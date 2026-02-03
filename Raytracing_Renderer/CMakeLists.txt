@@ -1,0 +1,18 @@
+cmake_minimum_required(VERSION 3.10)
+
+project(raytracer1a)
+
+add_library(lib
+    src/vector.cpp
+
+    src/screen.cpp
+    src/camera.cpp
+
+    src/color.cpp
+    src/file.cpp
+)
+
+target_include_directories(lib PUBLIC include)
+
+add_executable(${PROJECT_NAME} main.cpp)
+target_link_libraries(${PROJECT_NAME} PRIVATE lib)

@@ -1,0 +1,35 @@
+# CMake generated build directories and files
+# Use a standard name like /build/ or /out/ for the build directory
+/build/
+/out/
+/cmake-build-*/
+CMakeFiles/
+CMakeCache.txt
+CTestTestfile.cmake
+cmake_install.cmake
+install_manifest.txt
+compile_commands.json
+if you use visual studio add :
+*.VC.db
+*.VC.opendb
+
+# Executables and libraries (platform-specific)
+# Add patterns for common build outputs (e.g., .exe, .dll, .so, .a, .dylib)
+*.exe
+*.dll
+*.so
+*.a
+*.dylib
+
+# IDE specific files
+.idea/         # JetBrains CLion
+.vscode/       # VS Code (consider only ignoring user settings and not project config)
+/.vscode/settings.json
+*.suo          # Visual Studio
+*.user         # Visual Studio
+*.aps          # Visual Studio
+*.opensdf      # Visual Studio
+*.sdf          # Visual Studio
+*.ncb          # Visual Studio
+*.layout       # Visual Studio
+*.vs/          # Visual Studio 2019+
