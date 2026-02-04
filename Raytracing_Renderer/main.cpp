@@ -40,6 +40,15 @@ int main(int argc, char* argv[]) {
         return 1;
     }
 
+    cout << "map count: " << args.size() << endl;
+    for (auto map : args) {
+        cout << map.first + " ";
+        for (auto arg : map.second) {
+            cout << arg + " ";
+        }
+        cout << endl;
+    }
+
     cout << "imsize: " + args.find("imsize")->second[0] << endl;
     for (int i = 0; i < args["imsize"].size(); i++) {
         cout << "args: " + args["imsize"][i] << endl;
@@ -53,8 +62,11 @@ int main(int argc, char* argv[]) {
     cout << "cam u: " << cam.GetU().x << " + " << cam.GetU().y << " + " << cam.GetU().z << endl;
     cout << "cam v: " << cam.GetV().x << " + " << cam.GetV().y << " + " << cam.GetV().z << endl;
 
-    Screen screen(stoi(args["imsize"][0]), stoi(args["imsize"][1]));
+    Color bkg(stof(args["bkgcolor"][0]) * 255, stof(args["bkgcolor"][1]) * 255, stof(args["bkgcolor"][2]) * 255);
+    Screen screen(stoi(args["imsize"][0]), stoi(args["imsize"][1]), bkg);
     screen.CalcWindowCorners(cam, 5);
+
+    
 
     return 0;
 }
