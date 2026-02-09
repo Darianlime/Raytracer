@@ -10,7 +10,7 @@ struct Sphere : public Object {
         Sphere() = default;
         Sphere(Vec3 pos, float radius, Color mat);
 
-        pair<Vec3, bool> CheckIntersection(Raycast ray) override; 
+        pair<Vec3, bool> CheckIntersection(Ray ray) override; 
 }; 
 
 #endif

@@ -14,6 +14,10 @@ add_library(lib
     src/object.cpp
     src/sphere.cpp
 
+    src/ObjectFactory.cpp
+
+    include/ray.h
+
     src/file.cpp
 )
 

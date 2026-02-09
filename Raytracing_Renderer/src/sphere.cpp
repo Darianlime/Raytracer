@@ -3,10 +3,10 @@
 Sphere::Sphere(Vec3 pos, float radius, Color mat) 
     : Object(pos, mat, "sphere"), radius(radius) {}
 
-pair<Vec3, bool> Sphere::CheckIntersection(Raycast ray) {
-    float A = pow(ray.GetRayDir().x, 2) + pow(ray.GetRayDir().y, 2) + pow(ray.GetRayDir().z, 2);
-    float B = 2 * (ray.GetRayDir().x * (ray.GetOrigin().x - pos.x) + ray.GetRayDir().y * (ray.GetOrigin().y - pos.y) + ray.GetRayDir().z * (ray.GetOrigin().z - pos.z));
-    float C = pow(ray.GetOrigin().x - pos.x, 2) + pow(ray.GetOrigin().y - pos.y, 2) + pow(ray.GetOrigin().z - pos.z, 2) - pow(radius, 2);
+pair<Vec3, bool> Sphere::CheckIntersection(Ray ray) {
+    float A = pow(ray.raydir.x, 2) + pow(ray.raydir.y, 2) + pow(ray.raydir.z, 2);
+    float B = 2 * (ray.raydir.x * (ray.origin.x - pos.x) + ray.raydir.y * (ray.origin.y - pos.y) + ray.raydir.z * (ray.origin.z - pos.z));
+    float C = pow(ray.origin.x - pos.x, 2) + pow(ray.origin.y - pos.y, 2) + pow(ray.origin.z - pos.z, 2) - pow(radius, 2);
     float discriminant = pow(B, 2) - 4 * A * C;
     if (discriminant < 0) {
         return pair<Vec3, bool>(Vec3(0,0,0), false);

@@ -19,7 +19,7 @@ class File {
         File();
 
         static int ParseArgs(string inputFile, vector<vector<string>>& map);
-        static int WritePixels(vector<vector<Color>>& pixels);
+        static int WriteToPPM(string inputFileName, vector<vector<Color>>& pixels);
         static int FindKeyIndex(vector<vector<string>>& map, string key);
 }; 
 

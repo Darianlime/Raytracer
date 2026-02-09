@@ -1,9 +1,9 @@
 #ifndef OBJECT_H
 #define OBJECT_H
 
-#include "../vector.h"
-#include "../color.h"
-#include "../raycast.h"
+#include "vector.h"
+#include "color.h"
+#include "ray.h"
 
 struct Object {
     protected:
@@ -16,7 +16,7 @@ struct Object {
         Object(Vec3 pos, Color mat, string name);
         virtual ~Object() {};
 
-        virtual pair<Vec3, bool> CheckIntersection(Raycast ray) = 0; 
+        virtual pair<Vec3, bool> CheckIntersection(Ray ray) = 0; 
         string GetName() { return name; }
 
 }; 

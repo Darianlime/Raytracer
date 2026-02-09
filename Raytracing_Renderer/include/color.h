@@ -14,7 +14,7 @@ struct Color {
 	int b;
 
 	Color();
-	Color(int red, int green, int blue, bool isNormalized);
+	Color(float red, float green, float blue, bool isNormalized);
 	Color(Vec3 rgb, bool isNormalized);
 
 	string ToString() const;
