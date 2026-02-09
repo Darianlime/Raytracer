@@ -8,7 +8,12 @@ add_library(lib
     src/screen.cpp
     src/camera.cpp
 
+    src/raycast.cpp
+
     src/color.cpp
+    src/object.cpp
+    src/sphere.cpp
+
     src/file.cpp
 )
 

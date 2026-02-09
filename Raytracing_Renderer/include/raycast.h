@@ -1,12 +1,12 @@
-#include "vector.h"
-#include "color.h"
-
 #ifndef RAYCAST_H
 #define RAYCAST_H
 
+#include "vector.h"
+#include "color.h"
+
 class Raycast {
     private:
-        Vec3 pos;
+        Vec3 origin;
 
         float dx;
         float dy;
@@ -17,9 +17,12 @@ class Raycast {
         Raycast();
         Raycast(Vec3 eye);
 
-        void SetRayDir(Vec3 point);
+        Vec3 GetOrigin();
+        Vec3 GetRayDir();
+        void SetRayDir(Vec3 raydir);
+        void SetRayDirAtPoint(Vec3 point);
         Vec3 GetRay(float t);
-        Color TraceRay();
+        Color TraceRay(Vec3 point, Color background);
 }; 
 
 #endif

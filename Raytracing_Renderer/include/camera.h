@@ -1,7 +1,7 @@
-#include "vector.h"
-
 #ifndef CAMERA_H
 #define CAMERA_H
+
+#include "vector.h"
 
 class Camera {
     private:

@@ -1,15 +1,16 @@
+#ifndef FILE_H
+#define FILE_H
+
+#include "color.h"
+
 #include <iostream>
 #include <string>
 #include <sstream>
-#include <unordered_map>
 #include <fstream>
 #include <vector>
 #include <algorithm>
 
 using namespace std;
-
-#ifndef FILE_H
-#define FILE_H
 
 class File {
     private:
@@ -17,7 +18,9 @@ class File {
     public:
         File();
 
-        static int ParseArgs(string inputFile, unordered_map<string, vector<string>>& map);
+        static int ParseArgs(string inputFile, vector<vector<string>>& map);
+        static int WritePixels(vector<vector<Color>>& pixels);
+        static int FindKeyIndex(vector<vector<string>>& map, string key);
 }; 
 
 #endif

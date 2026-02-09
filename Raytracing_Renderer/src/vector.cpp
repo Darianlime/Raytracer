@@ -24,6 +24,11 @@ Vec3 Vec3::operator*(const float scalar) const
     return Vec3(x*scalar, y*scalar, z*scalar);
 }
 
+float Vec3::Dist(Vec3 vec1, Vec3 vec2)
+{
+    return sqrt(pow(vec2.x - vec1.x, 2) + pow(vec2.y - vec1.x, 2) + pow(vec2.z - vec1.z, 2));
+}
+
 float Vec3::Mag(Vec3 vec)
 {
     return sqrt(pow(vec.x, 2) + pow(vec.y, 2) + pow(vec.z, 2));
@@ -44,5 +49,5 @@ Vec3 Vec3::Cross(Vec3 vec1, Vec3 vec2)
 
 void Vec3::ToString()
 {
-    cout << "Vec x: " << x << " y: " << y << " z: " << z << endl;
+    cout << "Vec3 - x: " << x << " y: " << y << " z: " << z << endl;
 }

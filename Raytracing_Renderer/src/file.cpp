@@ -1,6 +1,6 @@
 #include "file.h"
 
-int File::ParseArgs(string inputFile, unordered_map<string, vector<string>>& args)
+int File::ParseArgs(string inputFile, vector<vector<string>>& args)
 {
     // Open and read input file
     ifstream fin(inputFile);
@@ -11,30 +11,35 @@ int File::ParseArgs(string inputFile, unordered_map<string, vector<string>>& arg
 
     // get inputs from file and add to vector
     string inputLine;
-    vector<string> sameArg;
-    int sameIndex = 0;
+    //vector<string> sameArg;
+    //int sameIndex = 0;
+    int index = 0;
     while (getline(fin, inputLine, '\n'))
     {
         stringstream input(inputLine);
         string keyword;
         
         getline(input, keyword, ' ');
+        args.push_back({});
+        args[index].push_back(keyword);
 
-        if (find(sameArg.begin(), sameArg.end(), keyword) != sameArg.end()) {
-            sameIndex++;
-            keyword += to_string(sameIndex);
-            args[keyword] = vector<string>();
-        }
-        else {
-            sameArg.push_back(keyword);
-            args[keyword] = vector<string>();
-        }
+        // if (find(sameArg.begin(), sameArg.end(), keyword) != sameArg.end()) {
+        //     sameIndex++;
+        //     keyword += to_string(sameIndex);
+        //     args[keyword] = vector<string>();
+        // }
+        // else {
+        //sameArg.push_back(keyword);
+        //args[keyword] = vector<string>();
+        //}
 
         string arg;
 
         while (getline(input, arg, ' ')) {
-            args[keyword].push_back(arg);
+            //args[keyword].push_back(arg);
+            args[index].push_back(arg);
         }
+        index++;
         cout << "Input line: " << inputLine << endl;
     }
 
@@ -48,4 +53,19 @@ int File::ParseArgs(string inputFile, unordered_map<string, vector<string>>& arg
 
     fin.close();
     return 0;
+}
+
+int File::WritePixels(vector<vector<Color>> &pixels)
+{
+    return 0;
+}
+
+int File::FindKeyIndex(vector<vector<string>> &map, string key)
+{
+    for (int i = 0; i < map.size(); i++) {
+        if (map[i][0] == key) {
+            return i;
+        }
+    }
+    return -1;
 }
