@@ -24,7 +24,6 @@ pair<Vec3, bool> Cylinder::CheckIntersection(Ray ray) {
     Vec3 intersectedPoint = ray.GetRay(t);
     Vec3 w = intersectedPoint - pos;
     float alpha = Vec3::Dot(w, direction) / Vec3::Dot(direction, direction);
-    float r = Vec3::Mag(w - direction * alpha);
     if (0 <= alpha && alpha <= length) {
         cout << "in" << endl;
         return pair<Vec3, bool>(intersectedPoint, true);
