@@ -16,6 +16,9 @@ int File::ParseArgs(string inputFile, vector<vector<string>>& args)
     int index = 0;
     while (getline(fin, inputLine, '\n'))
     {
+        if (inputLine.empty()) {
+            continue;
+        }
         stringstream input(inputLine);
         string keyword;
         
@@ -23,18 +26,7 @@ int File::ParseArgs(string inputFile, vector<vector<string>>& args)
         args.push_back({});
         args[index].push_back(keyword);
 
-        // if (find(sameArg.begin(), sameArg.end(), keyword) != sameArg.end()) {
-        //     sameIndex++;
-        //     keyword += to_string(sameIndex);
-        //     args[keyword] = vector<string>();
-        // }
-        // else {
-        //sameArg.push_back(keyword);
-        //args[keyword] = vector<string>();
-        //}
-
         string arg;
-
         while (getline(input, arg, ' ')) {
             //args[keyword].push_back(arg);
             args[index].push_back(arg);
@@ -61,11 +53,11 @@ int File::WriteToPPM(string inputFileName, vector<vector<Color>> &pixels)
     FILE* file = fopen((inputFileName + ".ppm").c_str(), "w");
     if (file == NULL) {
         cerr << "Error opening file" << endl;
-        return 1;
+        return -1;
     }
 
-    int h = pixels.size();
-    int w = pixels[0].size();
+    int w = pixels.size();
+    int h = pixels[0].size();
 
     string header = "P3\n" + to_string(w) + " " + to_string(h) + "\n255\n";
     cout << header << endl;

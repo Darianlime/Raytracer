@@ -13,6 +13,8 @@ add_library(lib
     src/color.cpp
     src/object.cpp
     src/sphere.cpp
+    src/cylinder.cpp
+    src/cone.cpp
 
     src/ObjectFactory.cpp
 

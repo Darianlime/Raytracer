@@ -32,10 +32,13 @@ Color Raycast::TraceRay(Vec3 point, Color background, vector<Object*> objects)
 {
     SetRayDirAtPoint(point);
     //cout << "tracing: " << objects[0]->GetName() << endl;
-    pair<Vec3, bool> o = objects[0]->CheckIntersection(Ray{origin, raydir});
-    if (o.second) {
-        return objects[0]->mat;
+    for (Object* obj : objects) {
+        pair<Vec3, bool> o = obj->CheckIntersection(Ray{origin, raydir});
+        if (o.second) {
+            return obj->mat;
+        }
     }
+
     //o.first.ToString();
     //cout << o.second << endl;
     // Object closest; 

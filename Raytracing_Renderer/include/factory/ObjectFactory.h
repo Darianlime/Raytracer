@@ -3,6 +3,7 @@
 
 #include <vector>
 #include "objects/sphere.h"
+#include "objects/cylinder.h"
 
 class ObjectFactory {
     private:

@@ -97,14 +97,16 @@ int main(int argc, char* argv[]) {
     vector<vector<Color>>& pixels = screen.GetPixels();
     int h = screen.GetHeight();
     int w = screen.GetWidth();
-
     for (int i = 0; i < h; i++) {
         for (int j = 0; j < w; j++) {
             Color color = ray.TraceRay(screen.GetWindowLocation(j,i), bkg, objectFactory.GetObjects());
-            pixels[i][j] = color;
+            pixels[j][i] = color;
         }
     }
 
-    File::WriteToPPM(fileName, pixels);
+    if (File::WriteToPPM(fileName, pixels) == -1) {
+        cerr << "Failed to write to " << fileName << endl;
+        return 1;
+    }
     return 0;
 }
