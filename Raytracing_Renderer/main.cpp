@@ -2,7 +2,6 @@
 #include <iostream>
 #include <string>
 #include <vector>
-#include <unordered_map>
 
 #include "include/vector.h"
 #include "include/file.h"
@@ -52,16 +51,21 @@ int main(int argc, char* argv[]) {
     for (int i = 0; i < firstMTLIndex; i++) {
         string key = args[i][0];
         argsCamera[key] = vector<string>();
-        //cout << key + " ";
         for (int j = 1; j < args[i].size(); j++) {
             argsCamera[key].push_back(args[i][j]);
-            //cout << argsCamera[key].back() + " ";
         }
-        //cout << endl;
+    }
+
+    // Check if Camera Arguments are vaild
+    Vec3 imsize, eye, viewdir, updir;
+    float vfov;
+    Color bkg;
+    if (File::VaildateCameraArgs(argsCamera, imsize, eye, viewdir, updir, vfov, bkg) == -1) {
+        cerr << "Invaild camera argument: ";
+        return 1;
     }
 
     ObjectFactory objectFactory;
-
     Color mtl;
     for (int i = firstMTLIndex; i < args.size(); i++) {
         string id = args[i][0];
@@ -78,18 +82,9 @@ int main(int argc, char* argv[]) {
         cout << objectFactory.GetObjects()[i]->GetName() << endl;
     }
 
-    cout << "imsize: " + argsCamera.find("imsize")->second[0] << endl;
-    for (int i = 0; i < argsCamera["imsize"].size(); i++) {
-        cout << "argsCamera: " + argsCamera["imsize"][i] << endl;
-    }
+    Camera cam(eye, viewdir, updir, vfov);
 
-    Vec3 eye(stof(argsCamera["eye"][0]), stof(argsCamera["eye"][1]), stof(argsCamera["eye"][2]));
-    Vec3 viewdir(stof(argsCamera["viewdir"][0]), stof(argsCamera["viewdir"][1]), stof(argsCamera["viewdir"][2]));
-    Vec3 updir(stof(argsCamera["updir"][0]), stof(argsCamera["updir"][1]), stof(argsCamera["updir"][2]));
-    Camera cam(eye, viewdir, updir, stof(argsCamera["vfov"][0]));
-
-    Color bkg(stof(argsCamera["bkgcolor"][0]), stof(argsCamera["bkgcolor"][1]), stof(argsCamera["bkgcolor"][2]), true);
-    Screen screen(stoi(argsCamera["imsize"][0]), stoi(argsCamera["imsize"][1]), bkg);
+    Screen screen(imsize.x, imsize.y, bkg);
     screen.CalcWindowCorners(cam);
     
     Raycast ray(eye);

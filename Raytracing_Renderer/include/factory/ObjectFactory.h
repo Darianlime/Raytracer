@@ -5,11 +5,13 @@
 #include "objects/sphere.h"
 #include "objects/cylinder.h"
 #include "objects/cone.h"
+#include "objects/ellipsoid.h"
 
 enum class ObjectType {
     SPHERE,
     CYLINDER,
-    CONE
+    CONE,
+    ELLIPSOID
 };
 
 class ObjectFactory {

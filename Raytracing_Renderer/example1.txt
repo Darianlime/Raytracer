@@ -4,8 +4,12 @@ viewdir 0 0 1
 vfov 45
 updir 0 1 0
 bkgcolor 0.2 0.2 0.2
+
+mtlcolor 1 0 1
+ellipsoid 0 4 15 5 1 1
+
 mtlcolor 1 0 0
-cone 0 1 15 0 -1 0 20 2
+cone 0 1 10 0 -1 0 10 2
 
 mtlcolor 0 1 0 
 sphere 3 0 15 1

@@ -15,6 +15,7 @@ add_library(lib
     src/sphere.cpp
     src/cylinder.cpp
     src/cone.cpp
+    src/ellipsoid.cpp
 
     src/ObjectFactory.cpp
 

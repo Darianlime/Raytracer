@@ -32,21 +32,22 @@ Color Raycast::TraceRay(Vec3 point, Color background, vector<Object*> objects)
 {
     SetRayDirAtPoint(point);
     //cout << "tracing: " << objects[0]->GetName() << endl;
+    Object* closest; 
+    Vec3 distance(numeric_limits<float>::infinity(), numeric_limits<float>::infinity(), numeric_limits<float>::infinity());
+    bool isIntersected = false;
     for (Object* obj : objects) {
         pair<Vec3, bool> o = obj->CheckIntersection(Ray{origin, raydir});
         if (o.second) {
-            return obj->mat;
+            if (Vec3::Dist(origin, o.first) < Vec3::Dist(origin, distance)) {
+                closest = obj;
+                distance = o.first;
+            }
+            isIntersected = true;
         }
     }
-
-    //o.first.ToString();
-    //cout << o.second << endl;
-    // Object closest; 
-    // bool isIntersected = false;
-    // for (Object obj : ) {
-    //     // Create intersections for each object no in ray
-    //     if (!SphereIntersecion())
-    // }
+    if (isIntersected) {
+        return closest->mat;
+    }
     // if (isIntersected) {
     //     return ShadeRay(ColorObj);
     // }

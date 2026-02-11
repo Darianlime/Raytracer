@@ -18,6 +18,7 @@ struct Color {
 	Color(Vec3 rgb, bool isNormalized);
 
 	string ToString() const;
+	int CheckArgs();
 };
 
 #endif
