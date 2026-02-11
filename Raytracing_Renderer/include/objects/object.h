@@ -16,7 +16,8 @@ struct Object {
         Object(Vec3 pos, Color mat, string name);
         virtual ~Object() {};
 
-        virtual pair<Vec3, bool> CheckIntersection(Ray ray) = 0; 
+        virtual pair<Vec3, bool> CheckIntersection(Ray ray) = 0;
+        float GetHitDistance(float A, float B, float C); 
         string GetName() { return name; }
 
 }; 
