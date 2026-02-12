@@ -2,6 +2,7 @@
 #define FILE_H
 
 #include "color.h"
+#include "factory/ObjectFactory.h"
 
 #include <iostream>
 #include <string>
@@ -14,15 +15,12 @@
 using namespace std;
 
 class File {
-    private:
-
     public:
-        File();
-
         static int ParseArgs(string inputFile, vector<vector<string>>& map);
         static int WriteToPPM(string inputFileName, vector<vector<Color>>& pixels);
         static int FindKeyIndex(vector<vector<string>>& map, string key);
         static int VaildateCameraArgs(unordered_map<string, vector<string>>, Vec3& imsize, Vec3& eye, Vec3& viewdir, Vec3& updir, float& vfov, Color& bkg);
-}; 
+        static int VaildateShapeArgs(vector<vector<string>> args, int firstMaterialIndex, ObjectFactory& objFactory);
+};
 
 #endif

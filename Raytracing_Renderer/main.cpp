@@ -47,7 +47,7 @@ int main(int argc, char* argv[]) {
         cerr << "Failed to get first material color" << endl;
         return 1;
     }
-    cout << "index: " << firstMTLIndex << endl;
+
     for (int i = 0; i < firstMTLIndex; i++) {
         string key = args[i][0];
         argsCamera[key] = vector<string>();
@@ -61,21 +61,12 @@ int main(int argc, char* argv[]) {
     float vfov;
     Color bkg;
     if (File::VaildateCameraArgs(argsCamera, imsize, eye, viewdir, updir, vfov, bkg) == -1) {
-        cerr << "Invaild camera argument: ";
         return 1;
     }
 
     ObjectFactory objectFactory;
-    Color mtl;
-    for (int i = firstMTLIndex; i < args.size(); i++) {
-        string id = args[i][0];
-        if (id == "mtlcolor") {
-            mtl = Color(stof(args[i][1]), stof(args[i][2]), stof(args[i][3]), true);
-        } else {
-            vector<string> objectVal = args[i];
-            objectVal.erase(objectVal.begin());
-            objectFactory.CreateObject(id, objectVal, mtl);
-        }
+    if (File::VaildateShapeArgs(args, firstMTLIndex, objectFactory) == -1) {
+        return 1;
     }
 
     for (int i = 0; i < objectFactory.GetObjects().size(); i++) {

@@ -107,3 +107,23 @@ int File::VaildateCameraArgs(unordered_map<string, vector<string>> args, Vec3& i
 
     return 0;
 }
+
+int File::VaildateShapeArgs(vector<vector<string>> args, int firstMTLIndex, ObjectFactory& objectFactory) {
+    Color mtl;
+    for (int i = firstMTLIndex; i < args.size(); i++) {
+        string id = args[i][0];
+        if (id == "mtlcolor") {
+            mtl = Color(stof(args[i][1]), stof(args[i][2]), stof(args[i][3]), true);
+            if (mtl.CheckArgs() == -1) {
+                return -1;
+            }
+        } else {
+            vector<string> objectVal = args[i];
+            if (objectFactory.CreateObject(id, objectVal, mtl) == -1) {
+                cerr << "Error: failed to create object: " << objectVal[0] << endl;
+                return -1;
+            }
+        }
+    }
+    return 0;
+}

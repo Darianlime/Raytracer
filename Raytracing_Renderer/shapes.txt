@@ -1,7 +1,7 @@
 imsize 512 512
 eye 0 0 1
-viewdir 0 0 1
-vfov 45
+viewdir -0.75 0 1
+vfov 120
 updir 0 1 0
 bkgcolor 0.2 0.2 0.2
 
@@ -9,7 +9,7 @@ mtlcolor 1 0 1
 ellipsoid 0 4 15 5 1 1
 
 mtlcolor 1 0 0
-cone 0 1 10 0 -1 0 10 2
+cone 0 1 10 0 -1 0 15 2
 
 mtlcolor 0 1 0 
 sphere 3 0 15 1

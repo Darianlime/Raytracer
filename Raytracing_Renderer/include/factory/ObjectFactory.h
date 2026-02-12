@@ -19,8 +19,8 @@ class ObjectFactory {
         vector<Object*> objects;
     public:
         ObjectFactory() = default;
-        ~ObjectFactory() {}
-        Object* CreateObject(string objectName, vector<string> args, Color mat);
+        ~ObjectFactory() {};
+        int CreateObject(string objectName, vector<string> args, Color mat);
         Object* CreateObject(ObjectType objectType, vector<string> args, Color mat);
 
         vector<Object*> GetObjects() const { return objects; }
