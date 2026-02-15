@@ -1,6 +1,6 @@
 #include "objects/cylinder.h"
 
-Cylinder::Cylinder(Vec3 pos, Vec3 direction, float radius, float length, Color mat) 
+Cylinder::Cylinder(Vec3 pos, Vec3 direction, float radius, float length, Material mat) 
     : Object(pos, mat, "cylinder"), radius(radius), direction(direction), length(length) {}
 
 pair<Vec3, bool> Cylinder::CheckIntersection(Ray ray) {
@@ -21,4 +21,9 @@ pair<Vec3, bool> Cylinder::CheckIntersection(Ray ray) {
         return pair<Vec3, bool>(intersectedPoint, true);
     }
     return pair<Vec3, bool>(Vec3(0,0,0), false);
+
+}
+Vec3 Cylinder::GetNormal(Vec3 intersectedPoint)
+{
+    return Vec3();
 }

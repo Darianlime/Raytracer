@@ -3,6 +3,7 @@
 
 #include "color.h"
 #include "factory/ObjectFactory.h"
+#include "factory/LightFactory.h"
 
 #include <iostream>
 #include <string>
@@ -20,7 +21,7 @@ class File {
         static int WriteToPPM(string inputFileName, vector<vector<Color>>& pixels);
         static int FindKeyIndex(vector<vector<string>>& map, string key);
         static int VaildateCameraArgs(unordered_map<string, vector<string>>, Vec3& imsize, Vec3& eye, Vec3& viewdir, Vec3& updir, float& vfov, Color& bkg);
-        static int VaildateShapeArgs(vector<vector<string>> args, int firstMaterialIndex, ObjectFactory& objFactory);
+        static int VaildateObjectsArgs(vector<vector<string>> args, ObjectFactory& objFactory, LightFactory& lightFactory);
 };
 
 #endif

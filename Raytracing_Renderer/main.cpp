@@ -9,6 +9,7 @@
 #include "include/screen.h"
 #include "include/raycast.h" 
 #include "include/factory/ObjectFactory.h"
+#include "include/factory/LightFactory.h"
 
 using namespace std;
 
@@ -38,23 +39,26 @@ int main(int argc, char* argv[]) {
 
     vector<vector<string>> args;
     unordered_map<string, vector<string>> argsCamera;
-    int firstMTLIndex = 0;
+    int bkgIndex = 0;
+    int firstLightIndex = 0;
     if (File::ParseArgs(inputFile, args) == -1) {
         cerr << "Failed to get args in file" << endl;
         return 1;
     }
-    if ((firstMTLIndex = File::FindKeyIndex(args, "mtlcolor")) == -1) {
+    if ((bkgIndex = File::FindKeyIndex(args, "bkgcolor")) == -1) {
         cerr << "Failed to get first material color" << endl;
         return 1;
     }
 
-    for (int i = 0; i < firstMTLIndex; i++) {
+    for (int i = 0; i <= bkgIndex; i++) {
         string key = args[i][0];
         argsCamera[key] = vector<string>();
         for (int j = 1; j < args[i].size(); j++) {
             argsCamera[key].push_back(args[i][j]);
         }
     }
+
+    cout << "in" << endl;
 
     // Check if Camera Arguments are vaild
     Vec3 imsize, eye, viewdir, updir;
@@ -64,14 +68,21 @@ int main(int argc, char* argv[]) {
         return 1;
     }
 
+    cout << "in" << endl;
+
     ObjectFactory objectFactory;
-    if (File::VaildateShapeArgs(args, firstMTLIndex, objectFactory) == -1) {
+    LightFactory lightFactory;
+    if (File::VaildateObjectsArgs(args, objectFactory, lightFactory) == -1) {
         return 1;
     }
+
+    cout << "in" << endl;
 
     for (int i = 0; i < objectFactory.GetObjects().size(); i++) {
         cout << objectFactory.GetObjects()[i]->GetName() << endl;
     }
+
+    cout << "in" << endl;
 
     Camera cam(eye, viewdir, updir, vfov);
 
@@ -85,7 +96,7 @@ int main(int argc, char* argv[]) {
     int w = screen.GetWidth();
     for (int i = 0; i < h; i++) {
         for (int j = 0; j < w; j++) {
-            Color color = ray.TraceRay(screen.GetWindowLocation(j,i), bkg, objectFactory.GetObjects());
+            Color color = ray.TraceRay(screen.GetWindowLocation(j,i), bkg, objectFactory.GetObjects(), lightFactory.GetObjects());
             pixels[j][i] = color;
         }
     }

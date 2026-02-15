@@ -1,6 +1,6 @@
 #include "objects/ellipsoid.h"
 
-Ellipsoid::Ellipsoid(Vec3 pos, Vec3 radius, Color mat) : Object(pos, mat, "ellipsoid"), radius(radius) {}
+Ellipsoid::Ellipsoid(Vec3 pos, Vec3 radius, Material mat) : Object(pos, mat, "ellipsoid"), radius(radius) {}
 
 pair<Vec3, bool> Ellipsoid::CheckIntersection(Ray ray)
 {
@@ -15,4 +15,9 @@ pair<Vec3, bool> Ellipsoid::CheckIntersection(Ray ray)
     
     Vec3 intersectedPoint = ray.GetRay(t);
     return pair<Vec3, bool>(intersectedPoint, true);
+}
+
+Vec3 Ellipsoid::GetNormal(Vec3 intersectedPoint)
+{
+    return Vec3();
 }

@@ -10,9 +10,10 @@ struct Cone : public Object {
         Vec3 direction;
 
         Cone() = default;
-        Cone(Vec3 pos, Vec3 direction, float angle, float height, Color mat);
+        Cone(Vec3 pos, Vec3 direction, float angle, float height, Material mat);
 
         pair<Vec3, bool> CheckIntersection(Ray ray) override; 
+        Vec3 GetNormal(Vec3 intersectedPoint) override;
 }; 
 
 #endif

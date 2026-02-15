@@ -15,6 +15,9 @@ struct Vec3 {
         Vec3();
         Vec3(float x, float y, float z);
 
+        // negate
+        Vec3 operator-() const;
+
         Vec3 operator+(const Vec3& other) const;
         Vec3 operator-(const Vec3& other) const;
         //Divsion By scalar

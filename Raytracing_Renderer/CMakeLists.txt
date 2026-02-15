@@ -11,13 +11,18 @@ add_library(lib
     src/raycast.cpp
 
     src/color.cpp
+    src/material.cpp
+    
     src/object.cpp
     src/sphere.cpp
     src/cylinder.cpp
     src/cone.cpp
     src/ellipsoid.cpp
 
-    src/ObjectFactory.cpp
+
+
+    src/factory/ObjectFactory.cpp
+    src/factory/LightFactory.cpp
 
     include/ray.h
 

@@ -8,9 +8,10 @@ struct Ellipsoid : public Object {
         Vec3 radius;
 
         Ellipsoid() = default;
-        Ellipsoid(Vec3 pos, Vec3 radius, Color mat);
+        Ellipsoid(Vec3 pos, Vec3 radius, Material mat);
 
         pair<Vec3, bool> CheckIntersection(Ray ray) override; 
+        Vec3 GetNormal(Vec3 intersectedPoint) override;
 }; 
 
 #endif

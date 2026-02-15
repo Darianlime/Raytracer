@@ -93,7 +93,7 @@ int File::VaildateCameraArgs(unordered_map<string, vector<string>> args, Vec3& i
     if (args["updir"].size() < 3) { cerr << "Not enough arguments for updir" << endl; return -1; }
     if (args["bkgcolor"].size() < 3) { cerr << "Not enough arguments for bkgcolor" << endl; return -1; }
 
-    imsize = Vec3(stoi(args["imsize"][0]), stoi(args["imsize"][1]), 0);
+    imsize = Vec3(stof(args["imsize"][0]), stof(args["imsize"][1]), 0.0f);
     eye = Vec3(stof(args["eye"][0]), stof(args["eye"][1]), stof(args["eye"][2]));
     viewdir = Vec3(stof(args["viewdir"][0]), stof(args["viewdir"][1]), stof(args["viewdir"][2]));
     updir = Vec3(stof(args["updir"][0]), stof(args["updir"][1]), stof(args["updir"][2]));
@@ -108,21 +108,24 @@ int File::VaildateCameraArgs(unordered_map<string, vector<string>> args, Vec3& i
     return 0;
 }
 
-int File::VaildateShapeArgs(vector<vector<string>> args, int firstMTLIndex, ObjectFactory& objectFactory) {
-    Color mtl;
-    for (int i = firstMTLIndex; i < args.size(); i++) {
+int File::VaildateObjectsArgs(vector<vector<string>> args, ObjectFactory& objectFactory, LightFactory& lightFactory) {
+    Material mtl;
+    for (int i = 0; i < args.size(); i++) {
         string id = args[i][0];
         if (id == "mtlcolor") {
-            mtl = Color(stof(args[i][1]), stof(args[i][2]), stof(args[i][3]), true);
-            if (mtl.CheckArgs() == -1) {
-                return -1;
-            }
+            mtl = Material(
+                Color(stof(args[i][1]), stof(args[i][2]), stof(args[i][3]), false),
+                Color(stof(args[i][4]), stof(args[i][5]), stof(args[i][6]), false), 
+                Vec3(stof(args[i][7]), stof(args[i][8]), stof(args[i][9])),
+                stof(args[i][10])
+            );
+            // if (mtl.CheckArgs() == -1) {
+            //     return -1;
+            // }
         } else {
             vector<string> objectVal = args[i];
-            if (objectFactory.CreateObject(id, objectVal, mtl) == -1) {
-                cerr << "Error: failed to create object: " << objectVal[0] << endl;
-                return -1;
-            }
+            objectFactory.CreateObject(id, objectVal, mtl);
+            lightFactory.CreateLight(id, objectVal);
         }
     }
     return 0;

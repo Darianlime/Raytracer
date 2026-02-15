@@ -1,6 +1,6 @@
 #include "objects/object.h"
 
-Object::Object(Vec3 pos, Color mat, string name) : pos(pos), mat(mat), name(name) {};
+Object::Object(Vec3 pos, Material mat, string name) : pos(pos), mat(mat), name(name) {};
 
 float Object::GetHitDistance(float A, float B, float C)
 {

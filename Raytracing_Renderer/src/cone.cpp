@@ -1,6 +1,6 @@
 #include "objects/cone.h"
 
-Cone::Cone(Vec3 pos, Vec3 direction, float angle, float height, Color mat) 
+Cone::Cone(Vec3 pos, Vec3 direction, float angle, float height, Material mat) 
     : Object(pos, mat, "cone"), angle(angle), direction(direction), height(height) {}
 
 pair<Vec3, bool> Cone::CheckIntersection(Ray ray) {
@@ -23,4 +23,9 @@ pair<Vec3, bool> Cone::CheckIntersection(Ray ray) {
         return pair<Vec3, bool>(intersectedPoint, true);
     }
     return pair<Vec3, bool>(Vec3(0,0,0), false);
+}
+
+Vec3 Cone::GetNormal(Vec3 intersectedPoint)
+{
+    return Vec3();
 }

@@ -28,7 +28,7 @@ Vec3 Raycast::GetRay(float t)
 // Check each object in the screen
 // if no object found in front of eye return background color
 // otherwise call ShadeRay()
-Color Raycast::TraceRay(Vec3 point, Color background, vector<Object*> objects)
+Color Raycast::TraceRay(Vec3 point, Color background, vector<Object*> objects, vector<Light*> lights)
 {
     SetRayDirAtPoint(point);
     //cout << "tracing: " << objects[0]->GetName() << endl;
@@ -46,10 +46,18 @@ Color Raycast::TraceRay(Vec3 point, Color background, vector<Object*> objects)
         }
     }
     if (isIntersected) {
-        return closest->mat;
+        return ShadeRay(closest, distance, lights);
     }
-    // if (isIntersected) {
-    //     return ShadeRay(ColorObj);
-    // }
     return background;
+}
+
+Color Raycast::ShadeRay(Object* obj, Vec3 intersectedPoint, vector<Light*> lights) {
+    Material mat = obj->mat;
+    Vec3 normal = obj->GetNormal(intersectedPoint);
+    Vec3 lightDir = lights[0]->GetLightDir(intersectedPoint);
+    Vec3 H = (lightDir + raydir) / Vec3::Mag(lightDir + raydir);
+    Vec3 ambient = mat.diffuse.GetVec() * mat.k.x;
+    Vec3 diffuse = mat.diffuse.GetVec() * mat.k.y * max(0.0f, Vec3::Dot(normal, lightDir));
+    Vec3 specular = mat.specular.GetVec() * mat.k.z * pow(max(0.0f, Vec3::Dot(normal, H)), mat.n);
+    return Color(ambient + diffuse + specular, true);
 }

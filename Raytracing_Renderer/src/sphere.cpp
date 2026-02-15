@@ -1,6 +1,6 @@
 #include "objects/sphere.h"
 
-Sphere::Sphere(Vec3 pos, float radius, Color mat) 
+Sphere::Sphere(Vec3 pos, float radius, Material mat) 
     : Object(pos, mat, "sphere"), radius(radius) {}
 
 pair<Vec3, bool> Sphere::CheckIntersection(Ray ray) {
@@ -15,4 +15,9 @@ pair<Vec3, bool> Sphere::CheckIntersection(Ray ray) {
     
     Vec3 intersectedPoint = ray.GetRay(t);
     return pair<Vec3, bool>(intersectedPoint, true);
+}
+
+Vec3 Sphere::GetNormal(Vec3 intersectedPoint)
+{
+    return (intersectedPoint - pos) / radius;
 }

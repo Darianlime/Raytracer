@@ -10,9 +10,10 @@ struct Cylinder : public Object {
         Vec3 direction;
 
         Cylinder() = default;
-        Cylinder(Vec3 pos, Vec3 direction, float radius, float length, Color mat);
+        Cylinder(Vec3 pos, Vec3 direction, float radius, float length, Material mat);
 
         pair<Vec3, bool> CheckIntersection(Ray ray) override; 
+        Vec3 GetNormal(Vec3 intersectedPoint) override;
 }; 
 
 #endif
