@@ -3,16 +3,16 @@
 
 #include "vector.h"
 #include "material.h"
-#include "objects/object.h"
-#include "lights/light.h"
+#include "factory/ObjectFactory.h"
 #include <vector>
+#include <map>
 
 class Raycast {
     private:
         Vec3 origin;
         Vec3 raydir;
     public:
-        Raycast();
+        Raycast() = default;
         Raycast(Vec3 eye);
 
         Vec3 GetOrigin();
@@ -20,8 +20,8 @@ class Raycast {
         void SetRayDir(Vec3 raydir);
         void SetRayDirAtPoint(Vec3 point);
         Vec3 GetRay(float t);
-        Color TraceRay(Vec3 point, Color background, vector<Object*> objects, vector<Light*> lights);
-        Color ShadeRay(Object *obj, Vec3 intersectedPoint, vector<Light *> lights);
+        Color TraceRay(Vec3 point, Color background, ObjectFactory& factories);
+        Color ShadeRay(Shape *obj, vector<Material> mats, Vec3 intersectedPoint, vector<Light *> lights);
 };
 
 #endif

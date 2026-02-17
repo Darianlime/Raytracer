@@ -1,7 +1,7 @@
-#include "objects/cylinder.h"
+#include "shapes/cylinder.h"
 
-Cylinder::Cylinder(Vec3 pos, Vec3 direction, float radius, float length, Material mat) 
-    : Object(pos, mat, "cylinder"), radius(radius), direction(direction), length(length) {}
+Cylinder::Cylinder(Vec3 pos, Vec3 direction, float radius, float length, int mat) 
+    : Shape(pos, mat, "cylinder"), radius(radius), direction(direction), length(length) {}
 
 pair<Vec3, bool> Cylinder::CheckIntersection(Ray ray) {
     Vec3 f = ray.origin - pos;

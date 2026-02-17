@@ -2,19 +2,16 @@
 #define LIGHT_FACTORY_H
 
 #include <vector>
+#include "factory/FactoryBase.h"
 #include "lights/DirectionalLight.h"
 #include "lights/PointLight.h"
 
-class LightFactory {
-    private:
-        vector<Light*> lights;
+class LightFactory : public FactoryBase<Light> {
     public:
-        LightFactory() = default;
+        LightFactory();
         ~LightFactory() {};
-        int CreateLight(string objectName, vector<string> args);
-        Light* CreateLight(LightType objectType, vector<string> args);
-
-        vector<Light*> GetObjects() const { return lights; }
+        int CreateObject(string& objectName, vector<string>& args) override;
+        //Light* CreateLight(LightType objectType, vector<string> args);
 }; 
 
 #endif

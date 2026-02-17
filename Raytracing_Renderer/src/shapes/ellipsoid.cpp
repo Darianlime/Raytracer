@@ -1,6 +1,6 @@
-#include "objects/ellipsoid.h"
+#include "shapes/ellipsoid.h"
 
-Ellipsoid::Ellipsoid(Vec3 pos, Vec3 radius, Material mat) : Object(pos, mat, "ellipsoid"), radius(radius) {}
+Ellipsoid::Ellipsoid(Vec3 pos, Vec3 radius, int mat) : Shape(pos, mat, "ellipsoid"), radius(radius) {}
 
 pair<Vec3, bool> Ellipsoid::CheckIntersection(Ray ray)
 {

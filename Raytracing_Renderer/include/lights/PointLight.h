@@ -6,12 +6,9 @@
 class PointLight : public Light
 {
 	public:
-		PointLight(Vec3 pos, float intensity) 
-            : Light(pos, 1, intensity) {}
+		PointLight(Vec3 pos, float intensity);
 
-        Vec3 GetLightDir(Vec3 surfacePos) const override {
-            return (pos - surfacePos) / Vec3::Mag(pos - surfacePos);
-        }
+        Vec3 GetLightDir(Vec3 surfacePos) const override;
 };
 
 #endif

@@ -12,17 +12,23 @@ add_library(lib
 
     src/color.cpp
     src/material.cpp
-    
+
     src/object.cpp
-    src/sphere.cpp
-    src/cylinder.cpp
-    src/cone.cpp
-    src/ellipsoid.cpp
+    
+    src/shapes/shape.cpp
+    src/shapes/sphere.cpp
+    src/shapes/cylinder.cpp
+    src/shapes/cone.cpp
+    src/shapes/ellipsoid.cpp
 
+    src/lights/light.cpp
+    src/lights/DirectionalLight.cpp
+    src/lights/PointLight.cpp
 
+    src/factory/ShapeFactory.cpp
+    src/factory/LightFactory.cpp
 
     src/factory/ObjectFactory.cpp
-    src/factory/LightFactory.cpp
 
     include/ray.h
 

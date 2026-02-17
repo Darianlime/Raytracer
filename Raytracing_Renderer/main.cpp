@@ -8,8 +8,6 @@
 #include "include/camera.h"
 #include "include/screen.h"
 #include "include/raycast.h" 
-#include "include/factory/ObjectFactory.h"
-#include "include/factory/LightFactory.h"
 
 using namespace std;
 
@@ -71,15 +69,21 @@ int main(int argc, char* argv[]) {
     cout << "in" << endl;
 
     ObjectFactory objectFactory;
-    LightFactory lightFactory;
-    if (File::VaildateObjectsArgs(args, objectFactory, lightFactory) == -1) {
+    objectFactory.CreateFactory<ShapeFactory>();
+    objectFactory.CreateFactory<LightFactory>();
+    if (File::VaildateObjectsArgs(args, objectFactory) == -1) {
         return 1;
     }
 
     cout << "in" << endl;
 
-    for (int i = 0; i < objectFactory.GetObjects().size(); i++) {
-        cout << objectFactory.GetObjects()[i]->GetName() << endl;
+    for (auto& shape : objectFactory.GetFactory<ShapeFactory>().GetObjects()) {
+        cout << shape->GetName() << endl;
+        cout << shape->mat << endl;
+    }
+
+    for (auto& mats : objectFactory.GetMats()) {
+        cout << mats.ToString() << endl;
     }
 
     cout << "in" << endl;
@@ -96,7 +100,7 @@ int main(int argc, char* argv[]) {
     int w = screen.GetWidth();
     for (int i = 0; i < h; i++) {
         for (int j = 0; j < w; j++) {
-            Color color = ray.TraceRay(screen.GetWindowLocation(j,i), bkg, objectFactory.GetObjects(), lightFactory.GetObjects());
+            Color color = ray.TraceRay(screen.GetWindowLocation(j,i), bkg, objectFactory);
             pixels[j][i] = color;
         }
     }

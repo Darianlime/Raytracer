@@ -2,6 +2,7 @@
 #define LIGHT_H
 
 #include "vector.h"
+#include "object.h"
 #include <cstdint>
 #include <string>
 
@@ -12,16 +13,16 @@ enum class LightType {
 	POINT
 };
 
-class Light
+class Light : public Object
 {
 	private:
 		int w; // 0 = direction, 1 = point
 		Vec3 lightDir;
 	public:
-		Vec3 pos;
 		float intensity;
 
-		Light(Vec3 pos, int w, float intensity) : pos(pos), w(w), intensity(intensity) {}
+		Light(Vec3 pos, int w, float intensity);
+		Light(Vec3 pos, int w, float intensity, string name);
 
 		void SetLightDir(Vec3 lightDir) { this->lightDir = lightDir; }
 		virtual Vec3 GetLightDir(Vec3 surfacePos) const { return lightDir; }

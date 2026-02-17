@@ -108,8 +108,32 @@ int File::VaildateCameraArgs(unordered_map<string, vector<string>> args, Vec3& i
     return 0;
 }
 
-int File::VaildateObjectsArgs(vector<vector<string>> args, ObjectFactory& objectFactory, LightFactory& lightFactory) {
+int File::VaildateObjectsArgs(vector<vector<string>> args, ShapeFactory& objectFactory, LightFactory& lightFactory) {
+    // Material mtl;
+    // for (int i = 0; i < args.size(); i++) {
+    //     string id = args[i][0];
+    //     if (id == "mtlcolor") {
+    //         mtl = Material(
+    //             Color(stof(args[i][1]), stof(args[i][2]), stof(args[i][3]), false),
+    //             Color(stof(args[i][4]), stof(args[i][5]), stof(args[i][6]), false), 
+    //             Vec3(stof(args[i][7]), stof(args[i][8]), stof(args[i][9])),
+    //             stof(args[i][10])
+    //         );
+    //         // if (mtl.CheckArgs() == -1) {
+    //         //     return -1;
+    //         // }
+    //     } else {
+    //         vector<string> objectVal = args[i];
+    //         objectFactory.CreateObject(id, objectVal);
+    //         lightFactory.CreateLight(id, objectVal);
+    //     }
+    // }
+    return 0;
+}
+
+int File::VaildateObjectsArgs(vector<vector<string>> args, ObjectFactory& objectFactory) {
     Material mtl;
+    int matIndex = -1;
     for (int i = 0; i < args.size(); i++) {
         string id = args[i][0];
         if (id == "mtlcolor") {
@@ -119,13 +143,17 @@ int File::VaildateObjectsArgs(vector<vector<string>> args, ObjectFactory& object
                 Vec3(stof(args[i][7]), stof(args[i][8]), stof(args[i][9])),
                 stof(args[i][10])
             );
+            objectFactory.AddMaterial(mtl);
+            matIndex++;
             // if (mtl.CheckArgs() == -1) {
             //     return -1;
             // }
         } else {
             vector<string> objectVal = args[i];
-            objectFactory.CreateObject(id, objectVal, mtl);
-            lightFactory.CreateLight(id, objectVal);
+            objectVal.push_back(to_string(matIndex));
+            for (auto& factory : objectFactory.GetFactoryMap()) {
+                factory.second.get()->CreateObject(id, objectVal);
+            }
         }
     }
     return 0;

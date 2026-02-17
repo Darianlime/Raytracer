@@ -1,7 +1,7 @@
-#include "objects/sphere.h"
+#include "shapes/sphere.h"
 
-Sphere::Sphere(Vec3 pos, float radius, Material mat) 
-    : Object(pos, mat, "sphere"), radius(radius) {}
+Sphere::Sphere(Vec3 pos, float radius, int mat) 
+    : Shape(pos, mat, "sphere"), radius(radius) {}
 
 pair<Vec3, bool> Sphere::CheckIntersection(Ray ray) {
     float A = pow(ray.raydir.x, 2) + pow(ray.raydir.y, 2) + pow(ray.raydir.z, 2);

@@ -1,7 +1,7 @@
-#include "objects/cone.h"
+#include "shapes/cone.h"
 
-Cone::Cone(Vec3 pos, Vec3 direction, float angle, float height, Material mat) 
-    : Object(pos, mat, "cone"), angle(angle), direction(direction), height(height) {}
+Cone::Cone(Vec3 pos, Vec3 direction, float angle, float height, int mat) 
+    : Shape(pos, mat, "cone"), angle(angle), direction(direction), height(height) {}
 
 pair<Vec3, bool> Cone::CheckIntersection(Ray ray) {
     Vec3 unitDir = direction / Vec3::Mag(direction);
