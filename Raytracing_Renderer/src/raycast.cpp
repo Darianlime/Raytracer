@@ -1,9 +1,9 @@
 #include "raycast.h"
 
-Raycast::Raycast(Vec3 eye) : origin(eye) {}
+Raycast::Raycast(Vec3 eye) : eye(eye) {}
 
-Vec3 Raycast::GetOrigin() {
-    return origin;
+Vec3 Raycast::GetEye() {
+    return eye;
 }
 
 Vec3 Raycast::GetRayDir() {
@@ -17,12 +17,12 @@ void Raycast::SetRayDir(Vec3 raydir)
 
 void Raycast::SetRayDirAtPoint(Vec3 point)
 {
-    this->raydir = (point - origin) / Vec3::Mag(point - origin);
+    this->raydir = (point - eye) / Vec3::Mag(point - eye);
 }
 
 Vec3 Raycast::GetRay(float t)
 {
-    return origin + raydir * t;
+    return eye + raydir * t;
 }
 
 // Check each object in the screen
@@ -37,9 +37,9 @@ Color Raycast::TraceRay(Vec3 point, Color background, ObjectFactory& factories)
     Vec3 distance(numeric_limits<float>::infinity(), numeric_limits<float>::infinity(), numeric_limits<float>::infinity());
     bool isIntersected = false;
     for (Shape* shape : shapes) {
-        pair<Vec3, bool> o = shape->CheckIntersection(Ray{origin, raydir});
+        pair<Vec3, bool> o = shape->CheckIntersection(Ray{eye, raydir});
         if (o.second) {
-            if (Vec3::Dist(origin, o.first) < Vec3::Dist(origin, distance)) {
+            if (Vec3::Dist(eye, o.first) < Vec3::Dist(eye, distance)) {
                 closest = shape;
                 distance = o.first;
             }
@@ -56,9 +56,10 @@ Color Raycast::ShadeRay(Shape* obj, vector<Material> mats, Vec3 intersectedPoint
     Material mat = mats[obj->mat];
     Vec3 normal = obj->GetNormal(intersectedPoint);
     Vec3 lightDir = lights[0]->GetLightDir(intersectedPoint);
-    Vec3 H = (lightDir + raydir) / Vec3::Mag(lightDir + raydir);
+    Vec3 viewDir = (eye - intersectedPoint) / Vec3::Mag(eye - intersectedPoint);
+    Vec3 H = (lightDir + viewDir) / Vec3::Mag(lightDir + viewDir);
     Vec3 ambient = mat.diffuse.GetVec() * mat.k.x;
     Vec3 diffuse = mat.diffuse.GetVec() * mat.k.y * max(0.0f, Vec3::Dot(normal, lightDir));
     Vec3 specular = mat.specular.GetVec() * mat.k.z * pow(max(0.0f, Vec3::Dot(normal, H)), mat.n);
-    return Color(ambient + diffuse + specular, true);
+    return Color(ambient + (diffuse + specular) * lights[0]->intensity, true);
 }

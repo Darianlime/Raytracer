@@ -9,13 +9,13 @@
 
 class Raycast {
     private:
-        Vec3 origin;
+        Vec3 eye;
         Vec3 raydir;
     public:
         Raycast() = default;
         Raycast(Vec3 eye);
 
-        Vec3 GetOrigin();
+        Vec3 GetEye();
         Vec3 GetRayDir();
         void SetRayDir(Vec3 raydir);
         void SetRayDirAtPoint(Vec3 point);

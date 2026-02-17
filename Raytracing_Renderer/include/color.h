@@ -17,7 +17,7 @@ struct Color {
 	Color(float red, float green, float blue, bool isNormalized);
 	Color(Vec3 rgb, bool isNormalized);
 
-	Vec3 GetVec() const { return Vec3(r, b, g); }
+	Vec3 GetVec() const { return Vec3(r, g, b); }
 	string ToString() const;
 	int CheckArgs();
 };
