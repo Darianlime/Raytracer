@@ -19,9 +19,10 @@ class Raycast {
         Vec3 GetRayDir();
         void SetRayDir(Vec3 raydir);
         void SetRayDirAtPoint(Vec3 point);
-        Vec3 GetRay(float t);
-        Color TraceRay(Vec3 point, Color background, ObjectFactory& factories);
-        Color ShadeRay(Shape *obj, vector<Material> mats, Vec3 intersectedPoint, vector<Light *> lights);
+        void SetRayDirAtPoint(Vec3 point, Vec3 eye);
+        bool IsShadow(Light *light, Vec3 eye, Shape *intersectedShape, vector<Shape *> &shapes);
+        Color TraceRay(Vec3 point, Color background, ObjectFactory &factories);
+        Color ShadeRay(Shape *obj, vector<Material> mats, Vec3 intersectedPoint, vector<Shape *> shapes, vector<Light *> lights);
 };
 
 #endif

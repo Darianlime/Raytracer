@@ -104,7 +104,7 @@ int main(int argc, char* argv[]) {
             pixels[j][i] = color;
         }
     }
-
+    
     if (File::WriteToPPM(fileName, pixels) == -1) {
         cerr << "Failed to write to " << fileName << endl;
         return 1;

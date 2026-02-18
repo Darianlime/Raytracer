@@ -9,6 +9,7 @@ class PointLight : public Light
 		PointLight(Vec3 pos, float intensity);
 
         Vec3 GetLightDir(Vec3 surfacePos) const override;
+		bool CompareDistToLight(Vec3 initalObject, Vec3 distToObject) override;
 };
 
 #endif

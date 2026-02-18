@@ -31,7 +31,7 @@ Vec3 Vec3::operator*(const float scalar) const
 
 float Vec3::Dist(Vec3 vec1, Vec3 vec2)
 {
-    return sqrt(pow(vec2.x - vec1.x, 2) + pow(vec2.y - vec1.x, 2) + pow(vec2.z - vec1.z, 2));
+    return sqrt(pow(vec2.x - vec1.x, 2) + pow(vec2.y - vec1.y, 2) + pow(vec2.z - vec1.z, 2));
 }
 
 float Vec3::Mag(Vec3 vec)

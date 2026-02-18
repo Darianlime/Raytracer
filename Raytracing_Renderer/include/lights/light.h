@@ -20,12 +20,15 @@ class Light : public Object
 		Vec3 lightDir;
 	public:
 		float intensity;
+		LightType type;
 
 		Light(Vec3 pos, int w, float intensity);
 		Light(Vec3 pos, int w, float intensity, string name);
+		Light(Vec3 pos, int w, float intensity, string name, LightType type);
 
 		void SetLightDir(Vec3 lightDir) { this->lightDir = lightDir; }
 		virtual Vec3 GetLightDir(Vec3 surfacePos) const { return lightDir; }
+		virtual bool CompareDistToLight(Vec3 initalObject, Vec3 distToObject) { return false; }
 
 		string ToString() const;
 		int CheckArgs();
