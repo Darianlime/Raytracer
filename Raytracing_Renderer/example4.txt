@@ -5,9 +5,8 @@ vfov 45
 updir 0 1 0
 bkgcolor 0.2 0.2 0.2
 mtlcolor 1 0 0 1 1 1 0.2 0.6 0.2 10
-light 0 -10 -8 0 1
+light 0 15 -8 1 1
 sphere 0 0 -8 2
-
 
 mtlcolor 0 1 0 1 1 1 0.2 0.6 0.2 10
 

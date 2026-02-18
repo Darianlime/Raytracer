@@ -26,10 +26,10 @@ void Raycast::SetRayDirAtPoint(Vec3 point, Vec3 intersectedPoint)
 }
 
 bool Raycast::IsShadow(Light* light, Vec3 intersectedPoint, Shape* intersectedShape, vector<Shape*>& shapes) {
-    SetRayDirAtPoint(light->pos, light->GetLightDir(intersectedPoint));
+    //SetRayDirAtPoint(light->pos, light->GetLightDir(intersectedPoint));
     for (Shape* shape : shapes) {
         if (shape == intersectedShape) continue;
-        pair<Vec3, bool> o = shape->CheckIntersection(Ray{intersectedPoint, raydir});
+        pair<Vec3, bool> o = shape->CheckIntersection(Ray{intersectedPoint, light->GetLightDir(intersectedPoint)});
         if (o.second) {
             if (!light->CompareDistToLight(intersectedShape->pos, o.first)) {
                 return false;
