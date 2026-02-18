@@ -15,6 +15,8 @@ struct Vec3 {
         Vec3();
         Vec3(float x, float y, float z);
 
+        bool operator==(const Vec3& other) const;
+
         // negate
         Vec3 operator-() const;
 
@@ -28,6 +30,8 @@ struct Vec3 {
         static float Mag(Vec3 vector);
         static float Dot(Vec3 vec1, Vec3 vec2);
         static Vec3 Cross(Vec3 vec1, Vec3 vec2);
+
+        static Vec3 Zero();
 
         void ToString();
 }; 

@@ -15,18 +15,20 @@ enum class LightType {
 
 class Light : public Object
 {
-	private:
+	protected:
 		int w; // 0 = direction, 1 = point
 		Vec3 lightDir;
 	public:
 		float intensity;
 		LightType type;
+		Vec3 consts;
 
 		Light(Vec3 pos, int w, float intensity);
 		Light(Vec3 pos, int w, float intensity, string name);
 		Light(Vec3 pos, int w, float intensity, string name, LightType type);
 
 		void SetLightDir(Vec3 lightDir) { this->lightDir = lightDir; }
+		void SetAtLightConst(Vec3 consts)  { this->consts = consts; };
 		virtual Vec3 GetLightDir(Vec3 surfacePos) const { return lightDir; }
 		virtual bool CompareDistToLight(Vec3 initalObject, Vec3 distToObject) { return false; }
 

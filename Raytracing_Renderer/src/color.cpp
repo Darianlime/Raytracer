@@ -13,6 +13,7 @@ Color::Color(float red, float green, float blue, bool isNormalized)
         g = green;
         b = blue;
     }
+    ClampValues(isNormalized);
 }
 
 Color::Color(Vec3 rgb, bool isNormalized)
@@ -25,6 +26,20 @@ Color::Color(Vec3 rgb, bool isNormalized)
         r = rgb.x;
         g = rgb.y;
         b = rgb.z;
+    }
+    ClampValues(isNormalized);
+
+}
+
+void Color::ClampValues(bool isNormalized) {
+    if (isNormalized) {
+        r = clamp(r, 0, 255);
+        g = clamp(g, 0, 255);
+        b = clamp(b, 0, 255);
+    } else {
+        r = clamp(r, 0, 1);
+        g = clamp(g, 0, 1);
+        b = clamp(b, 0, 1);
     }
 }
 

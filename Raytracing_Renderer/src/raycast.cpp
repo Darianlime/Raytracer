@@ -69,12 +69,22 @@ Color Raycast::TraceRay(Vec3 point, Color background, ObjectFactory& factories)
 Color Raycast::ShadeRay(Shape* obj, vector<Material> mats, Vec3 intersectedPoint, vector<Shape*> shapes, vector<Light*> lights) {
     Material mat = mats[obj->mat];
     Vec3 normal = obj->GetNormal(intersectedPoint);
-    Vec3 lightDir = lights[0]->GetLightDir(intersectedPoint);
     Vec3 viewDir = (eye - intersectedPoint) / Vec3::Mag(eye - intersectedPoint);
-    Vec3 H = (lightDir + viewDir) / Vec3::Mag(lightDir + viewDir);
     Vec3 ambient = mat.diffuse.GetVec() * mat.k.x;
-    Vec3 diffuse = mat.diffuse.GetVec() * mat.k.y * max(0.0f, Vec3::Dot(normal, lightDir));
-    Vec3 specular = mat.specular.GetVec() * mat.k.z * pow(max(0.0f, Vec3::Dot(normal, H)), mat.n);
-    int shadow = IsShadow(lights[0], intersectedPoint, obj, shapes);
-    return Color(ambient + ((diffuse + specular) * lights[0]->intensity * shadow), true);
+
+    Vec3 summation;
+
+    for (Light* light : lights) {
+        Vec3 lightDir = light->GetLightDir(intersectedPoint);
+        Vec3 H = (lightDir + viewDir) / Vec3::Mag(lightDir + viewDir);
+        Vec3 diffuse = mat.diffuse.GetVec() * mat.k.y * max(0.0f, Vec3::Dot(normal, lightDir));
+        Vec3 specular = mat.specular.GetVec() * mat.k.z * pow(max(0.0f, Vec3::Dot(normal, H)), mat.n);
+        int shadow = IsShadow(light, intersectedPoint, obj, shapes);
+        float d = Vec3::Dist(intersectedPoint, light->pos);
+        float attenuation = 1 / (light->consts.x + light->consts.y * d + light->consts.z * pow(d, 2));
+        
+        summation = summation + (diffuse + specular) * light->intensity * shadow * attenuation;
+    }
+
+    return Color(ambient + summation, true);
 }
