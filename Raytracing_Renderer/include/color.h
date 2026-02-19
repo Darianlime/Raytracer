@@ -10,9 +10,10 @@
 using namespace std;
 
 struct Color {
-	int r;
-	int g;
-	int b;
+	float r;
+	float g;
+	float b;
+	bool isNormalized;
 
 	Color();
 	Color(float red, float green, float blue, bool isNormalized);
@@ -20,7 +21,11 @@ struct Color {
 
     void ClampValues(bool isNormalized);
 
-    Vec3 GetVec() const { return Vec3(r, g, b); }
+	// float R() { if (isNormalized) { return (int)round(r); } return r; }
+	// float G() { if (isNormalized) { return (int)round(g); } return g; }
+	// float B() { if (isNormalized) { return (int)round(b); } return b; }
+
+    Vec3 GetVec() { return Vec3(r, g, b); }
 	string ToString() const;
 	int CheckArgs();
 };

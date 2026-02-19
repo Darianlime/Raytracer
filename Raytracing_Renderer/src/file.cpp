@@ -84,7 +84,7 @@ int File::FindKeyIndex(vector<vector<string>> &map, string key)
     return -1;
 }
 
-int File::VaildateCameraArgs(unordered_map<string, vector<string>> args, Vec3& imsize, Vec3& eye, Vec3& viewdir, Vec3& updir, float& vfov, Color& bkg)
+int File::VaildateArgs(unordered_map<string, vector<float>> args)
 {
     if (args["imsize"].size() < 2) { cerr << "Not enough arguments for imsize" << endl; return -1; }
     if (args["eye"].size() < 3) { cerr << "Not enough arguments for eye" << endl; return -1; }
@@ -92,18 +92,14 @@ int File::VaildateCameraArgs(unordered_map<string, vector<string>> args, Vec3& i
     if (args["vfov"].size() < 1) { cerr << "Not enough arguments for vfov" << endl; return -1; }
     if (args["updir"].size() < 3) { cerr << "Not enough arguments for updir" << endl; return -1; }
     if (args["bkgcolor"].size() < 3) { cerr << "Not enough arguments for bkgcolor" << endl; return -1; }
+    if (args.find("depthcueing") != args.end()) {
+        if (args["depthcueing"].size() < 7) { cerr << "Not enough arguments for depthcueing" << endl; return -1; }
+    }
 
-    imsize = Vec3(stof(args["imsize"][0]), stof(args["imsize"][1]), 0.0f);
-    eye = Vec3(stof(args["eye"][0]), stof(args["eye"][1]), stof(args["eye"][2]));
-    viewdir = Vec3(stof(args["viewdir"][0]), stof(args["viewdir"][1]), stof(args["viewdir"][2]));
-    updir = Vec3(stof(args["updir"][0]), stof(args["updir"][1]), stof(args["updir"][2]));
-    bkg = Color(stof(args["bkgcolor"][0]), stof(args["bkgcolor"][1]), stof(args["bkgcolor"][2]), true);
-    vfov = stof(args["vfov"][0]);
-
-    if (imsize.x < 1 || imsize.y < 1) { cerr << "Error: imsize arguments are too small" << endl; return -1; }
-    if (Vec3::Dot(eye, updir) != 0) { cerr << "Error: eye and updir are not orthogonal" << endl; return -1; }
-    if (vfov < 0 || vfov > 180) { cerr << "Error: vfov is less than 0 or greater than 180" << endl; return -1; }
-    if (bkg.CheckArgs() == -1) { return -1; }
+    if (args["imsize"][0] < 1 || args["imsize"][1] < 1) { cerr << "Error: imsize arguments are too small" << endl; return -1; }
+    if (Vec3::Dot(Vec3(args["eye"][0], args["eye"][1], args["eye"][2]), Vec3(args["updir"][0], args["updir"][1], args["updir"][2])) != 0) { cerr << "Error: eye and updir are not orthogonal" << endl; return -1; }
+    if (args["vfov"][0] < 0 || args["vfov"][0] > 180) { cerr << "Error: vfov is less than 0 or greater than 180" << endl; return -1; }
+    if (Color(args["bkgcolor"][0], args["bkgcolor"][1], args["bkgcolor"][2], true).CheckArgs() == -1) { return -1; }
 
     return 0;
 }

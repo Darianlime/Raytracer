@@ -42,26 +42,25 @@ bool Raycast::IsShadow(Light* light, Vec3 intersectedPoint, Shape* intersectedSh
 // Check each object in the screen
 // if no object found in front of eye return background color
 // otherwise call ShadeRay()
-Color Raycast::TraceRay(Vec3 point, Color background, ObjectFactory& factories)
+Color Raycast::TraceRay(Vec3 point, Color background, ObjectFactory& factories, pair<Vec3, bool> &intersectedPoint)
 {
     SetRayDirAtPoint(point);
     //cout << "tracing: " << objects[0]->GetName() << endl;
     vector<Shape*> shapes = factories.GetFactory<ShapeFactory>().GetObjects();
+    //Vec3 intersectedPoint(numeric_limits<float>::infinity(), numeric_limits<float>::infinity(), numeric_limits<float>::infinity());
     Shape* closest; 
-    Vec3 intersectedPoint(numeric_limits<float>::infinity(), numeric_limits<float>::infinity(), numeric_limits<float>::infinity());
-    bool isIntersected = false;
     for (Shape* shape : shapes) {
         pair<Vec3, bool> o = shape->CheckIntersection(Ray{eye, raydir});
         if (o.second) {
-            if (Vec3::Dist(eye, o.first) < Vec3::Dist(eye, intersectedPoint)) {
+            if (Vec3::Dist(eye, o.first) < Vec3::Dist(eye, intersectedPoint.first)) {
                 closest = shape;
-                intersectedPoint = o.first;
+                intersectedPoint.first = o.first;
             }
-            isIntersected = true;
+            intersectedPoint.second = true;
         }
     }
-    if (isIntersected) {
-        return ShadeRay(closest, factories.GetMats(), intersectedPoint, shapes, factories.GetFactory<LightFactory>().GetObjects());
+    if (intersectedPoint.second) {
+        return ShadeRay(closest, factories.GetMats(), intersectedPoint.first, shapes, factories.GetFactory<LightFactory>().GetObjects());
     }
     return background;
 }
@@ -86,5 +85,5 @@ Color Raycast::ShadeRay(Shape* obj, vector<Material> mats, Vec3 intersectedPoint
         summation = summation + (diffuse + specular) * light->intensity * shadow * attenuation;
     }
 
-    return Color(ambient + summation, true);
+    return Color(ambient + summation, false);
 }

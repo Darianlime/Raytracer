@@ -36,33 +36,22 @@ int main(int argc, char* argv[]) {
     }
 
     vector<vector<string>> args;
-    unordered_map<string, vector<string>> argsCamera;
-    int bkgIndex = 0;
-    int firstLightIndex = 0;
+    unordered_map<string, vector<float>> argsMap;
     if (File::ParseArgs(inputFile, args) == -1) {
         cerr << "Failed to get args in file" << endl;
         return 1;
     }
-    if ((bkgIndex = File::FindKeyIndex(args, "bkgcolor")) == -1) {
-        cerr << "Failed to get first material color" << endl;
-        return 1;
-    }
 
-    for (int i = 0; i <= bkgIndex; i++) {
+    for (int i = 0; i < args.size(); i++) {
         string key = args[i][0];
-        argsCamera[key] = vector<string>();
+        argsMap[key] = vector<float>();
         for (int j = 1; j < args[i].size(); j++) {
-            argsCamera[key].push_back(args[i][j]);
+            argsMap[key].push_back(stof(args[i][j]));
         }
     }
 
-    cout << "in" << endl;
-
-    // Check if Camera Arguments are vaild
-    Vec3 imsize, eye, viewdir, updir;
-    float vfov;
-    Color bkg;
-    if (File::VaildateCameraArgs(argsCamera, imsize, eye, viewdir, updir, vfov, bkg) == -1) {
+    // Check if Arguments are vaild
+    if (File::VaildateArgs(argsMap) == -1) {
         return 1;
     }
 
@@ -88,20 +77,44 @@ int main(int argc, char* argv[]) {
 
     cout << "in" << endl;
 
-    Camera cam(eye, viewdir, updir, vfov);
+    Camera cam(
+        Vec3(argsMap["eye"][0], argsMap["eye"][1], argsMap["eye"][2]),
+        Vec3(argsMap["viewdir"][0], argsMap["viewdir"][1], argsMap["viewdir"][2]),
+        Vec3(argsMap["updir"][0], argsMap["updir"][1], argsMap["updir"][2]),
+        argsMap["vfov"][0]);
 
-    Screen screen(imsize.x, imsize.y, bkg);
+    Screen screen(argsMap["imsize"][0], argsMap["imsize"][1], Color(argsMap["bkgcolor"][0], argsMap["bkgcolor"][1], argsMap["bkgcolor"][2], false));
     screen.CalcWindowCorners(cam);
     
-    Raycast ray(eye);
+    Raycast ray(Vec3(argsMap["eye"][0], argsMap["eye"][1], argsMap["eye"][2]));
+
+    Color depthCueColor;
+    float alphaMin, alphaMax, depthFar, depthNear;
+    if (argsMap.find("depthcueing") != argsMap.end()) {
+        depthCueColor = Color(argsMap["depthcueing"][0], argsMap["depthcueing"][1], argsMap["depthcueing"][2], false);
+        alphaMin = argsMap["depthcueing"][3];
+        alphaMax = argsMap["depthcueing"][4];
+        depthNear = argsMap["depthcueing"][5];
+        depthFar = argsMap["depthcueing"][6];
+    }
 
     vector<vector<Color>>& pixels = screen.GetPixels();
     int h = screen.GetHeight();
     int w = screen.GetWidth();
     for (int i = 0; i < h; i++) {
         for (int j = 0; j < w; j++) {
-            Color color = ray.TraceRay(screen.GetWindowLocation(j,i), bkg, objectFactory);
-            pixels[j][i] = color;
+            float alphaDepthCue = 1.0f;
+            pair<Vec3, bool> intersectedPoint(Vec3(numeric_limits<float>::infinity(), numeric_limits<float>::infinity(), numeric_limits<float>::infinity()), false);
+            Color color = ray.TraceRay(screen.GetWindowLocation(j,i), screen.bkgcolor, objectFactory, intersectedPoint);
+            if (argsMap.find("depthcueing") != argsMap.end() && intersectedPoint.second) {
+                float distObj = Vec3::Dist(intersectedPoint.first, ray.GetEye());
+                if (distObj >= depthFar) { alphaDepthCue = alphaMin; }
+                else if (distObj <= depthNear) { alphaDepthCue = alphaMax; }
+                else { alphaDepthCue = alphaMin + (alphaMax - alphaMin) * ((depthFar - distObj) / (depthFar - depthNear)); }
+
+                color = Color(color.GetVec() * alphaDepthCue + depthCueColor.GetVec() * (1 - alphaDepthCue), false);  
+            }
+            pixels[j][i] = Color(color.GetVec(), true);
         }
     }
     

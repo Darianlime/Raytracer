@@ -2,7 +2,7 @@
 
 Color::Color() : r(0), g(0), b(0) {}
 
-Color::Color(float red, float green, float blue, bool isNormalized)
+Color::Color(float red, float green, float blue, bool isNormalized) : isNormalized(isNormalized)
 {
     if (isNormalized) {
         r = red * 255;
@@ -16,7 +16,7 @@ Color::Color(float red, float green, float blue, bool isNormalized)
     ClampValues(isNormalized);
 }
 
-Color::Color(Vec3 rgb, bool isNormalized)
+Color::Color(Vec3 rgb, bool isNormalized) : isNormalized(isNormalized)
 {
     if (isNormalized) {
         r = rgb.x * 255;
@@ -33,17 +33,23 @@ Color::Color(Vec3 rgb, bool isNormalized)
 
 void Color::ClampValues(bool isNormalized) {
     if (isNormalized) {
-        r = clamp(r, 0, 255);
-        g = clamp(g, 0, 255);
-        b = clamp(b, 0, 255);
+        r = (int)round(r);
+        g = (int)round(g);
+        b = (int)round(b);
+        r = clamp(r, 0.0f, 255.0f);
+        g = clamp(g, 0.0f, 255.0f);
+        b = clamp(b, 0.0f, 255.0f);
     } else {
-        r = clamp(r, 0, 1);
-        g = clamp(g, 0, 1);
-        b = clamp(b, 0, 1);
+        r = clamp(r, 0.0f, 1.0f);
+        g = clamp(g, 0.0f, 1.0f);
+        b = clamp(b, 0.0f, 1.0f);
     }
 }
 
 string Color::ToString() const {
+    if (isNormalized) {
+        return to_string(static_cast<int>(r)) + " " + to_string(static_cast<int>(g)) + " " + to_string(static_cast<int>(b)) + " ";
+    }
     return to_string(r) + " " + to_string(g) + " " + to_string(b) + " ";
 }
 
