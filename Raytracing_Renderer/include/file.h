@@ -18,8 +18,8 @@ using namespace std;
 
 class File {
     public:
-        static int ParseArgs(string inputFile, vector<vector<string>>& map);
-        static int WriteToPPM(string inputFileName, vector<vector<Color>>& pixels);
+        static int ParseArgs(string inputFile, vector<vector<string>> &args, unordered_map<string, vector<float>> &argsMap);
+        static int WriteToPPM(string inputFileName, vector<vector<Color>> &pixels);
         static int FindKeyIndex(vector<vector<string>>& map, string key);
         static int VaildateArgs(unordered_map<string, vector<float>> args);
         static int VaildateObjectsArgs(vector<vector<string>> args, ShapeFactory& objFactory, LightFactory& lightFactory);

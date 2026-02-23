@@ -35,19 +35,12 @@ int main(int argc, char* argv[]) {
         return 1;
     }
 
+    // store arguments in a 2d vector and map
     vector<vector<string>> args;
     unordered_map<string, vector<float>> argsMap;
-    if (File::ParseArgs(inputFile, args) == -1) {
+    if (File::ParseArgs(inputFile, args, argsMap) == -1) {
         cerr << "Failed to get args in file" << endl;
         return 1;
-    }
-
-    for (int i = 0; i < args.size(); i++) {
-        string key = args[i][0];
-        argsMap[key] = vector<float>();
-        for (int j = 1; j < args[i].size(); j++) {
-            argsMap[key].push_back(stof(args[i][j]));
-        }
     }
 
     // Check if Arguments are vaild
@@ -55,8 +48,7 @@ int main(int argc, char* argv[]) {
         return 1;
     }
 
-    cout << "in" << endl;
-
+    // Store shapes and objects inside the object factory
     ObjectFactory objectFactory;
     objectFactory.CreateFactory<ShapeFactory>();
     objectFactory.CreateFactory<LightFactory>();
@@ -64,18 +56,9 @@ int main(int argc, char* argv[]) {
         return 1;
     }
 
-    cout << "in" << endl;
-
     for (auto& shape : objectFactory.GetFactory<ShapeFactory>().GetObjects()) {
         cout << shape->GetName() << endl;
-        cout << shape->mat << endl;
     }
-
-    for (auto& mats : objectFactory.GetMats()) {
-        cout << mats.ToString() << endl;
-    }
-
-    cout << "in" << endl;
 
     Camera cam(
         Vec3(argsMap["eye"][0], argsMap["eye"][1], argsMap["eye"][2]),
@@ -88,6 +71,7 @@ int main(int argc, char* argv[]) {
     
     Raycast ray(Vec3(argsMap["eye"][0], argsMap["eye"][1], argsMap["eye"][2]));
 
+    // If Depthcueing is enabled store arguments
     Color depthCueColor;
     float alphaMin, alphaMax, depthFar, depthNear;
     if (argsMap.find("depthcueing") != argsMap.end()) {
@@ -106,6 +90,7 @@ int main(int argc, char* argv[]) {
             float alphaDepthCue = 1.0f;
             pair<Vec3, bool> intersectedPoint(Vec3(numeric_limits<float>::infinity(), numeric_limits<float>::infinity(), numeric_limits<float>::infinity()), false);
             Color color = ray.TraceRay(screen.GetWindowLocation(j,i), screen.bkgcolor, objectFactory, intersectedPoint);
+            // Calculate for deothcueing if enabled
             if (argsMap.find("depthcueing") != argsMap.end() && intersectedPoint.second) {
                 float distObj = Vec3::Dist(intersectedPoint.first, ray.GetEye());
                 if (distObj >= depthFar) { alphaDepthCue = alphaMin; }

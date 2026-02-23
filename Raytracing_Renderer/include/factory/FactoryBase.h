@@ -5,6 +5,7 @@
 #include "object.h"
 #include "material.h"
 
+// Generic class used to get the objects in the other factories
 template <typename T>
 class FactoryBase : public IFactory {
     protected:

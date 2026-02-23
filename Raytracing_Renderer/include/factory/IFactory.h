@@ -5,6 +5,7 @@
 #include <vector>
 using namespace std;
 
+// Interface to create new objects in the scene
 class IFactory {
     public:
         virtual ~IFactory() = default;

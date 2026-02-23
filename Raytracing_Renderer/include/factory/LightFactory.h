@@ -6,6 +6,7 @@
 #include "lights/DirectionalLight.h"
 #include "lights/PointLight.h"
 
+// Creates light objects in the scene
 class LightFactory : public FactoryBase<Light> {
     public:
         LightFactory();

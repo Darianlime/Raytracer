@@ -25,8 +25,8 @@ void Raycast::SetRayDirAtPoint(Vec3 point, Vec3 intersectedPoint)
     this->raydir = (point - intersectedPoint) / Vec3::Mag(point - intersectedPoint);
 }
 
+// Shoots a shadow ray from intersected point to light and checks for object intersections
 bool Raycast::IsShadow(Light* light, Vec3 intersectedPoint, Shape* intersectedShape, vector<Shape*>& shapes) {
-    //SetRayDirAtPoint(light->pos, light->GetLightDir(intersectedPoint));
     for (Shape* shape : shapes) {
         if (shape == intersectedShape) continue;
         pair<Vec3, bool> o = shape->CheckIntersection(Ray{intersectedPoint, light->GetLightDir(intersectedPoint)});
@@ -65,6 +65,7 @@ Color Raycast::TraceRay(Vec3 point, Color background, ObjectFactory& factories, 
     return background;
 }
 
+// Shades pixel based on blin phong
 Color Raycast::ShadeRay(Shape* obj, vector<Material> mats, Vec3 intersectedPoint, vector<Shape*> shapes, vector<Light*> lights) {
     Material mat = mats[obj->mat];
     Vec3 normal = obj->GetNormal(intersectedPoint);

@@ -1,6 +1,6 @@
 #include "file.h"
 
-int File::ParseArgs(string inputFile, vector<vector<string>>& args)
+int File::ParseArgs(string inputFile, vector<vector<string>>& args, unordered_map<string, vector<float>> &argsMap)
 {
     // Open and read input file
     ifstream fin(inputFile);
@@ -9,7 +9,7 @@ int File::ParseArgs(string inputFile, vector<vector<string>>& args)
         return -1;
     }
 
-    // get inputs from file and add to vector
+    // get inputs from file and add to vector and map
     string inputLine;
     int index = 0;
     while (getline(fin, inputLine, '\n'))
@@ -23,10 +23,12 @@ int File::ParseArgs(string inputFile, vector<vector<string>>& args)
         getline(input, keyword, ' ');
         args.push_back({});
         args[index].push_back(keyword);
+        argsMap[keyword] = vector<float>();
 
         string arg;
         while (getline(input, arg, ' ')) {
             args[index].push_back(arg);
+            argsMap[keyword].push_back(stof(arg));
         }
         index++;
         cout << "Input line: " << inputLine << endl;

@@ -11,6 +11,7 @@
 
 using namespace std;
 
+// Factory to create new object factories
 class ObjectFactory {
     private:
         unordered_map<type_index, unique_ptr<IFactory>> factories;
@@ -18,11 +19,14 @@ class ObjectFactory {
     public:
         ObjectFactory();
         ~ObjectFactory() {};
+
+        // Creates a factory based on class name as identifier
         template <typename T> 
         void CreateFactory() {
             factories[typeid(T)] = make_unique<T>();
         }
 
+        // Gets Factory based on class name
         template <typename T> 
         T& GetFactory() {
             auto it = factories.find(typeid(T));

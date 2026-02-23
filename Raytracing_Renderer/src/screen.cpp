@@ -6,10 +6,8 @@ Screen::Screen(int width, int height, Color bkgcolor) : width(width), height(hei
 
 void Screen::CalcWindowCorners(Camera cam) {
 
-    // USE VFOV TO CALC NEW 
     float vfov = cam.GetVFov();
     float viewDist = (height/2) / tan((vfov/2) * (M_PI / 180));
-    //float hfov = (2 * (atan((width/2)/viewDist))) * 180 / M_PI;
 
     Vec3 p = cam.GetEye() + cam.GetViewDir() * viewDist;
     upper_left = p - cam.GetU() * (width/2) + cam.GetV() * (height/2);

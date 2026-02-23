@@ -17,6 +17,7 @@ pair<Vec3, bool> Cone::CheckIntersection(Ray ray) {
     }
     
     Vec3 intersectedPoint = ray.GetRay(t);
+    
     // Check if point lies between 0 and height
     float checkPoint = Vec3::Dot(intersectedPoint - pos, unitDir);
     if (0 <= checkPoint && checkPoint <= height) {
