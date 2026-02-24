@@ -54,18 +54,18 @@ namespace Raytracer {
         //cout << "tracing: " << objects[0]->GetName() << endl;
         vector<Shape*> shapes = factories.GetFactory<ShapeFactory>().GetObjects();
         //Vec3 intersectedPoint(numeric_limits<float>::infinity(), numeric_limits<float>::infinity(), numeric_limits<float>::infinity());
-        Shape* closest; 
+        Shape* closest = nullptr; 
         for (Shape* shape : shapes) {
             pair<Vec3, bool> o = shape->CheckIntersection(Ray{eye, raydir});
             if (o.second) {
                 if (Vec3::Dist(eye, o.first) < Vec3::Dist(eye, intersectedPoint.first)) {
                     closest = shape;
                     intersectedPoint.first = o.first;
+                    intersectedPoint.second = true;
                 }
-                intersectedPoint.second = true;
             }
         }
-        if (intersectedPoint.second) {
+        if (closest && intersectedPoint.second) {
             return ShadeRay(closest, factories.GetMats(), intersectedPoint.first, shapes, factories.GetFactory<LightFactory>().GetObjects());
         }
         return background;
