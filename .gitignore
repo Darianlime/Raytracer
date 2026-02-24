@@ -1,7 +1,7 @@
 # CMake generated build directories and files
 # Use a standard name like /build/ or /out/ for the build directory
 /build/
-/RaytracingCore/out/
+/out/
 /cmake-build-*/
 CMakeFiles/
 CMakeCache.txt
