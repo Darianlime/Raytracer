@@ -2,7 +2,6 @@
 #define OBJECT_H
 
 #include "vector.h"
-#include <numbers>
 
 class Object {
     protected:

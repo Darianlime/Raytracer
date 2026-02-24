@@ -1,9 +1,10 @@
 #ifndef VECTOR_H
 #define VECTOR_H
 
-#include <math.h>
+#include "numbers.h"
 #include <iostream>
 
+using namespace math;
 using namespace std;
 
 struct Vec3 {

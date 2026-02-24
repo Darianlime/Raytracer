@@ -76,36 +76,6 @@ int File::WriteToPPM(string inputFileName, vector<vector<Color>> &pixels)
     return 0;
 }
 
-int File::WriteToPPM(string inputFileName, vector<vector<Color>> &pixels)
-{
-    // Create and open output file
-    FILE* file = fopen((inputFileName + ".ppm").c_str(), "w");
-    if (file == NULL) {
-        cerr << "Error opening file" << endl;
-        return -1;
-    }
-
-    int w = pixels.size();
-    int h = pixels[0].size();
-
-    string header = "P3\n" + to_string(w) + " " + to_string(h) + "\n255\n";
-    cout << header << endl;
-    fwrite(header.c_str(), 1, header.size(), file);
-
-    // Write pixel data to file
-    for (int y = 0; y <  h; ++y) {
-	    string colorsLine = "";
-	    for (int x = 0; x < w; ++x) {
-		    colorsLine += pixels[x][y].ToString();
-	    }
-	    colorsLine += "\n";
-	    fwrite(colorsLine.c_str(), 1, colorsLine.size(), file);
-    }
-
-    fclose(file);
-    return 0;
-}
-
 int File::FindKeyIndex(vector<vector<string>> &map, string key)
 {
     for (int i = 0; i < map.size(); i++) {
