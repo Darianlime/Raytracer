@@ -17,6 +17,7 @@ class Raycast {
         Raycast(Vec3 eye);
 
         Vec3 GetEye();
+        void SetEye(Vec3 eye);
         Vec3 GetRayDir();
         void SetRayDir(Vec3 raydir);
         void SetRayDirAtPoint(Vec3 point);

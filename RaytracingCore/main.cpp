@@ -6,7 +6,7 @@
 #include "include/vector.h"
 #include "include/file.h"
 #include "include/camera.h"
-#include "include/screen.h"
+#include "include/viewport.h"
 #include "include/raycast.h" 
 
 using namespace std;
@@ -67,7 +67,7 @@ int main(int argc, char* argv[]) {
         Vec3(argsMap["updir"][0], argsMap["updir"][1], argsMap["updir"][2]),
         argsMap["vfov"][0]);
 
-    Screen screen(argsMap["imsize"][0], argsMap["imsize"][1], Color(argsMap["bkgcolor"][0], argsMap["bkgcolor"][1], argsMap["bkgcolor"][2], false));
+    Viewport screen(argsMap["imsize"][0], argsMap["imsize"][1], Color(argsMap["bkgcolor"][0], argsMap["bkgcolor"][1], argsMap["bkgcolor"][2], false));
     screen.CalcWindowCorners(cam);
     
     Raycast ray(Vec3(argsMap["eye"][0], argsMap["eye"][1], argsMap["eye"][2]));

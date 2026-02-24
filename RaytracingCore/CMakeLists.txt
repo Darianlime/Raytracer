@@ -9,7 +9,7 @@ option(RAYTRACER_BUILD_APP "Build raytracer executable" ON)
 add_library(lib
     src/vector.cpp
 
-    src/screen.cpp
+    src/viewport.cpp
     src/camera.cpp
 
     src/raycast.cpp

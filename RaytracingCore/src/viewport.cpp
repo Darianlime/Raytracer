@@ -1,11 +1,11 @@
-#include "screen.h"
+#include "viewport.h"
 
 namespace Raytracer {
-    Screen::Screen() {}
+    Viewport::Viewport() {}
 
-    Screen::Screen(int width, int height, Color bkgcolor) : width(width), height(height), bkgcolor(bkgcolor), pixels(width, vector<Color>(height)) {}
+    Viewport::Viewport(int width, int height, Color bkgcolor) : width(width), height(height), bkgcolor(bkgcolor), pixels(width, vector<Color>(height)) {}
 
-    void Screen::CalcWindowCorners(Camera cam) {
+    void Viewport::CalcWindowCorners(Camera cam) {
 
         float vfov = cam.GetVFov();
         float viewDist = (height/2) / tan((vfov/2) * (M_PI / 180));

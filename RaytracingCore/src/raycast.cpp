@@ -7,6 +7,11 @@ namespace Raytracer {
         return eye;
     }
 
+    void Raycast::SetEye(Vec3 eye)
+    {
+        eye = eye;
+    }
+
     Vec3 Raycast::GetRayDir() {
         return raydir;
     }

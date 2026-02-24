@@ -1,17 +1,14 @@
 #ifndef SCREEN_H
 #define SCREEN_H
 
-#define _USE_MATH_DEFINES
-
 #include <vector>
-#include <cmath>
 
 #include "vector.h"
 #include "camera.h"
 #include "color.h"
 
 namespace Raytracer {
-class Screen {
+class Viewport {
     private:
         // screen resolution
         int width;
@@ -27,11 +24,13 @@ class Screen {
     public:
         Color bkgcolor;
 
-        Screen();
-        Screen(int width, int height, Color bkgcolor);
+        Viewport();
+        Viewport(int width, int height, Color bkgcolor);
         void CalcWindowCorners(Camera cam);
         int GetWidth() const { return width; }
         int GetHeight() const { return height; }
+        void SetWidth(int width) { width = width; }
+        void SetHeight(int height) const { height = height; }
 
         Vec3 GetDV() const { return (lower_left - upper_left) / (height - 1); }
         Vec3 GetDH() const { return (upper_right - upper_left) / (width - 1); }
