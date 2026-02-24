@@ -30,7 +30,9 @@ class Viewport {
         int GetWidth() const { return width; }
         int GetHeight() const { return height; }
         void SetWidth(int width) { width = width; }
-        void SetHeight(int height) const { height = height; }
+        void SetHeight(int height) { height = height; }
+        void SetWidthHeight(int width, int height) { width = width; height = height; }
+        void SetHeight(int height) { height = height; }
 
         Vec3 GetDV() const { return (lower_left - upper_left) / (height - 1); }
         Vec3 GetDH() const { return (upper_right - upper_left) / (width - 1); }
