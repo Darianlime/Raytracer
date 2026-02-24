@@ -3,6 +3,7 @@
 
 #include "vector.h"
 
+namespace Raytracer {
 class Camera {
     private:
         Vec3 eye;
@@ -25,5 +26,5 @@ class Camera {
         Vec3 GetUp() const { return updir; }
         float GetVFov() const { return vfov; }
 }; 
-
+}
 #endif

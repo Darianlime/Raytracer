@@ -7,6 +7,7 @@
 #include <vector>
 #include <map>
 
+namespace Raytracer {
 class Raycast {
     private:
         Vec3 eye;
@@ -24,5 +25,5 @@ class Raycast {
         Color TraceRay(Vec3 point, Color background, ObjectFactory &factories, pair<Vec3, bool> &intersectedPoint);
         Color ShadeRay(Shape *obj, vector<Material> mats, Vec3 intersectedPoint, vector<Shape *> shapes, vector<Light *> lights);
 };
-
+}
 #endif

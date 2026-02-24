@@ -10,6 +10,7 @@
 #include "camera.h"
 #include "color.h"
 
+namespace Raytracer {
 class Screen {
     private:
         // screen resolution
@@ -40,5 +41,5 @@ class Screen {
         vector<vector<Color>>& GetPixels() { return pixels; }
 
 }; 
-
+}
 #endif
