@@ -1,5 +1,5 @@
-#ifndef SCREEN_H
-#define SCREEN_H
+#ifndef VIEWPORT_H
+#define VIEWPORT_H
 
 #include <vector>
 
