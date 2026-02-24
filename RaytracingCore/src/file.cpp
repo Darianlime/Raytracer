@@ -76,6 +76,36 @@ int File::WriteToPPM(string inputFileName, vector<vector<Color>> &pixels)
     return 0;
 }
 
+int File::WriteToPPM(string inputFileName, vector<vector<Color>> &pixels)
+{
+    // Create and open output file
+    FILE* file = fopen((inputFileName + ".ppm").c_str(), "w");
+    if (file == NULL) {
+        cerr << "Error opening file" << endl;
+        return -1;
+    }
+
+    int w = pixels.size();
+    int h = pixels[0].size();
+
+    string header = "P3\n" + to_string(w) + " " + to_string(h) + "\n255\n";
+    cout << header << endl;
+    fwrite(header.c_str(), 1, header.size(), file);
+
+    // Write pixel data to file
+    for (int y = 0; y <  h; ++y) {
+	    string colorsLine = "";
+	    for (int x = 0; x < w; ++x) {
+		    colorsLine += pixels[x][y].ToString();
+	    }
+	    colorsLine += "\n";
+	    fwrite(colorsLine.c_str(), 1, colorsLine.size(), file);
+    }
+
+    fclose(file);
+    return 0;
+}
+
 int File::FindKeyIndex(vector<vector<string>> &map, string key)
 {
     for (int i = 0; i < map.size(); i++) {
@@ -103,29 +133,6 @@ int File::VaildateArgs(unordered_map<string, vector<float>> args)
     if (args["vfov"][0] < 0 || args["vfov"][0] > 180) { cerr << "Error: vfov is less than 0 or greater than 180" << endl; return -1; }
     if (Color(args["bkgcolor"][0], args["bkgcolor"][1], args["bkgcolor"][2], true).CheckArgs() == -1) { return -1; }
 
-    return 0;
-}
-
-int File::VaildateObjectsArgs(vector<vector<string>> args, ShapeFactory& objectFactory, LightFactory& lightFactory) {
-    // Material mtl;
-    // for (int i = 0; i < args.size(); i++) {
-    //     string id = args[i][0];
-    //     if (id == "mtlcolor") {
-    //         mtl = Material(
-    //             Color(stof(args[i][1]), stof(args[i][2]), stof(args[i][3]), false),
-    //             Color(stof(args[i][4]), stof(args[i][5]), stof(args[i][6]), false), 
-    //             Vec3(stof(args[i][7]), stof(args[i][8]), stof(args[i][9])),
-    //             stof(args[i][10])
-    //         );
-    //         // if (mtl.CheckArgs() == -1) {
-    //         //     return -1;
-    //         // }
-    //     } else {
-    //         vector<string> objectVal = args[i];
-    //         objectFactory.CreateObject(id, objectVal);
-    //         lightFactory.CreateLight(id, objectVal);
-    //     }
-    // }
     return 0;
 }
 

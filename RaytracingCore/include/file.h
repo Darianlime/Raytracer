@@ -22,7 +22,6 @@ class File {
         static int WriteToPPM(string inputFileName, vector<vector<Color>> &pixels);
         static int FindKeyIndex(vector<vector<string>>& map, string key);
         static int VaildateArgs(unordered_map<string, vector<float>> args);
-        static int VaildateObjectsArgs(vector<vector<string>> args, ShapeFactory& objFactory, LightFactory& lightFactory);
         static int VaildateObjectsArgs(vector<vector<string>> args, ObjectFactory& objectFactory);
 };
 

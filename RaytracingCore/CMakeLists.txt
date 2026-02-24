@@ -2,6 +2,8 @@ cmake_minimum_required(VERSION 3.10)
 
 project(raytracer1a)
 
+option(RAYTRACER_BUILD_APP "Build raytracer executable" ON)
+
 add_library(lib
     src/vector.cpp
 
@@ -27,15 +29,14 @@ add_library(lib
 
     src/factory/ShapeFactory.cpp
     src/factory/LightFactory.cpp
-
     src/factory/ObjectFactory.cpp
-
-    include/ray.h
 
     src/file.cpp
 )
 
 target_include_directories(lib PUBLIC include)
 
-add_executable(${PROJECT_NAME} main.cpp)
-target_link_libraries(${PROJECT_NAME} PRIVATE lib)
+if(RAYTRACER_BUILD_APP)
+    add_executable(${PROJECT_NAME} main.cpp)
+    target_link_libraries(${PROJECT_NAME} PRIVATE lib)
+endif()
