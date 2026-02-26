@@ -9,26 +9,17 @@ namespace Raytracer {
 
     void Raycast::SetEye(Vec3 eye)
     {
-        eye = eye;
+        this->eye = eye;
     }
 
-    Vec3 Raycast::GetRayDir() {
-        return raydir;
-    }
-
-    void Raycast::SetRayDir(Vec3 raydir)
+    Vec3 Raycast::CalcRayDirAtPoint(Vec3 point) const
     {
-        this->raydir = raydir;
+        return (point - eye) / Vec3::Mag(point - eye);
     }
 
-    void Raycast::SetRayDirAtPoint(Vec3 point)
+    Vec3 Raycast::CalcRayDirAtPoint(Vec3 point, Vec3 intersectedPoint) const
     {
-        this->raydir = (point - eye) / Vec3::Mag(point - eye);
-    }
-
-    void Raycast::SetRayDirAtPoint(Vec3 point, Vec3 intersectedPoint)
-    {
-        this->raydir = (point - intersectedPoint) / Vec3::Mag(point - intersectedPoint);
+        return (point - intersectedPoint) / Vec3::Mag(point - intersectedPoint);
     }
 
     // Shoots a shadow ray from intersected point to light and checks for object intersections
@@ -50,13 +41,13 @@ namespace Raytracer {
     // otherwise call ShadeRay()
     Color Raycast::TraceRay(Vec3 point, Color background, ObjectFactory& factories, pair<Vec3, bool> &intersectedPoint)
     {
-        SetRayDirAtPoint(point);
+        //SetRayDirAtPoint(point);
         //cout << "tracing: " << objects[0]->GetName() << endl;
         vector<Shape*> shapes = factories.GetFactory<ShapeFactory>().GetObjects();
         //Vec3 intersectedPoint(numeric_limits<float>::infinity(), numeric_limits<float>::infinity(), numeric_limits<float>::infinity());
         Shape* closest = nullptr; 
         for (Shape* shape : shapes) {
-            pair<Vec3, bool> o = shape->CheckIntersection(Ray{eye, raydir});
+            pair<Vec3, bool> o = shape->CheckIntersection(Ray{eye, CalcRayDirAtPoint(point)});
             if (o.second) {
                 if (Vec3::Dist(eye, o.first) < Vec3::Dist(eye, intersectedPoint.first)) {
                     closest = shape;

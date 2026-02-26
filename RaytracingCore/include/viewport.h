@@ -29,9 +29,9 @@ class Viewport {
         void CalcWindowCorners(Camera cam);
         int GetWidth() const { return width; }
         int GetHeight() const { return height; }
-        void SetWidth(int width) { width = width; }
-        void SetHeight(int height) { height = height; }
-        void SetWidthHeight(int width, int height) { width = width; height = height; }
+        void SetWidth(int w) { width = w; }
+        void SetHeight(int h) { height = h; }
+        void SetWidthHeight(int w, int h) { width = w; height = h; }
 
         Vec3 GetDV() const { return (lower_left - upper_left) / (height - 1); }
         Vec3 GetDH() const { return (upper_right - upper_left) / (width - 1); }
