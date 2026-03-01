@@ -1,6 +1,6 @@
 #include "object.h"
 
-Object::Object(Vec3 pos)
+Object::Object(Vec3 pos) : pos(pos)
 {
 }
 

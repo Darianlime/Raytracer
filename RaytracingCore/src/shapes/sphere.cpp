@@ -1,7 +1,20 @@
 #include "shapes/sphere.h"
 
 Sphere::Sphere(Vec3 pos, float radius, int mat) 
-    : Shape(pos, mat, "sphere"), radius(radius) {}
+    : Shape(pos, mat, ShapeType::SPHERE), radius(radius) {}
+
+Sphere::Sphere(SphereData data)
+    : Shape(data.pos, data.mat, ShapeType::SPHERE), radius(data.radius) {}
+
+Sphere::Sphere(vector<float> &args) 
+    : Sphere(ParseArgs(args)) {}
+
+SphereData Sphere::ParseArgs(vector<float> &args) {
+    if (args.size() < 4) {
+        return SphereData{Vec3(0,0,0), 1.0f, 0};
+    }
+    return SphereData{Vec3(args[0], args[1], args[2]), args[3], (int)args[4]};
+}
 
 pair<Vec3, bool> Sphere::CheckIntersection(Ray ray) {
     float A = pow(ray.raydir.x, 2) + pow(ray.raydir.y, 2) + pow(ray.raydir.z, 2);
@@ -20,4 +33,9 @@ pair<Vec3, bool> Sphere::CheckIntersection(Ray ray) {
 Vec3 Sphere::GetNormal(Vec3 intersectedPoint)
 {
     return (intersectedPoint - pos) / radius;
+}
+
+string Sphere::GetName()
+{
+    return GetTypeMap()[type];
 }

@@ -57,14 +57,13 @@ namespace Raytracer {
             }
         }
         if (closest && intersectedPoint.second) {
-            return ShadeRay(closest, factories.GetMats(), intersectedPoint.first, shapes, factories.GetFactory<LightFactory>().GetObjects());
+            return ShadeRay(closest, factories.GetMatIndex(closest->mat), intersectedPoint.first, shapes, factories.GetFactory<LightFactory>().GetObjects());
         }
         return background;
     }
 
     // Shades pixel based on blin phong
-    Color Raycast::ShadeRay(Shape* obj, vector<Material> mats, Vec3 intersectedPoint, vector<Shape*> shapes, vector<Light*> lights) {
-        Material mat = mats[obj->mat];
+    Color Raycast::ShadeRay(Shape* obj, Material mat, Vec3 intersectedPoint, vector<Shape*> shapes, vector<Light*> lights) {
         Vec3 normal = obj->GetNormal(intersectedPoint);
         Vec3 viewDir = (eye - intersectedPoint) / Vec3::Mag(eye - intersectedPoint);
         Vec3 ambient = mat.diffuse.GetVec() * mat.k.x;

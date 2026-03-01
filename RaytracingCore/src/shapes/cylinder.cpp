@@ -1,7 +1,20 @@
 #include "shapes/cylinder.h"
 
 Cylinder::Cylinder(Vec3 pos, Vec3 direction, float radius, float length, int mat) 
-    : Shape(pos, mat, "cylinder"), radius(radius), direction(direction), length(length) {}
+    : Shape(pos, mat, ShapeType::CYLINDER), radius(radius), direction(direction), length(length) {}
+
+Cylinder::Cylinder(CylinderData data)
+    : Shape(data.pos, data.mat, ShapeType::CYLINDER), radius(data.radius), direction(data.direction), length(data.length) {}
+
+Cylinder::Cylinder(vector<float> &args) 
+    : Cylinder(ParseArgs(args)) {}
+
+CylinderData Cylinder::ParseArgs(vector<float> &args) {
+    if (args.size() < 8) {
+        return CylinderData{Vec3(0.0f,0.0f,0.0f), Vec3(0.0f, -1.0f, 0.0f), 1.0f, 1.0f, 0};
+    }
+    return CylinderData{Vec3(args[0], args[1], args[2]), Vec3(args[3], args[4], args[5]), args[6], args[7], int(args[8])};
+}
 
 pair<Vec3, bool> Cylinder::CheckIntersection(Ray ray) {
     Vec3 f = ray.origin - pos;
@@ -23,7 +36,13 @@ pair<Vec3, bool> Cylinder::CheckIntersection(Ray ray) {
     return pair<Vec3, bool>(Vec3(0,0,0), false);
 
 }
+
 Vec3 Cylinder::GetNormal(Vec3 intersectedPoint)
 {
     return Vec3();
+}
+
+string Cylinder::GetName()
+{
+    return GetTypeMap()[type];
 }

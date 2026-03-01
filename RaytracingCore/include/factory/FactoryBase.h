@@ -13,9 +13,13 @@ class FactoryBase : public IFactory {
     public:
         FactoryBase() {} 
         virtual const vector<T*>& GetObjects() const { return objects; } 
-        int CreateObject(string& objectName, vector<string>& args) override {
+        int CreateObject(string& objectName, vector<float>& args) override {
             cout << "creating obj in base" << endl;
             return 0;
+        };
+
+        string GetName() override {
+            return "Factory Base";
         };
 }; 
 

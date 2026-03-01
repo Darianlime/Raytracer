@@ -108,15 +108,19 @@ int File::VaildateArgs(unordered_map<string, vector<float>> args)
 
 int File::VaildateObjectsArgs(vector<vector<string>> args, ObjectFactory& objectFactory) {
     Material mtl;
-    int matIndex = -1;
+    int matIndex = 0;
     for (int i = 0; i < args.size(); i++) {
         string id = args[i][0];
+        vector<float> argsFloat{};
+        for (int j = 1; j < args[i].size(); j++) {
+            argsFloat.push_back(stof(args[i][j]));
+        }
         if (id == "mtlcolor") {
             mtl = Material(
-                Color(stof(args[i][1]), stof(args[i][2]), stof(args[i][3]), false),
-                Color(stof(args[i][4]), stof(args[i][5]), stof(args[i][6]), false), 
-                Vec3(stof(args[i][7]), stof(args[i][8]), stof(args[i][9])),
-                stof(args[i][10])
+                Color(argsFloat[0], argsFloat[1], argsFloat[2], false),
+                Color(argsFloat[3], argsFloat[4], argsFloat[5], false), 
+                Vec3(argsFloat[6], argsFloat[7], argsFloat[8]),
+                argsFloat[9]
             );
             objectFactory.AddMaterial(mtl);
             matIndex++;
@@ -124,10 +128,9 @@ int File::VaildateObjectsArgs(vector<vector<string>> args, ObjectFactory& object
             //     return -1;
             // }
         } else {
-            vector<string> objectVal = args[i];
-            objectVal.push_back(to_string(matIndex));
+            argsFloat.push_back(matIndex);
             for (auto& factory : objectFactory.GetFactoryMap()) {
-                factory.second.get()->CreateObject(id, objectVal);
+                factory.second.get()->CreateObject(id, argsFloat);
             }
         }
     }

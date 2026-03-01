@@ -3,6 +3,14 @@
 
 #include "shape.h"
 
+struct ConeData {
+    Vec3 pos;
+    Vec3 direction; 
+    float angle;
+    float height; 
+    int mat;
+};
+
 struct Cone : public Shape {
     public:
         float angle;
@@ -11,9 +19,15 @@ struct Cone : public Shape {
 
         Cone() = default;
         Cone(Vec3 pos, Vec3 direction, float angle, float height, int mat);
+        Cone(ConeData data);
+        Cone(vector<float> &args);
+
+        ConeData ParseArgs(vector<float> &args);
 
         pair<Vec3, bool> CheckIntersection(Ray ray) override; 
         Vec3 GetNormal(Vec3 intersectedPoint) override;
+
+        string GetName() override;
 }; 
 
 #endif

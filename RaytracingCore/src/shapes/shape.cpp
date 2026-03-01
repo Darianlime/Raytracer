@@ -1,6 +1,13 @@
 #include "shapes/shape.h"
 
-Shape::Shape(Vec3 pos, int mat, string name) : Object(pos, name), mat(mat) {}
+map<ShapeType, string> Shape::typeMap = {
+    {ShapeType::SPHERE, "sphere"},
+    {ShapeType::CYLINDER, "cylinder"},
+    {ShapeType::CONE, "cone"},
+    {ShapeType::ELLIPSOID, "ellipsoid"}
+};
+
+Shape::Shape(Vec3 pos, int mat, ShapeType type) : Object(pos), mat(mat), type(type) {}
 
 float Shape::GetHitDistance(float A, float B, float C)
 {
@@ -21,4 +28,13 @@ float Shape::GetHitDistance(float A, float B, float C)
         t = t2;
     }
     return t;
+}
+
+map<ShapeType, string> Shape::GetTypeMap() {
+    return typeMap;
+}
+
+string Shape::GetName()
+{
+    return "default shape";
 }

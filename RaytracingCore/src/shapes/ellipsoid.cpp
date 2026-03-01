@@ -1,6 +1,19 @@
 #include "shapes/ellipsoid.h"
 
-Ellipsoid::Ellipsoid(Vec3 pos, Vec3 radius, int mat) : Shape(pos, mat, "ellipsoid"), radius(radius) {}
+Ellipsoid::Ellipsoid(Vec3 pos, Vec3 radius, int mat) : Shape(pos, mat, ShapeType::ELLIPSOID), radius(radius) {}
+
+Ellipsoid::Ellipsoid(EllipsoidData data)
+    : Shape(data.pos, data.mat, ShapeType::SPHERE), radius(data.radius) {}
+
+Ellipsoid::Ellipsoid(vector<float> &args) 
+    : Ellipsoid(ParseArgs(args)) {}
+
+EllipsoidData Ellipsoid::ParseArgs(vector<float> &args) {
+    if (args.size() < 6) {
+        return EllipsoidData{Vec3(0,0,0), Vec3(1.0f,1.0f,1.0f), 0};
+    }
+    return EllipsoidData{Vec3(args[0], args[1], args[2]), Vec3(args[3], args[4], args[5]), (int)args[6]};
+}
 
 pair<Vec3, bool> Ellipsoid::CheckIntersection(Ray ray)
 {
@@ -20,4 +33,9 @@ pair<Vec3, bool> Ellipsoid::CheckIntersection(Ray ray)
 Vec3 Ellipsoid::GetNormal(Vec3 intersectedPoint)
 {
     return Vec3();
+}
+
+string Ellipsoid::GetName()
+{
+    return GetTypeMap()[type];
 }

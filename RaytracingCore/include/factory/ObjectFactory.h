@@ -47,6 +47,7 @@ class ObjectFactory {
 
         void AddMaterial(Material mat);
         const vector<Material>& GetMats();
-}; 
+        const Material &GetMatIndex(int index);
+};
 
 #endif

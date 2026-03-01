@@ -2,6 +2,8 @@
 #define OBJECT_H
 
 #include "vector.h"
+#include <vector>
+#include <map>
 
 class Object {
     protected:

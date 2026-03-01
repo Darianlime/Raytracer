@@ -21,7 +21,7 @@ class Raycast {
         Vec3 CalcRayDirAtPoint(Vec3 point, Vec3 intersectedPoint) const;
         bool IsShadow(Light *light, Vec3 eye, Shape *intersectedShape, vector<Shape *> &shapes);
         Color TraceRay(Vec3 point, Color background, ObjectFactory &factories, pair<Vec3, bool> &intersectedPoint);
-        Color ShadeRay(Shape *obj, vector<Material> mats, Vec3 intersectedPoint, vector<Shape *> shapes, vector<Light *> lights);
+        Color ShadeRay(Shape *obj, Material mat, Vec3 intersectedPoint, vector<Shape *> shapes, vector<Light *> lights);
 };
 }
 #endif

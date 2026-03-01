@@ -8,12 +8,17 @@
 #include "shapes/cone.h"
 #include "shapes/ellipsoid.h"
 
-class ShapeFactory : public FactoryBase<Shape> {
+class ShapeFactory : public FactoryBase<Shape> { 
     public:
         ShapeFactory();
         ~ShapeFactory() {};
-        int CreateObject(string& objectName, vector<string>& args) override;
-        //Object* CreateObject(ObjectType objectType, vector<string> args, Material mat); 
+
+        int CreateObject(string& objectName, vector<float>& args) override;
+        string GetTypeIndex(int index) override;
+
+        string GetName() override {
+            return "Shape Factory";
+        };
 };
 
 #endif

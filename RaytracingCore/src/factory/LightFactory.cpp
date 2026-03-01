@@ -2,31 +2,25 @@
 
 LightFactory::LightFactory() {}
 
-int LightFactory::CreateObject(string& objectName, vector<string>& args)
+string LightFactory::GetTypeIndex(int index)
 {
-    if (objectName != "light" && objectName != "attlight") { return 0; }
-    switch (stoi(args[4])) {
+    LightSourceType type = static_cast<LightSourceType>(index);
+    return Light::GetTypeMap()[type];
+}
+
+int LightFactory::CreateObject(string& objectName, vector<float>& args)
+{
+    map<LightSourceType, std::string> type = Light::GetTypeMap();
+    if (objectName != type[LightSourceType::LIGHT] && objectName != type[LightSourceType::ATTLIGHT]) { return 0; }
+    switch (int(args[3])) {
         case (int)LightType::DIRECTIONAL:
             cout << "created dir light" << endl;
-            objects.push_back(new DirectionalLight(Vec3(stof(args[1]), stof(args[2]), stof(args[3])), stof(args[5])));
+            objects.push_back(new DirectionalLight(args));
             break;
         case (int)LightType::POINT:
             cout << "created point light" << endl;
-            objects.push_back(new PointLight(Vec3(stof(args[1]), stof(args[2]), stof(args[3])), stof(args[5])));
-            if (objectName == "attlight") {
-                Vec3 consts(stof(args[6]), stof(args[7]), stof(args[8]));
-                if (consts == Vec3::Zero()) {
-                    consts = Vec3(1,0,0);
-                }
-                objects[objects.size() - 1]->SetAtLightConst(consts);
-                cout << "set att light point light" << endl;
-            }
+            objects.push_back(new PointLight(args));
             break;
     }
     return 0;
 }
-
-// Light *LightFactory::CreateLight(LightType objectType, vector<string> args)
-// {
-//     return nullptr;
-// }

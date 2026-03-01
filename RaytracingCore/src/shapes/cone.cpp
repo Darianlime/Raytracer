@@ -1,7 +1,20 @@
 #include "shapes/cone.h"
 
 Cone::Cone(Vec3 pos, Vec3 direction, float angle, float height, int mat) 
-    : Shape(pos, mat, "cone"), angle(angle), direction(direction), height(height) {}
+    : Shape(pos, mat, ShapeType::CONE), angle(angle), direction(direction), height(height) {}
+
+Cone::Cone(ConeData data)
+    : Shape(data.pos, data.mat, ShapeType::CONE), angle(data.angle), direction(data.direction), height(data.height) {}
+
+Cone::Cone(vector<float> &args) 
+    : Cone(ParseArgs(args)) {}
+
+ConeData Cone::ParseArgs(vector<float> &args) {
+    if (args.size() < 8) {
+        return ConeData{Vec3(0.0f,0.0f,0.0f), Vec3(0.0f, -1.0f, 0.0f), 1.0f, 1.0f, 0};
+    }
+    return ConeData{Vec3(args[0], args[1], args[2]), Vec3(args[3], args[4], args[5]), args[6], args[7], int(args[8])};
+}
 
 pair<Vec3, bool> Cone::CheckIntersection(Ray ray) {
     Vec3 unitDir = direction / Vec3::Mag(direction);
@@ -29,4 +42,9 @@ pair<Vec3, bool> Cone::CheckIntersection(Ray ray) {
 Vec3 Cone::GetNormal(Vec3 intersectedPoint)
 {
     return Vec3();
+}
+
+string Cone::GetName()
+{
+    return GetTypeMap()[type];
 }
