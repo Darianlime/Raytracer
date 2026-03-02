@@ -1,10 +1,10 @@
-#include "shapes/cylinder.h"
+#include "meshs/cylinder.h"
 
 Cylinder::Cylinder(Vec3 pos, Vec3 direction, float radius, float length, int mat) 
-    : Shape(pos, mat, ShapeType::CYLINDER), radius(radius), direction(direction), length(length) {}
+    : Mesh(pos, mat, MeshType::CYLINDER), radius(radius), direction(direction), length(length) {}
 
 Cylinder::Cylinder(CylinderData data)
-    : Shape(data.pos, data.mat, ShapeType::CYLINDER), radius(data.radius), direction(data.direction), length(data.length) {}
+    : Mesh(data.pos, data.mat, MeshType::CYLINDER), radius(data.radius), direction(data.direction), length(data.length) {}
 
 Cylinder::Cylinder(vector<float> &args) 
     : Cylinder(ParseArgs(args)) {}

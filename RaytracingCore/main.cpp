@@ -51,13 +51,13 @@ int main(int argc, char* argv[]) {
 
     // Store shapes and objects inside the object factory
     ObjectFactory objectFactory;
-    objectFactory.CreateFactory<ShapeFactory>();
+    objectFactory.CreateFactory<MeshFactory>();
     objectFactory.CreateFactory<LightFactory>();
     if (File::VaildateObjectsArgs(args, objectFactory) == -1) {
         return 1;
     }
 
-    for (auto& shape : objectFactory.GetFactory<ShapeFactory>().GetObjects()) {
+    for (auto& shape : objectFactory.GetFactory<MeshFactory>().GetObjects()) {
         cout << shape->GetName() << endl;
     }
 

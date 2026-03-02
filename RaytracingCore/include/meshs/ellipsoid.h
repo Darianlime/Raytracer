@@ -1,7 +1,7 @@
 #ifndef ELLIPSOID_H
 #define ELLIPSOID_H
 
-#include "shape.h"
+#include "mesh.h"
 
 struct EllipsoidData {
     Vec3 pos;
@@ -9,7 +9,7 @@ struct EllipsoidData {
     int mat;
 };
 
-struct Ellipsoid : public Shape {
+struct Ellipsoid : public Mesh {
     public:
         Vec3 radius;
 

@@ -1,10 +1,10 @@
-#include "shapes/cone.h"
+#include "meshs/cone.h"
 
 Cone::Cone(Vec3 pos, Vec3 direction, float angle, float height, int mat) 
-    : Shape(pos, mat, ShapeType::CONE), angle(angle), direction(direction), height(height) {}
+    : Mesh(pos, mat, MeshType::CONE), angle(angle), direction(direction), height(height) {}
 
 Cone::Cone(ConeData data)
-    : Shape(data.pos, data.mat, ShapeType::CONE), angle(data.angle), direction(data.direction), height(data.height) {}
+    : Mesh(data.pos, data.mat, MeshType::CONE), angle(data.angle), direction(data.direction), height(data.height) {}
 
 Cone::Cone(vector<float> &args) 
     : Cone(ParseArgs(args)) {}

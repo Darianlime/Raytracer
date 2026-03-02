@@ -3,7 +3,7 @@
 
 #include "color.h"
 #include "factory/ObjectFactory.h"
-#include "factory/ShapeFactory.h"
+#include "factory/MeshFactory.h"
 #include "factory/LightFactory.h"
 
 #include <iostream>

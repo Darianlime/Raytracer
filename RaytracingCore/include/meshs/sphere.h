@@ -1,7 +1,7 @@
 #ifndef SPHERE_H
 #define SPHERE_H
 
-#include "shape.h"
+#include "mesh.h"
 
 struct SphereData {
     Vec3 pos;
@@ -9,7 +9,7 @@ struct SphereData {
     int mat;
 };
 
-struct Sphere : public Shape {
+struct Sphere : public Mesh {
     public:
         float radius;
 

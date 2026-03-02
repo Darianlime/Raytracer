@@ -1,24 +1,28 @@
-#include "factory/Shapefactory.h"
+#include "factory/MeshFactory.h"
 
-ShapeFactory::ShapeFactory() {}
+MeshFactory::MeshFactory() {}
 
-string ShapeFactory::GetTypeIndex(int index)
+string MeshFactory::GetTypeIndex(int index)
 {
-    ShapeType type = static_cast<ShapeType>(index);
-    return Shape::GetTypeMap()[type];
+    MeshType type = static_cast<MeshType>(index);
+    return Mesh::GetTypeMap()[type];
 }
 
-int ShapeFactory::CreateObject(string &objectName, vector<float> &args)
+int MeshFactory::CreateObject(string &objectName, vector<float> &args)
 {
-    std::map<ShapeType, std::string> type = Shape::GetTypeMap();
-    if (type[ShapeType::SPHERE] == objectName) {
+    std::map<MeshType, std::string> type = Mesh::GetTypeMap();
+    if (type[MeshType::SPHERE] == objectName) {
         objects.push_back(new Sphere(args));
-    } else if (type[ShapeType::CYLINDER] == objectName) {
+    } else if (type[MeshType::CYLINDER] == objectName) {
         objects.push_back(new Cylinder(args));
-    } else if (type[ShapeType::CONE] == objectName) {
+    } else if (type[MeshType::CONE] == objectName) {
         objects.push_back(new Cone(args));
-    } else if (type[ShapeType::ELLIPSOID] == objectName) {
+    } else if (type[MeshType::ELLIPSOID] == objectName) {
         objects.push_back(new Ellipsoid(args));
+    } else if (type[MeshType::VERTEX] == objectName) {
+        vertices.emplace_back(Vec3(args[0],args[1],args[2]));
+    } else if (type[MeshType::INDICE] == objectName) {
+        objects.push_back(new Triangle({vertices[(int)args[0]-1],vertices[(int)args[1]-1],vertices[(int)args[2]-1]}, args[3]));
     }
     // switch (typeMap[objectName]) {
     //     case ShapeType::SPHERE:

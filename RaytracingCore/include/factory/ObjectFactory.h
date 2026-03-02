@@ -6,7 +6,7 @@
 #include <typeindex>
 #include <memory>
 #include "factory/LightFactory.h"
-#include "factory/ShapeFactory.h"
+#include "factory/MeshFactory.h"
 #include "material.h"
 
 using namespace std;

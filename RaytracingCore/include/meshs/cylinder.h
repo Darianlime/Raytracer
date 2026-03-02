@@ -1,7 +1,7 @@
 #ifndef CYLINDER_H
 #define CYLINDER_H
 
-#include "shape.h"
+#include "mesh.h"
 
 struct CylinderData {
     Vec3 pos;
@@ -11,7 +11,7 @@ struct CylinderData {
     int mat;
 };
 
-struct Cylinder : public Shape {
+struct Cylinder : public Mesh {
     public:
         float radius;
         float length;

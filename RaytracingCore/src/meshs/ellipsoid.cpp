@@ -1,9 +1,9 @@
-#include "shapes/ellipsoid.h"
+#include "meshs/ellipsoid.h"
 
-Ellipsoid::Ellipsoid(Vec3 pos, Vec3 radius, int mat) : Shape(pos, mat, ShapeType::ELLIPSOID), radius(radius) {}
+Ellipsoid::Ellipsoid(Vec3 pos, Vec3 radius, int mat) : Mesh(pos, mat, MeshType::ELLIPSOID), radius(radius) {}
 
 Ellipsoid::Ellipsoid(EllipsoidData data)
-    : Shape(data.pos, data.mat, ShapeType::SPHERE), radius(data.radius) {}
+    : Mesh(data.pos, data.mat, MeshType::SPHERE), radius(data.radius) {}
 
 Ellipsoid::Ellipsoid(vector<float> &args) 
     : Ellipsoid(ParseArgs(args)) {}

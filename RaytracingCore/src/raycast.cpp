@@ -23,8 +23,8 @@ namespace Raytracer {
     }
 
     // Shoots a shadow ray from intersected point to light and checks for object intersections
-    bool Raycast::IsShadow(Light* light, Vec3 intersectedPoint, Shape* intersectedShape, vector<Shape*>& shapes) {
-        for (Shape* shape : shapes) {
+    bool Raycast::IsShadow(Light* light, Vec3 intersectedPoint, Mesh* intersectedShape, vector<Mesh*>& shapes) {
+        for (Mesh* shape : shapes) {
             if (shape == intersectedShape) continue;
             pair<Vec3, bool> o = shape->CheckIntersection(Ray{intersectedPoint, light->GetLightDir(intersectedPoint)});
             if (o.second) {
@@ -43,10 +43,10 @@ namespace Raytracer {
     {
         //SetRayDirAtPoint(point);
         //cout << "tracing: " << objects[0]->GetName() << endl;
-        vector<Shape*> shapes = factories.GetFactory<ShapeFactory>().GetObjects();
+        vector<Mesh*> shapes = factories.GetFactory<MeshFactory>().GetObjects();
         //Vec3 intersectedPoint(numeric_limits<float>::infinity(), numeric_limits<float>::infinity(), numeric_limits<float>::infinity());
-        Shape* closest = nullptr; 
-        for (Shape* shape : shapes) {
+        Mesh* closest = nullptr; 
+        for (Mesh* shape : shapes) {
             pair<Vec3, bool> o = shape->CheckIntersection(Ray{eye, CalcRayDirAtPoint(point)});
             if (o.second) {
                 if (Vec3::Dist(eye, o.first) < Vec3::Dist(eye, intersectedPoint.first)) {
@@ -63,7 +63,7 @@ namespace Raytracer {
     }
 
     // Shades pixel based on blin phong
-    Color Raycast::ShadeRay(Shape* obj, Material mat, Vec3 intersectedPoint, vector<Shape*> shapes, vector<Light*> lights) {
+    Color Raycast::ShadeRay(Mesh* obj, Material mat, Vec3 intersectedPoint, vector<Mesh*> shapes, vector<Light*> lights) {
         Vec3 normal = obj->GetNormal(intersectedPoint);
         Vec3 viewDir = (eye - intersectedPoint) / Vec3::Mag(eye - intersectedPoint);
         Vec3 ambient = mat.diffuse.GetVec() * mat.k.x;

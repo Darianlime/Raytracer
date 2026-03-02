@@ -19,17 +19,18 @@ add_library(lib
 
     src/object.cpp
     
-    src/shapes/shape.cpp
-    src/shapes/sphere.cpp
-    src/shapes/cylinder.cpp
-    src/shapes/cone.cpp
-    src/shapes/ellipsoid.cpp
+    src/meshs/mesh.cpp
+    src/meshs/sphere.cpp
+    src/meshs/cylinder.cpp
+    src/meshs/cone.cpp
+    src/meshs/ellipsoid.cpp
+    src/meshs/geometry.cpp
 
     src/lights/light.cpp
     src/lights/DirectionalLight.cpp
     src/lights/PointLight.cpp
 
-    src/factory/ShapeFactory.cpp
+    src/factory/MeshFactory.cpp
     src/factory/LightFactory.cpp
     src/factory/ObjectFactory.cpp
 

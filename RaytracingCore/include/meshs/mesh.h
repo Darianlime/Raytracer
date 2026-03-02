@@ -1,34 +1,37 @@
 #ifndef SHAPE_H
 #define SHAPE_H
 
-
 #include "object.h"
 #include "material.h"
 #include "ray.h"
 
-enum class ShapeType {
+enum class MeshType {
     SPHERE,
     CYLINDER,
     CONE,
-    ELLIPSOID
+    ELLIPSOID,
+    TRIANGLE,
+    VERTEX,
+    INDICE
 };
 
-struct Shape : public Object {
+struct Mesh : public Object {
     protected:
-        static map<ShapeType, string> typeMap;
+        static map<MeshType, string> typeMap;
     public:
         int mat;
-        ShapeType type;
+        MeshType type;
 
-        Shape() = default;
-        Shape(Vec3 pos, int mat, ShapeType type);
-        virtual ~Shape() {};
+        Mesh() = default;
+        Mesh(int mat, MeshType type);
+        Mesh(Vec3 pos, int mat, MeshType type);
+        virtual ~Mesh() {};
 
         virtual pair<Vec3, bool> CheckIntersection(Ray ray) = 0;
         virtual Vec3 GetNormal(Vec3 intersectedPoint) = 0;
         float GetHitDistance(float A, float B, float C);
 
-        static map<ShapeType, string> GetTypeMap();
+        static map<MeshType, string> GetTypeMap();
         string GetName() override;
 }; 
 

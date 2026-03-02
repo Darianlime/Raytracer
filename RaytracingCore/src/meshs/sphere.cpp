@@ -1,10 +1,10 @@
-#include "shapes/sphere.h"
+#include "meshs/sphere.h"
 
 Sphere::Sphere(Vec3 pos, float radius, int mat) 
-    : Shape(pos, mat, ShapeType::SPHERE), radius(radius) {}
+    : Mesh(pos, mat, MeshType::SPHERE), radius(radius) {}
 
 Sphere::Sphere(SphereData data)
-    : Shape(data.pos, data.mat, ShapeType::SPHERE), radius(data.radius) {}
+    : Mesh(data.pos, data.mat, MeshType::SPHERE), radius(data.radius) {}
 
 Sphere::Sphere(vector<float> &args) 
     : Sphere(ParseArgs(args)) {}

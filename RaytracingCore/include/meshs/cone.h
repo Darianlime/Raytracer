@@ -1,7 +1,7 @@
 #ifndef CONE_H
 #define CONE_H
 
-#include "shape.h"
+#include "mesh.h"
 
 struct ConeData {
     Vec3 pos;
@@ -11,7 +11,7 @@ struct ConeData {
     int mat;
 };
 
-struct Cone : public Shape {
+struct Cone : public Mesh {
     public:
         float angle;
         float height;
