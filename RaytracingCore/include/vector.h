@@ -5,7 +5,17 @@
 #include <iostream>
 
 using namespace math;
-using namespace std;
+
+struct Vec2;
+struct Vec3;
+
+struct Vec2 {
+    public:
+        float x;
+        float y;
+        Vec2();
+        Vec2(float x, float y);
+};
 
 struct Vec3 {
     public:
@@ -14,6 +24,7 @@ struct Vec3 {
         float z;
 
         Vec3();
+        Vec3(Vec2 vec2);
         Vec3(float x, float y, float z);
 
         bool operator==(const Vec3& other) const;

@@ -18,7 +18,7 @@ LightData PointLight::ParseArgs(vector<float> &args) {
             consts = Vec3(1,0,0);
         }
         SetAtLightConst(consts);
-        cout << "set att light point light" << endl;
+        std::cout << "set att light point light" << std::endl;
     }
     return LightData{Vec3(args[0], args[1], args[2]), args[4]};
 }

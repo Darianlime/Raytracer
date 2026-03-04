@@ -1,5 +1,7 @@
 #include "viewport.h"
 
+using std::vector;
+
 namespace Raytracer {
     Viewport::Viewport() : width(1), height(1), bkgcolor(Color(0.0f,0.0f,0.0f, true)), pixels(width, vector<Color>(height)) {}
 

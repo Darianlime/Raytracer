@@ -9,12 +9,10 @@
 #include "factory/MeshFactory.h"
 #include "material.h"
 
-using namespace std;
-
 // Factory to create new object factories
 class ObjectFactory {
     private:
-        unordered_map<type_index, unique_ptr<IFactory>> factories;
+        std::unordered_map<std::type_index, unique_ptr<IFactory>> factories;
         vector<Material> materials;
     public:
         ObjectFactory();
@@ -43,7 +41,7 @@ class ObjectFactory {
             return *factory;
         }
 
-        unordered_map<type_index, unique_ptr<IFactory>>& GetFactoryMap();
+        std::unordered_map<std::type_index, unique_ptr<IFactory>>& GetFactoryMap();
 
         void AddMaterial(Material mat);
         const vector<Material>& GetMats();

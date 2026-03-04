@@ -8,18 +8,23 @@ string LightFactory::GetTypeIndex(int index)
     return Light::GetTypeMap()[type];
 }
 
-int LightFactory::CreateObject(string& objectName, vector<float>& args)
+int LightFactory::CreateObject(string& objectName, vector<string>& args)
 {
     map<LightSourceType, std::string> type = Light::GetTypeMap();
     if (objectName != type[LightSourceType::LIGHT] && objectName != type[LightSourceType::ATTLIGHT]) { return 0; }
-    switch (int(args[3])) {
+
+    vector<float> lightsArgs(args.size());
+    for (int i = 0; i < lightsArgs.size(); i++) {
+        lightsArgs[i] = stof(args[i]);
+    }
+    switch ((int)lightsArgs[3]) {
         case (int)LightType::DIRECTIONAL:
-            cout << "created dir light" << endl;
-            objects.push_back(new DirectionalLight(args));
+            std::cout << "created dir light" << std::endl;
+            objects.push_back(make_unique<DirectionalLight>(lightsArgs));
             break;
         case (int)LightType::POINT:
-            cout << "created point light" << endl;
-            objects.push_back(new PointLight(args));
+            std::cout << "created point light" << std::endl;
+            objects.push_back(make_unique<PointLight>(lightsArgs));
             break;
     }
     return 0;

@@ -11,15 +11,27 @@
 
 class MeshFactory : public FactoryBase<Mesh> { 
     private:
-        vector<Vertex> vertices;
+        map<string, std::function<unique_ptr<Mesh>(vector<float>&)>> meshMap;
+        map<string, std::function<void(vector<float>&)>> geometryMap;
+        vector<Vec3> vertsPos;
+        vector<Vec3> vertsNormal;
+        vector<Vec2> vertsTex;
     public:
         MeshFactory();
         ~MeshFactory() {};
 
-        int CreateObject(string& objectName, vector<float>& args) override;
+        int CreateObject(string& objectName, vector<string>& args) override;
+        void ParseTriangle(vector<string> &args, vector<float> &vertsArgs);
         string GetTypeIndex(int index) override;
+        map<string, std::function<unique_ptr<Mesh>(vector<float>&)>>& GetMeshMap();
+        map<string, std::function<void(vector<float>&)>>& GetGeometryMap();
+        void AddVertPos(vector<float> &args);
+        void AddVertNormal(vector<float> &args);
+        void AddVertTex(vector<float> &args);
+        void AddTriangle(vector<float> &args);
 
-        string GetName() override {
+        string GetName() override
+        {
             return "Mesh Factory";
         };
 };

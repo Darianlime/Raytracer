@@ -1,6 +1,14 @@
 #include "file.h"
 
-int File::ParseArgs(string inputFile, vector<vector<string>>& args, unordered_map<string, vector<float>> &argsMap)
+using std::ifstream;
+using std::getline;
+using std::cout;
+using std::cerr;
+using std::endl;
+using std::string;
+using std::to_string;
+
+int File::ParseArgs(string inputFile, vector<vector<string>>& args, std::unordered_map<string, vector<float>> &argsMap)
 {
     // Open and read input file
     ifstream fin(inputFile);
@@ -17,7 +25,7 @@ int File::ParseArgs(string inputFile, vector<vector<string>>& args, unordered_ma
         if (inputLine.empty()) {
             continue;
         }
-        stringstream input(inputLine);
+        std::stringstream input(inputLine);
         string keyword;
         
         getline(input, keyword, ' ');
@@ -86,7 +94,7 @@ int File::FindKeyIndex(vector<vector<string>> &map, string key)
     return -1;
 }
 
-int File::VaildateArgs(unordered_map<string, vector<float>> args)
+int File::VaildateArgs(std::unordered_map<string, vector<float>>& args)
 {
     if (args["imsize"].size() < 2) { cerr << "Not enough arguments for imsize" << endl; return -1; }
     if (args["eye"].size() < 3) { cerr << "Not enough arguments for eye" << endl; return -1; }
@@ -106,21 +114,17 @@ int File::VaildateArgs(unordered_map<string, vector<float>> args)
     return 0;
 }
 
-int File::VaildateObjectsArgs(vector<vector<string>> args, ObjectFactory& objectFactory) {
+int File::VaildateObjectsArgs(vector<vector<string>>& args, ObjectFactory& objectFactory) {
     Material mtl;
     int matIndex = 0;
     for (int i = 0; i < args.size(); i++) {
         string id = args[i][0];
-        vector<float> argsFloat{};
-        for (int j = 1; j < args[i].size(); j++) {
-            argsFloat.push_back(stof(args[i][j]));
-        }
         if (id == "mtlcolor") {
             mtl = Material(
-                Color(argsFloat[0], argsFloat[1], argsFloat[2], false),
-                Color(argsFloat[3], argsFloat[4], argsFloat[5], false), 
-                Vec3(argsFloat[6], argsFloat[7], argsFloat[8]),
-                argsFloat[9]
+                Color(stof(args[i][1]), stof(args[i][2]), stof(args[i][3]), false),
+                Color(stof(args[i][4]), stof(args[i][5]), stof(args[i][6]), false), 
+                Vec3(stof(args[i][7]), stof(args[i][8]), stof(args[i][9])),
+                stof(args[i][10])
             );
             objectFactory.AddMaterial(mtl);
             matIndex++;
@@ -128,9 +132,11 @@ int File::VaildateObjectsArgs(vector<vector<string>> args, ObjectFactory& object
             //     return -1;
             // }
         } else {
-            argsFloat.push_back(matIndex);
+            vector<string> arg = args[i];
+            arg.erase(arg.begin());
+            arg.emplace_back(to_string(matIndex));
             for (auto& factory : objectFactory.GetFactoryMap()) {
-                factory.second.get()->CreateObject(id, argsFloat);
+                factory.second.get()->CreateObject(id, arg);
             }
         }
     }

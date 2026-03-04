@@ -1,5 +1,11 @@
 #include "color.h"
 
+using std::string;
+using std::to_string;
+using std::clamp;
+using std::cerr;
+using std::endl;
+
 Color::Color() : r(0), g(0), b(0) {}
 
 Color::Color(float red, float green, float blue, bool isNormalized) : isNormalized(isNormalized)

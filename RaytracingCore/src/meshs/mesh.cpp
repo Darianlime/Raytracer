@@ -5,8 +5,10 @@ map<MeshType, string> Mesh::typeMap = {
     {MeshType::CYLINDER, "cylinder"},
     {MeshType::CONE, "cone"},
     {MeshType::ELLIPSOID, "ellipsoid"},
-    {MeshType::TRIANGLE, "triangle"},
+    {MeshType::TRIANGLE, "f"},
     {MeshType::VERTEX, "v"},
+    {MeshType::VERTEXNORMAL, "vn"},
+    {MeshType::VERTEXTEXTURE, "vt"},
     {MeshType::INDICE, "f"}
 };
 
@@ -34,7 +36,7 @@ float Mesh::GetHitDistance(float A, float B, float C)
     return t;
 }
 
-map<MeshType, string> Mesh::GetTypeMap() {
+map<MeshType, string> &Mesh::GetTypeMap() {
     return typeMap;
 }
 

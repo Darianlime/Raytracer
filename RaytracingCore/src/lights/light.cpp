@@ -1,6 +1,6 @@
 #include "lights/light.h"
 
-map<LightSourceType, string> Light::typeMap = {
+std::map<LightSourceType, string> Light::typeMap = {
     {LightSourceType::LIGHT,"light"},
     {LightSourceType::ATTLIGHT,"attlight"}
 };
@@ -13,7 +13,7 @@ Light::Light(Vec3 pos, float intensity, LightType type) : Object(pos), intensity
 
 Light::Light(Vec3 pos, float intensity, string name, LightType type) : Object(pos, name), intensity(intensity), consts(Vec3(1,0,0)), type(type) {}
 
-map<LightSourceType, string> Light::GetTypeMap()
+std::map<LightSourceType, string> Light::GetTypeMap()
 {
     return typeMap;
 }

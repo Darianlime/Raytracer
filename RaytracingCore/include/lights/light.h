@@ -4,9 +4,6 @@
 #include "vector.h"
 #include "object.h"
 #include <cstdint>
-#include <string>
-
-using namespace std;
 
 enum class LightSourceType {
 	LIGHT,
@@ -27,7 +24,7 @@ class Light : public Object
 {
 	protected:
 		Vec3 lightDir;
-		static map<LightSourceType, string> typeMap; 
+		static std::map<LightSourceType, string> typeMap; 
 	public:
 		float intensity;
 		LightType type; // 0 = direction, 1 = point
@@ -38,7 +35,7 @@ class Light : public Object
         Light(Vec3 pos, float intensity, LightType type);
         Light(Vec3 pos, float intensity, string name, LightType type);
 
-        static map<LightSourceType, string> GetTypeMap();
+        static std::map<LightSourceType, string> GetTypeMap();
 
         void SetLightDir(Vec3 lightDir) { this->lightDir = lightDir; }
 		void SetAtLightConst(Vec3 consts)  { this->consts = consts; };

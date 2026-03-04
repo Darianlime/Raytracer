@@ -7,8 +7,6 @@
 #include <cstdint>
 #include <string>
 
-using namespace std;
-
 struct Color {
 	float r;
 	float g;
@@ -26,7 +24,7 @@ struct Color {
 	// float B() { if (isNormalized) { return (int)round(b); } return b; }
 
     Vec3 GetVec() { return Vec3(r, g, b); }
-	string ToString() const;
+	std::string ToString() const;
 	int CheckArgs();
 };
 

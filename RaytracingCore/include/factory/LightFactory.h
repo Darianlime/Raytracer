@@ -11,7 +11,7 @@ class LightFactory : public FactoryBase<Light> {
     public:
         LightFactory();
         ~LightFactory() {};
-        int CreateObject(string& objectName, vector<float>& args) override;
+        int CreateObject(string& objectName, vector<string>& args) override;
         string GetTypeIndex(int index) override;
 
         string GetName() override {

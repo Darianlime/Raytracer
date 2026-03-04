@@ -14,7 +14,7 @@ class Viewport {
         int width;
         int height;
 
-        vector<vector<Color>> pixels;
+        std::vector<std::vector<Color>> pixels;
 
         // 4 corners of viewing window
         Vec3 upper_left;
@@ -38,7 +38,7 @@ class Viewport {
 
         Vec3 GetWindowLocation(int width, int height) const { return upper_left + GetDH() * width + GetDV() * height; }
 
-        vector<vector<Color>>& GetPixels() { return pixels; }
+        std::vector<std::vector<Color>>& GetPixels() { return pixels; }
 
 }; 
 }

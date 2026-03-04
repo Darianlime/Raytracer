@@ -1,6 +1,100 @@
 #include "factory/MeshFactory.h"
 
-MeshFactory::MeshFactory() {}
+using std::function;
+
+MeshFactory::MeshFactory() {
+    meshMap["sphere"] = [](vector<float>& args) { return make_unique<Sphere>(args); };
+    meshMap["cylinder"] = [](vector<float>& args) { return make_unique<Cylinder>(args); };
+    meshMap["cone"] = [](vector<float>& args) { return make_unique<Cone>(args); };
+    meshMap["ellipsoid"] = [](vector<float>& args) { return make_unique<Ellipsoid>(args); };  
+
+    geometryMap["f"] = [this](vector<float>& args) { AddTriangle(args); };
+    geometryMap["v"] = [this](vector<float>& args) { AddVertPos(args); };
+    geometryMap["vn"] = [this](vector<float>& args) { AddVertNormal(args); };
+    geometryMap["vt"] = [this](vector<float>& args) { AddVertTex(args); };
+}
+
+void MeshFactory::AddVertPos(vector<float>& args) {
+    Vec3 vert = Vec3(args[0],args[1],args[2]);
+    vert.ToString();
+    vertsPos.emplace_back(args[0],args[1],args[2]);
+}
+
+void MeshFactory::AddVertNormal(vector<float>& args) {
+    vertsNormal.emplace_back(args[0],args[1],args[2]);
+}
+
+void MeshFactory::AddVertTex(vector<float>& args) {
+    vertsTex.emplace_back(args[0],args[1]);
+}
+
+void MeshFactory::AddTriangle(vector<float>& args) {
+    objects.push_back(make_unique<Triangle>(args));
+}
+
+int MeshFactory::CreateObject(string &objectName, vector<string> &args)
+{
+    // create meshs
+    if (meshMap.find(objectName) != meshMap.end()) {
+        vector<float> meshArgs(args.size());
+        for (int i = 0; i < meshArgs.size(); i++) {
+            meshArgs[i] = stof(args[i]);
+        }
+        objects.push_back(meshMap[objectName](meshArgs));
+    }
+
+    // create geometry
+    auto geoIndex = geometryMap.find(objectName);
+    if (geoIndex != geometryMap.end()) {
+        vector<float> vertsArgs(args.size());
+        // parse triangle
+        if (geoIndex->first == "f") {
+            MeshFactory::ParseTriangle(args, vertsArgs);
+        } else {
+            for (int i = 0; i < vertsArgs.size(); i++) {
+                vertsArgs[i] = stof(args[i]);
+            }           
+        }
+        geometryMap[objectName](vertsArgs);
+    }
+    return 0;
+}
+
+void MeshFactory::ParseTriangle(vector<string> &args, vector<float>& vertsArgs) {
+
+    const int INDICE_SIZE = 8;
+    vertsArgs.resize((args.size()-1) * INDICE_SIZE + 1);
+    for (int i = 0; i < args.size()-1; i++) {
+        const char* toChar = args[i].c_str();
+        const char* ptr = toChar;
+        const char* end = toChar + strlen(toChar);
+        int v, vn, vt;
+        int index = i*INDICE_SIZE;
+        std::from_chars_result res = std::from_chars(ptr, end, v);
+        vertsArgs[index] = vertsPos[v-1].x;
+        vertsArgs[index+1] = vertsPos[v-1].y;
+        vertsArgs[index+2] = vertsPos[v-1].z;
+        ptr = res.ptr;
+        if (*ptr == '/') {
+            ptr++;
+            if (*ptr != '/') {
+                std::from_chars_result res = std::from_chars(ptr, end, vt);
+                vertsArgs[index+6] = vertsTex[vt-1].x;
+                vertsArgs[index+7] = vertsTex[vt-1].y;
+                ptr = res.ptr;
+            }
+            if (*ptr == '/') {
+                ptr++;
+                std::from_chars(ptr, end, vn);
+                vertsArgs[index+3] = vertsNormal[vn-1].x;
+                vertsArgs[index+4] = vertsNormal[vn-1].y;
+                vertsArgs[index+5] = vertsNormal[vn-1].z;
+            }
+        }
+    }
+    vertsArgs[vertsArgs.size()-1] = stoi(args[args.size()-1]);
+    std::cout << "break" << std::endl;
+}
 
 string MeshFactory::GetTypeIndex(int index)
 {
@@ -8,39 +102,12 @@ string MeshFactory::GetTypeIndex(int index)
     return Mesh::GetTypeMap()[type];
 }
 
-int MeshFactory::CreateObject(string &objectName, vector<float> &args)
+map<string, function<unique_ptr<Mesh>(vector<float>&)>> &MeshFactory::GetMeshMap()
 {
-    std::map<MeshType, std::string> type = Mesh::GetTypeMap();
-    if (type[MeshType::SPHERE] == objectName) {
-        objects.push_back(new Sphere(args));
-    } else if (type[MeshType::CYLINDER] == objectName) {
-        objects.push_back(new Cylinder(args));
-    } else if (type[MeshType::CONE] == objectName) {
-        objects.push_back(new Cone(args));
-    } else if (type[MeshType::ELLIPSOID] == objectName) {
-        objects.push_back(new Ellipsoid(args));
-    } else if (type[MeshType::VERTEX] == objectName) {
-        vertices.emplace_back(Vec3(args[0],args[1],args[2]));
-    } else if (type[MeshType::INDICE] == objectName) {
-        objects.push_back(new Triangle({vertices[(int)args[0]-1],vertices[(int)args[1]-1],vertices[(int)args[2]-1]}, args[3]));
-    }
-    // switch (typeMap[objectName]) {
-    //     case ShapeType::SPHERE:
-    //         if (args.size() < 5) { cerr << "Error: failed to create object sphere not enough args" << endl; return -1; }
-    //         objects.push_back(new Sphere(Vec3(stof(args[1]),stof(args[2]),stof(args[3])), stof(args[4]), stoi(args[5])));
-    //         break;
-    //     case ShapeType::CYLINDER:
-    //         if (args.size() < 9) { cerr << "Error: failed to create object cylinder not enough args" << endl; return -1; }
-    //         objects.push_back(new Cylinder(Vec3(stof(args[1]),stof(args[2]),stof(args[3])), Vec3(stof(args[4]), stof(args[5]), stof(args[6])), stof(args[7]), stof(args[8]), stoi(args[9])));
-    //         break;
-    //     case ShapeType::CONE:
-    //         if (args.size() < 9) { cerr << "Error: failed to create object cone not enough args" << endl; return -1; }
-    //         objects.push_back(new Cone(Vec3(stof(args[1]),stof(args[2]),stof(args[3])), Vec3(stof(args[4]), stof(args[5]), stof(args[6])), stof(args[7]), stof(args[8]), stoi(args[9])));
-    //         break;
-    //     case ShapeType::ELLIPSOID:
-    //         if (args.size() < 7) { cerr << "Error: failed to create object ellipsoid not enough args" << endl; return -1; }
-    //         objects.push_back(new Ellipsoid(Vec3(stof(args[1]),stof(args[2]),stof(args[3])), Vec3(stof(args[4]), stof(args[5]), stof(args[6])), stoi(args[7])));
-    //         break;
-    // }
-    return 0;
+    return meshMap;
+}
+
+map<string, function<void(vector<float>&)>> &MeshFactory::GetGeometryMap()
+{
+    return geometryMap;
 }

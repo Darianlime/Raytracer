@@ -5,8 +5,6 @@
 #include <cstdint>
 #include <string>
 
-using namespace std;
-
 struct Material {
     Color diffuse;
     Color specular;
@@ -16,7 +14,7 @@ struct Material {
 	Material();
 	Material(Color diffuse, Color specular, Vec3 k, float n);
 
-	string ToString() const;
+	std::string ToString() const;
 	//int CheckArgs();
 };
 

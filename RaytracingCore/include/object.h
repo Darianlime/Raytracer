@@ -3,7 +3,12 @@
 
 #include "vector.h"
 #include <vector>
+#include <string>
 #include <map>
+
+using std::string;
+using std::vector;
+using std::map;
 
 class Object {
     protected:

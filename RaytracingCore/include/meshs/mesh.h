@@ -5,6 +5,8 @@
 #include "material.h"
 #include "ray.h"
 
+using std::pair;
+
 enum class MeshType {
     SPHERE,
     CYLINDER,
@@ -12,6 +14,8 @@ enum class MeshType {
     ELLIPSOID,
     TRIANGLE,
     VERTEX,
+    VERTEXNORMAL,
+    VERTEXTEXTURE,
     INDICE
 };
 
@@ -31,7 +35,7 @@ struct Mesh : public Object {
         virtual Vec3 GetNormal(Vec3 intersectedPoint) = 0;
         float GetHitDistance(float A, float B, float C);
 
-        static map<MeshType, string> GetTypeMap();
+        static map<MeshType, string>& GetTypeMap();
         string GetName() override;
 }; 
 

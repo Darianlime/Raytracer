@@ -5,6 +5,6 @@ Material::Material() : diffuse(0,0,0,false), specular(0,0,0,false), k(0,0,0), n(
 Material::Material(Color diffuse, Color specular, Vec3 k, float n)
     : diffuse(diffuse), specular(specular), k(k), n(n) {}
 
-string Material::ToString() const {
+std::string Material::ToString() const {
     return diffuse.ToString() + " " + specular.ToString();
 }
