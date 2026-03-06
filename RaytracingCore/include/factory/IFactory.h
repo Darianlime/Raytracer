@@ -13,6 +13,7 @@ class IFactory {
         virtual ~IFactory() = default;
         virtual int CreateObject(string& objectName, std::vector<string>& args) = 0;
         virtual string GetTypeIndex(int index) = 0;
+        virtual int GetTypeMapSize() = 0;        
 
         virtual string GetName() = 0;
 };

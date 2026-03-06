@@ -6,14 +6,18 @@ using std::clamp;
 using std::cerr;
 using std::endl;
 
-Color::Color() : r(0), g(0), b(0) {}
+Color::Color() : r(0), g(0), b(0), isNormalized(false) {}
+
+Color::Color(float red, float green, float blue) : r(red), g(green), b(blue), isNormalized(false) {}
+
+Color::Color(Vec3 rgb) : r(rgb.x), g(rgb.y), b(rgb.z), isNormalized(false) {}
 
 Color::Color(float red, float green, float blue, bool isNormalized) : isNormalized(isNormalized)
 {
     if (isNormalized) {
-        r = red * 255;
-        g = green * 255;
-        b = blue * 255;
+        r = clamp(red * 255, 0.0f, 255.0f);
+        g = clamp(green * 255, 0.0f, 255.0f);
+        b = clamp(blue * 255, 0.0f, 255.0f);
     } else {
         r = red;
         g = green;
@@ -25,9 +29,9 @@ Color::Color(float red, float green, float blue, bool isNormalized) : isNormaliz
 Color::Color(Vec3 rgb, bool isNormalized) : isNormalized(isNormalized)
 {
     if (isNormalized) {
-        r = rgb.x * 255;
-        g = rgb.y * 255;
-        b = rgb.z * 255;
+        r = clamp(rgb.x * 255, 0.0f, 255.0f);
+        g = clamp(rgb.y * 255, 0.0f, 255.0f);
+        b = clamp(rgb.z * 255, 0.0f, 255.0f);
     } else {
         r = rgb.x;
         g = rgb.y;
@@ -50,6 +54,13 @@ void Color::ClampValues(bool isNormalized) {
         g = clamp(g, 0.0f, 1.0f);
         b = clamp(b, 0.0f, 1.0f);
     }
+}
+
+void Color::Normlize()
+{
+    r = r/255;
+    g = g/255;
+    b = b/255;
 }
 
 string Color::ToString() const {

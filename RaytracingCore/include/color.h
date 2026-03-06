@@ -14,14 +14,13 @@ struct Color {
 	bool isNormalized;
 
 	Color();
-	Color(float red, float green, float blue, bool isNormalized);
-	Color(Vec3 rgb, bool isNormalized);
+    Color(float red, float green, float blue);
+    Color(Vec3 rgb);
+    Color(float red, float green, float blue, bool isNormalized);
+    Color(Vec3 rgb, bool isNormalized);
 
     void ClampValues(bool isNormalized);
-
-	// float R() { if (isNormalized) { return (int)round(r); } return r; }
-	// float G() { if (isNormalized) { return (int)round(g); } return g; }
-	// float B() { if (isNormalized) { return (int)round(b); } return b; }
+	void Normlize();
 
     Vec3 GetVec() { return Vec3(r, g, b); }
 	std::string ToString() const;

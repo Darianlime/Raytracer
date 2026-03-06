@@ -20,11 +20,13 @@ LightData PointLight::ParseArgs(vector<float> &args) {
         SetAtLightConst(consts);
         std::cout << "set att light point light" << std::endl;
     }
+    std::cout << "point light args" << std::endl;
+    Vec3(args[0], args[1], args[2]).ToString();
     return LightData{Vec3(args[0], args[1], args[2]), args[4]};
 }
 
 Vec3 PointLight::GetLightDir(Vec3 surfacePos) const {
-    return (pos - surfacePos) / Vec3::Mag(pos - surfacePos);
+    return (pos - surfacePos) / (pos - surfacePos).Mag();
 }
 
 bool PointLight::CompareDistToLight(Vec3 initalObject, Vec3 distToObject)
@@ -34,5 +36,5 @@ bool PointLight::CompareDistToLight(Vec3 initalObject, Vec3 distToObject)
 
 string PointLight::GetName()
 {
-    return "Directional Light";
+    return "Point Light";
 }

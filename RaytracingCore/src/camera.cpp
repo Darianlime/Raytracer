@@ -10,7 +10,7 @@ namespace Raytracer {
     }
 
     void Camera::CalcCoords() {
-        u = Vec3::Cross(viewdir, updir) / Vec3::Mag(Vec3::Cross(viewdir, updir));
-        v = Vec3::Cross(u, viewdir) / Vec3::Mag(Vec3::Cross(u, viewdir));
+        u = Vec3::Cross(viewdir, updir) / Vec3::Cross(viewdir, updir).Mag();
+        v = Vec3::Cross(u, viewdir) / Vec3::Cross(u, viewdir).Mag();
     }
 }

@@ -6,14 +6,10 @@ map<MeshType, string> Mesh::typeMap = {
     {MeshType::CONE, "cone"},
     {MeshType::ELLIPSOID, "ellipsoid"},
     {MeshType::TRIANGLE, "f"},
-    {MeshType::VERTEX, "v"},
-    {MeshType::VERTEXNORMAL, "vn"},
-    {MeshType::VERTEXTEXTURE, "vt"},
-    {MeshType::INDICE, "f"}
 };
 
-Mesh::Mesh(int mat, MeshType type) : mat(mat), type(type) {}
-Mesh::Mesh(Vec3 pos, int mat, MeshType type) : Object(pos), mat(mat), type(type) {}
+Mesh::Mesh(int mat, int tex, MeshType type) : mat(mat), tex(tex), type(type) {}
+Mesh::Mesh(Vec3 pos, int mat, int tex, MeshType type) : Object(pos), mat(mat), tex(tex), type(type) {}
 
 float Mesh::GetHitDistance(float A, float B, float C)
 {

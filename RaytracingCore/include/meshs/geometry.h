@@ -10,6 +10,13 @@ enum class BufferType {
     INDICE
 };
 
+enum class ShadeType {
+    NONE,
+    TEXTURED,
+    SMOOTH,
+    SMOOTH_TEXTURED
+};
+
 struct Vertex {
     Vec3 pos;
     Vec3 normal;
@@ -27,11 +34,15 @@ struct Indices  {
 
 struct Triangle : public Mesh {
     private:
-        int mat;
         Indices indices;
+        Vec3 normal;
+        Vec2 texture;
+        int mat;
+        int tex;
+        int shadeType; 
     public:
         Triangle() = default;
-        Triangle(Indices indices, int mat);
+        Triangle(Indices indices, int mat, int tex);
         Triangle(Indices data);
         Triangle(vector<float> &args);
 
@@ -39,6 +50,7 @@ struct Triangle : public Mesh {
 
         pair<Vec3, bool> CheckIntersection(Ray ray) override;
         Vec3 GetNormal(Vec3 intersectedPoint) override;
+        pair<float, float> GetTexUV(Vec3 intersectedPoint) override;
 
         string GetName() override;
 }; 

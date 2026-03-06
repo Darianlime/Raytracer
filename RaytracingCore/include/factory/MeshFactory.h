@@ -21,8 +21,10 @@ class MeshFactory : public FactoryBase<Mesh> {
         ~MeshFactory() {};
 
         int CreateObject(string& objectName, vector<string>& args) override;
-        void ParseTriangle(vector<string> &args, vector<float> &vertsArgs);
         string GetTypeIndex(int index) override;
+        int GetTypeMapSize() override;
+
+        void ParseTriangle(vector<string> &args, vector<float> &vertsArgs);
         map<string, std::function<unique_ptr<Mesh>(vector<float>&)>>& GetMeshMap();
         map<string, std::function<void(vector<float>&)>>& GetGeometryMap();
         void AddVertPos(vector<float> &args);

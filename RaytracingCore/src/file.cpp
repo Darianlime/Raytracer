@@ -36,7 +36,11 @@ int File::ParseArgs(string inputFile, vector<vector<string>>& args, std::unorder
         string arg;
         while (getline(input, arg, ' ')) {
             args[index].push_back(arg);
-            argsMap[keyword].push_back(stof(arg));
+            float value;
+            auto result = std::from_chars(arg.data(), arg.data() + arg.size(), value);
+            if (result.ec == std::errc()) {
+                argsMap[keyword].push_back(value);
+            }
         }
         index++;
         cout << "Input line: " << inputLine << endl;
@@ -50,6 +54,27 @@ int File::ParseArgs(string inputFile, vector<vector<string>>& args, std::unorder
         return -1;
     }
 
+    fin.close();
+    return 0;
+}
+
+int File::ReadPPM(string inputFileName, int &width, int &height, vector<Color> &pixels) {
+    ifstream fin(inputFileName);
+    if (!fin.is_open()) {
+        cerr << "Error opening read file" << endl;
+        return -1;
+    }
+    string format{};
+    int maxRGBValue{};
+    fin >> format >> width >> height >> maxRGBValue;
+    pixels.resize(width * height); 
+    for (int i = 0; i < height; i++) {
+        for (int j = 0; j < width; j++) {
+            Color pixel;
+            fin >> pixel.r >> pixel.g >> pixel.b;
+            pixels[i * width + j] = pixel;
+        }
+    }
     fin.close();
     return 0;
 }
@@ -107,7 +132,6 @@ int File::VaildateArgs(std::unordered_map<string, vector<float>>& args)
     }
 
     if (args["imsize"][0] < 1 || args["imsize"][1] < 1) { cerr << "Error: imsize arguments are too small" << endl; return -1; }
-    if (Vec3::Dot(Vec3(args["eye"][0], args["eye"][1], args["eye"][2]), Vec3(args["updir"][0], args["updir"][1], args["updir"][2])) != 0) { cerr << "Error: eye and updir are not orthogonal" << endl; return -1; }
     if (args["vfov"][0] < 0 || args["vfov"][0] > 180) { cerr << "Error: vfov is less than 0 or greater than 180" << endl; return -1; }
     if (Color(args["bkgcolor"][0], args["bkgcolor"][1], args["bkgcolor"][2], true).CheckArgs() == -1) { return -1; }
 
@@ -115,8 +139,9 @@ int File::VaildateArgs(std::unordered_map<string, vector<float>>& args)
 }
 
 int File::VaildateObjectsArgs(vector<vector<string>>& args, ObjectFactory& objectFactory) {
-    Material mtl;
-    int matIndex = 0;
+    Material mtl{};
+    Texture tex{};
+    int matIndex{}, texIndex = -1;
     for (int i = 0; i < args.size(); i++) {
         string id = args[i][0];
         if (id == "mtlcolor") {
@@ -131,10 +156,18 @@ int File::VaildateObjectsArgs(vector<vector<string>>& args, ObjectFactory& objec
             // if (mtl.CheckArgs() == -1) {
             //     return -1;
             // }
+        } else if (id == "texture") {
+            std::vector<Color> pixels;
+            int width{}, height{};
+            File::ReadPPM(args[i][1], width, height, pixels);
+            tex = Texture(width, height, pixels);
+            objectFactory.AddTexture(tex);
+            texIndex++;
         } else {
             vector<string> arg = args[i];
             arg.erase(arg.begin());
             arg.emplace_back(to_string(matIndex));
+            arg.emplace_back(to_string(texIndex));
             for (auto& factory : objectFactory.GetFactoryMap()) {
                 factory.second.get()->CreateObject(id, arg);
             }

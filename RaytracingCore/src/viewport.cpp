@@ -9,14 +9,17 @@ namespace Raytracer {
 
     void Viewport::CalcWindowCorners(Camera cam) {
 
-        float vfov = cam.GetVFov();
-        float viewDist = (height/2) / tan((vfov/2) * (M_PI / 180));
+        float vfov = cam.GetVFov() * M_PI / 180;
+        float viewDist = 1;
+        
+        float viewportHeight = 2 * tan(vfov / 2);
+        float viewportWidth = viewportHeight * ((float)width / height);
 
-        Vec3 p = cam.GetEye() + cam.GetViewDir() * viewDist;
-        upper_left = p - cam.GetU() * (width/2) + cam.GetV() * (height/2);
-        upper_right = p + cam.GetU() * (width/2) + cam.GetV() * (height/2);
-        lower_left = p - cam.GetU() * (width/2) - cam.GetV() * (height/2);
-        lower_right = p + cam.GetU() * (width/2) - cam.GetV() * (height/2);
+        Vec3 p = cam.GetEye() + cam.GetViewDir().Normalize() * viewDist;
+        upper_left = p - cam.GetU() * (viewportWidth/2) + cam.GetV() * (viewportHeight/2);
+        upper_right = p + cam.GetU() * (viewportWidth/2) + cam.GetV() * (viewportHeight/2);
+        lower_left = p - cam.GetU() * (viewportWidth/2) - cam.GetV() * (viewportHeight/2);
+        lower_right = p + cam.GetU() * (viewportWidth/2) - cam.GetV() * (viewportHeight/2);
         
         p.ToString();
         upper_left.ToString();

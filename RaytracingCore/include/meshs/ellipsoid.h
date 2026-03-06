@@ -7,6 +7,7 @@ struct EllipsoidData {
     Vec3 pos;
     Vec3 radius;
     int mat;
+    int tex;
 };
 
 struct Ellipsoid : public Mesh {
@@ -22,6 +23,7 @@ struct Ellipsoid : public Mesh {
 
         pair<Vec3, bool> CheckIntersection(Ray ray) override; 
         Vec3 GetNormal(Vec3 intersectedPoint) override;
+        pair<float, float> GetTexUV(Vec3 intersectedPoint) override;
 
         string GetName() override;
 }; 

@@ -1,19 +1,19 @@
 #include "meshs/cylinder.h"
 
 Cylinder::Cylinder(Vec3 pos, Vec3 direction, float radius, float length, int mat) 
-    : Mesh(pos, mat, MeshType::CYLINDER), radius(radius), direction(direction), length(length) {}
+    : Mesh(pos, mat, tex, MeshType::CYLINDER), radius(radius), direction(direction), length(length) {}
 
 Cylinder::Cylinder(CylinderData data)
-    : Mesh(data.pos, data.mat, MeshType::CYLINDER), radius(data.radius), direction(data.direction), length(data.length) {}
+    : Mesh(data.pos, data.mat, data.tex, MeshType::CYLINDER), radius(data.radius), direction(data.direction), length(data.length) {}
 
 Cylinder::Cylinder(vector<float> &args) 
     : Cylinder(ParseArgs(args)) {}
 
 CylinderData Cylinder::ParseArgs(vector<float> &args) {
     if (args.size() < 8) {
-        return CylinderData{Vec3(0.0f,0.0f,0.0f), Vec3(0.0f, -1.0f, 0.0f), 1.0f, 1.0f, 0};
+        return CylinderData{Vec3(0.0f,0.0f,0.0f), Vec3(0.0f, -1.0f, 0.0f), 1.0f, 1.0f, 0, 0};
     }
-    return CylinderData{Vec3(args[0], args[1], args[2]), Vec3(args[3], args[4], args[5]), args[6], args[7], int(args[8])};
+    return CylinderData{Vec3(args[0], args[1], args[2]), Vec3(args[3], args[4], args[5]), args[6], args[7], int(args[8]), int(args[9])};
 }
 
 pair<Vec3, bool> Cylinder::CheckIntersection(Ray ray) {
@@ -40,6 +40,11 @@ pair<Vec3, bool> Cylinder::CheckIntersection(Ray ray) {
 Vec3 Cylinder::GetNormal(Vec3 intersectedPoint)
 {
     return Vec3();
+}
+
+pair<float, float> Cylinder::GetTexUV(Vec3 intersectedPoint)
+{
+    return pair<float, float>();
 }
 
 string Cylinder::GetName()

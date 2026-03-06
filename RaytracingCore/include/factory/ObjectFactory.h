@@ -8,12 +8,14 @@
 #include "factory/LightFactory.h"
 #include "factory/MeshFactory.h"
 #include "material.h"
+#include "texture.h"
 
 // Factory to create new object factories
 class ObjectFactory {
     private:
         std::unordered_map<std::type_index, unique_ptr<IFactory>> factories;
         vector<Material> materials;
+        vector<Texture> textures;
     public:
         ObjectFactory();
         ~ObjectFactory() {};
@@ -44,8 +46,10 @@ class ObjectFactory {
         std::unordered_map<std::type_index, unique_ptr<IFactory>>& GetFactoryMap();
 
         void AddMaterial(Material mat);
+        void AddTexture(Texture tex);
         const vector<Material>& GetMats();
-        const Material &GetMatIndex(int index);
+        const Material& GetMatIndex(int index);
+        Texture& GetTexIndex(int index);
 };
 
 #endif

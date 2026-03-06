@@ -14,12 +14,12 @@ namespace Raytracer {
 
     Vec3 Raycast::CalcRayDirAtPoint(Vec3 point) const
     {
-        return (point - eye) / Vec3::Mag(point - eye);
+        return (point - eye).Normalize();
     }
 
     Vec3 Raycast::CalcRayDirAtPoint(Vec3 point, Vec3 intersectedPoint) const
     {
-        return (point - intersectedPoint) / Vec3::Mag(point - intersectedPoint);
+        return (point - intersectedPoint).Normalize();
     }
 
     // Shoots a shadow ray from intersected point to light and checks for object intersections
@@ -41,11 +41,8 @@ namespace Raytracer {
     // otherwise call ShadeRay()
     Color Raycast::TraceRay(Vec3 point, Color background, ObjectFactory& factories, pair<Vec3, bool> &intersectedPoint)
     {
-        //SetRayDirAtPoint(point);
-        //cout << "tracing: " << objects[0]->GetName() << endl;
         vector<unique_ptr<Mesh>>& meshs = factories.GetFactory<MeshFactory>().GetObjects();
         vector<unique_ptr<Light>>& lights = factories.GetFactory<LightFactory>().GetObjects();
-        //Vec3 intersectedPoint(numeric_limits<float>::infinity(), numeric_limits<float>::infinity(), numeric_limits<float>::infinity());
         Mesh* closest = nullptr; 
         for (unique_ptr<Mesh>& mesh : meshs) {
             pair<Vec3, bool> o = mesh->CheckIntersection(Ray{eye, CalcRayDirAtPoint(point)});
@@ -58,22 +55,27 @@ namespace Raytracer {
             }
         }
         if (closest && intersectedPoint.second) {
-            return ShadeRay(closest, factories.GetMatIndex(closest->mat), intersectedPoint.first, meshs, lights);
+            Material mat = factories.GetMatIndex(closest->mat);
+            if (closest->tex != -1) {
+                pair<float, float> texUV = closest->GetTexUV(intersectedPoint.first);
+                mat.diffuse = factories.GetTexIndex(closest->tex).GetPixel(texUV.first, texUV.second);
+            }
+            return ShadeRay(closest, mat, intersectedPoint.first, meshs, lights);
         }
         return background;
     }
 
     // Shades pixel based on blin phong
     Color Raycast::ShadeRay(Mesh* obj, Material mat, Vec3 intersectedPoint, vector<unique_ptr<Mesh>>& meshs, vector<unique_ptr<Light>>& lights) {
-        Vec3 normal = obj->GetNormal(intersectedPoint);
-        Vec3 viewDir = (eye - intersectedPoint) / Vec3::Mag(eye - intersectedPoint);
+        Vec3 normal = obj->GetNormal(intersectedPoint).Normalize();
+        Vec3 viewDir = (eye - intersectedPoint).Normalize();
         Vec3 ambient = mat.diffuse.GetVec() * mat.k.x;
 
-        Vec3 summation;
+        Vec3 summation(0,0,0);
 
         for (unique_ptr<Light>& light : lights) {
             Vec3 lightDir = light->GetLightDir(intersectedPoint);
-            Vec3 H = (lightDir + viewDir) / Vec3::Mag(lightDir + viewDir);
+            Vec3 H = (lightDir + viewDir).Normalize();
             Vec3 diffuse = mat.diffuse.GetVec() * mat.k.y * std::max(0.0f, Vec3::Dot(normal, lightDir));
             Vec3 specular = mat.specular.GetVec() * mat.k.z * pow(std::max(0.0f, Vec3::Dot(normal, H)), mat.n);
             int shadow = IsShadow(light.get(), intersectedPoint, obj, meshs);

@@ -7,8 +7,6 @@ project(raytracer1a)
 option(RAYTRACER_BUILD_APP "Build raytracer executable" ON)
 
 add_library(lib
-    src/vector.cpp
-
     src/viewport.cpp
     src/camera.cpp
 
@@ -16,6 +14,7 @@ add_library(lib
 
     src/color.cpp
     src/material.cpp
+    src/texture.cpp
 
     src/object.cpp
     

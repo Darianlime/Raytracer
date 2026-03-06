@@ -7,6 +7,7 @@ struct SphereData {
     Vec3 pos;
     float radius;
     int mat;
+    int tex;
 };
 
 struct Sphere : public Mesh {
@@ -22,6 +23,7 @@ struct Sphere : public Mesh {
 
         pair<Vec3, bool> CheckIntersection(Ray ray) override; 
         Vec3 GetNormal(Vec3 intersectedPoint) override;
+        pair<float, float> GetTexUV(Vec3 intersectedPoint) override;
 
         string GetName() override;
 }; 

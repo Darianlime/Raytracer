@@ -13,7 +13,12 @@ void ObjectFactory::AddMaterial(Material mat)
     materials.push_back(mat);
 }
 
-const vector<Material>& ObjectFactory::GetMats()
+void ObjectFactory::AddTexture(Texture tex)
+{
+    textures.push_back(tex);
+}
+
+const vector<Material> &ObjectFactory::GetMats()
 {
     return materials;
 }
@@ -21,4 +26,9 @@ const vector<Material>& ObjectFactory::GetMats()
 const Material& ObjectFactory::GetMatIndex(int index)
 {
     return materials[index];
+}
+
+Texture& ObjectFactory::GetTexIndex(int index)
+{
+    return textures[index];
 }

@@ -1,19 +1,19 @@
 #include "meshs/sphere.h"
 
 Sphere::Sphere(Vec3 pos, float radius, int mat) 
-    : Mesh(pos, mat, MeshType::SPHERE), radius(radius) {}
+    : Mesh(pos, mat, tex, MeshType::SPHERE), radius(radius) {}
 
 Sphere::Sphere(SphereData data)
-    : Mesh(data.pos, data.mat, MeshType::SPHERE), radius(data.radius) {}
+    : Mesh(data.pos, data.mat, data.tex, MeshType::SPHERE), radius(data.radius) {}
 
 Sphere::Sphere(vector<float> &args) 
     : Sphere(ParseArgs(args)) {}
 
 SphereData Sphere::ParseArgs(vector<float> &args) {
     if (args.size() < 4) {
-        return SphereData{Vec3(0,0,0), 1.0f, 0};
+        return SphereData{Vec3(0,0,0), 1.0f, 0, 0};
     }
-    return SphereData{Vec3(args[0], args[1], args[2]), args[3], (int)args[4]};
+    return SphereData{Vec3(args[0], args[1], args[2]), args[3], (int)args[4], (int)args[5]};
 }
 
 pair<Vec3, bool> Sphere::CheckIntersection(Ray ray) {
@@ -33,6 +33,14 @@ pair<Vec3, bool> Sphere::CheckIntersection(Ray ray) {
 Vec3 Sphere::GetNormal(Vec3 intersectedPoint)
 {
     return (intersectedPoint - pos) / radius;
+}
+
+pair<float, float> Sphere::GetTexUV(Vec3 intersectedPoint)
+{
+    float phi = acos((intersectedPoint.z - pos.z)/radius);
+    float theta = atan2(intersectedPoint.y - pos.y, intersectedPoint.x - pos.x);
+
+    return pair<float, float>(std::max(theta/(2*M_PI), (theta + 2*M_PI)/(2*M_PI)), phi / M_PI);
 }
 
 string Sphere::GetName()

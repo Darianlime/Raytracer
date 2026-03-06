@@ -9,6 +9,7 @@ struct CylinderData {
     float radius;
     float length;
     int mat;
+    int tex;
 };
 
 struct Cylinder : public Mesh {
@@ -26,6 +27,7 @@ struct Cylinder : public Mesh {
 
         pair<Vec3, bool> CheckIntersection(Ray ray) override; 
         Vec3 GetNormal(Vec3 intersectedPoint) override;
+        pair<float, float> GetTexUV(Vec3 intersectedPoint) override;
 
         string GetName() override;
 }; 

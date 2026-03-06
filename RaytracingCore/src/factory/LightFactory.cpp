@@ -29,3 +29,8 @@ int LightFactory::CreateObject(string& objectName, vector<string>& args)
     }
     return 0;
 }
+
+int LightFactory::GetTypeMapSize()
+{
+    return Light::GetTypeMap().size();
+}

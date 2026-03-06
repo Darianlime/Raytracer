@@ -1,18 +1,18 @@
 #include "meshs/ellipsoid.h"
 
-Ellipsoid::Ellipsoid(Vec3 pos, Vec3 radius, int mat) : Mesh(pos, mat, MeshType::ELLIPSOID), radius(radius) {}
+Ellipsoid::Ellipsoid(Vec3 pos, Vec3 radius, int mat) : Mesh(pos, mat, tex, MeshType::ELLIPSOID), radius(radius) {}
 
 Ellipsoid::Ellipsoid(EllipsoidData data)
-    : Mesh(data.pos, data.mat, MeshType::SPHERE), radius(data.radius) {}
+    : Mesh(data.pos, data.mat, data.tex, MeshType::SPHERE), radius(data.radius) {}
 
 Ellipsoid::Ellipsoid(vector<float> &args) 
     : Ellipsoid(ParseArgs(args)) {}
 
 EllipsoidData Ellipsoid::ParseArgs(vector<float> &args) {
     if (args.size() < 6) {
-        return EllipsoidData{Vec3(0,0,0), Vec3(1.0f,1.0f,1.0f), 0};
+        return EllipsoidData{Vec3(0,0,0), Vec3(1.0f,1.0f,1.0f), 0, 0};
     }
-    return EllipsoidData{Vec3(args[0], args[1], args[2]), Vec3(args[3], args[4], args[5]), (int)args[6]};
+    return EllipsoidData{Vec3(args[0], args[1], args[2]), Vec3(args[3], args[4], args[5]), (int)args[6], int(args[7])};
 }
 
 pair<Vec3, bool> Ellipsoid::CheckIntersection(Ray ray)
@@ -33,6 +33,11 @@ pair<Vec3, bool> Ellipsoid::CheckIntersection(Ray ray)
 Vec3 Ellipsoid::GetNormal(Vec3 intersectedPoint)
 {
     return Vec3();
+}
+
+pair<float, float> Ellipsoid::GetTexUV(Vec3 intersectedPoint)
+{
+    return pair<float, float>();
 }
 
 string Ellipsoid::GetName()

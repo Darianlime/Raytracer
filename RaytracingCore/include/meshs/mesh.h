@@ -12,11 +12,7 @@ enum class MeshType {
     CYLINDER,
     CONE,
     ELLIPSOID,
-    TRIANGLE,
-    VERTEX,
-    VERTEXNORMAL,
-    VERTEXTEXTURE,
-    INDICE
+    TRIANGLE
 };
 
 struct Mesh : public Object {
@@ -24,15 +20,17 @@ struct Mesh : public Object {
         static map<MeshType, string> typeMap;
     public:
         int mat;
+        int tex;
         MeshType type;
 
         Mesh() = default;
-        Mesh(int mat, MeshType type);
-        Mesh(Vec3 pos, int mat, MeshType type);
+        Mesh(int mat, int tex, MeshType type);
+        Mesh(Vec3 pos, int mat, int tex, MeshType type);
         virtual ~Mesh() {};
 
         virtual pair<Vec3, bool> CheckIntersection(Ray ray) = 0;
         virtual Vec3 GetNormal(Vec3 intersectedPoint) = 0;
+        virtual pair<float, float> GetTexUV(Vec3 intersectedPoint) = 0;
         float GetHitDistance(float A, float B, float C);
 
         static map<MeshType, string>& GetTypeMap();
