@@ -18,12 +18,22 @@ void ObjectFactory::AddTexture(Texture tex)
     textures.push_back(tex);
 }
 
-const vector<Material> &ObjectFactory::GetMats()
+const vector<Material> &ObjectFactory::GetMats() const
 {
     return materials;
 }
 
-const Material& ObjectFactory::GetMatIndex(int index)
+const int ObjectFactory::GetMatsSize() const
+{
+    return materials.size();
+}
+
+Material &ObjectFactory::GetMatIndex(int index)
+{
+    return materials[index];
+}
+
+const Material& ObjectFactory::GetMatIndex(int index) const
 {
     return materials[index];
 }
@@ -31,4 +41,9 @@ const Material& ObjectFactory::GetMatIndex(int index)
 Texture& ObjectFactory::GetTexIndex(int index)
 {
     return textures[index];
+}
+
+const int ObjectFactory::GetTexSize() const
+{
+    return textures.size();
 }

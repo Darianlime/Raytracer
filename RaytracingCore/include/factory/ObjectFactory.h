@@ -47,9 +47,13 @@ class ObjectFactory {
 
         void AddMaterial(Material mat);
         void AddTexture(Texture tex);
-        const vector<Material>& GetMats();
-        const Material& GetMatIndex(int index);
+        const vector<Material> &GetMats() const;
+        const int GetMatsSize() const;
+        Material& GetMatIndex(int index);
+        const Material& GetMatIndex(int index) const;
+
         Texture& GetTexIndex(int index);
+        const int GetTexSize() const;
 };
 
 #endif
