@@ -58,6 +58,33 @@ int File::ParseArgs(string inputFile, vector<vector<string>>& args, std::unorder
     return 0;
 }
 
+int File::ReadPPMBinary(string inputFileName, int &width, int &height, vector<Color> &pixels) {
+    std::cout << "reading p6" << std::endl;
+    ifstream fin(inputFileName, std::ios::binary);
+    if (!fin.is_open()) {
+        cerr << "Error opening read file" << endl;
+        return -1;
+    }
+    string format;
+    int maxRGBValue;
+
+    fin >> format >> width >> height >> maxRGBValue;
+    fin.ignore(1); // skip newline after header
+
+    pixels.resize(width * height);
+
+    for (int i = 0; i < width * height; i++) {
+        unsigned char rgb[3];
+        fin.read(reinterpret_cast<char*>(rgb), 3);
+
+        pixels[i].r = rgb[0];
+        pixels[i].g = rgb[1];
+        pixels[i].b = rgb[2];
+    }
+    fin.close();
+    return 0;
+}
+
 int File::ReadPPM(string inputFileName, int &width, int &height, vector<Color> &pixels) {
     ifstream fin(inputFileName);
     if (!fin.is_open()) {
@@ -67,6 +94,11 @@ int File::ReadPPM(string inputFileName, int &width, int &height, vector<Color> &
     string format{};
     int maxRGBValue{};
     fin >> format >> width >> height >> maxRGBValue;
+    if (format == "P6") {
+        fin.close();
+        ReadPPMBinary(inputFileName, width, height, pixels);
+        return 0;
+    }
     pixels.resize(width * height); 
     for (int i = 0; i < height; i++) {
         for (int j = 0; j < width; j++) {

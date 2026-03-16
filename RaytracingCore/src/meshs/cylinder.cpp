@@ -10,7 +10,7 @@ Cylinder::Cylinder(vector<float> &args)
     : Cylinder(ParseArgs(args)) {}
 
 CylinderData Cylinder::ParseArgs(vector<float> &args) {
-    if (args.size() < 8) {
+    if (args.size() < 10) {
         return CylinderData{Vec3(0.0f,0.0f,0.0f), Vec3(0.0f, -1.0f, 0.0f), 1.0f, 1.0f, 0, 0};
     }
     return CylinderData{Vec3(args[0], args[1], args[2]), Vec3(args[3], args[4], args[5]), args[6], args[7], int(args[8]), int(args[9])};

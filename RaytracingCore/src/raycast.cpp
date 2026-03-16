@@ -44,8 +44,9 @@ namespace Raytracer {
         vector<unique_ptr<Mesh>>& meshs = factories.GetFactory<MeshFactory>().GetObjects();
         vector<unique_ptr<Light>>& lights = factories.GetFactory<LightFactory>().GetObjects();
         Mesh* closest = nullptr; 
+        Vec3 dir = CalcRayDirAtPoint(point);
         for (unique_ptr<Mesh>& mesh : meshs) {
-            pair<Vec3, bool> o = mesh->CheckIntersection(Ray{eye, CalcRayDirAtPoint(point)});
+            pair<Vec3, bool> o = mesh->CheckIntersection(Ray{eye, dir});
             if (o.second) {
                 if (Vec3::Dist(eye, o.first) < Vec3::Dist(eye, intersectedPoint.first)) {
                     closest = mesh.get();

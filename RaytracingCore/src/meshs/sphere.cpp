@@ -10,7 +10,7 @@ Sphere::Sphere(vector<float> &args)
     : Sphere(ParseArgs(args)) {}
 
 SphereData Sphere::ParseArgs(vector<float> &args) {
-    if (args.size() < 4) {
+    if (args.size() < 6) {
         return SphereData{Vec3(0,0,0), 1.0f, 0, 0};
     }
     return SphereData{Vec3(args[0], args[1], args[2]), args[3], (int)args[4], (int)args[5]};
