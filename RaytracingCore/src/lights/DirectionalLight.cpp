@@ -1,12 +1,12 @@
 #include "lights/DirectionalLight.h"
 
 DirectionalLight::DirectionalLight(Vec3 direction, float intensity) : Light(direction, intensity, LightType::DIRECTIONAL) {
-    SetLightDir((-direction) / direction.Mag()); 
+    SetLightDir(direction); 
 }
 
 DirectionalLight::DirectionalLight(LightData data)
     : Light(data.lightVec, data.intensity, LightType::DIRECTIONAL) {
-    SetLightDir((-data.lightVec) / data.lightVec.Mag()); 
+    SetLightDir(data.lightVec); 
 }
 
 DirectionalLight::DirectionalLight(vector<float> &args) 
@@ -19,6 +19,11 @@ LightData DirectionalLight::ParseArgs(vector<float> &args) {
     }
     std::cout << ">4" << std::endl;
     return LightData{Vec3(args[0], args[1], args[2]), args[4]};
+}
+
+void DirectionalLight::SetLightDir(Vec3 lightDir)
+{
+    this->lightDir = (-lightDir) / lightDir.Mag();
 }
 
 string DirectionalLight::GetName()

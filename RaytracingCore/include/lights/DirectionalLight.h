@@ -12,6 +12,8 @@ class DirectionalLight : public Light
         DirectionalLight(vector<float> &args);
         LightData ParseArgs(vector<float> &args);
 
+        void SetLightDir(Vec3 lightDir) override;
+
 		string GetName() override;
 };
 

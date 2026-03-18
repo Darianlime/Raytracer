@@ -13,6 +13,7 @@ class PointLight : public Light
 
         Vec3 GetLightDir(Vec3 surfacePos) const override;
 		bool CompareDistToLight(Vec3 initalObject, Vec3 distToObject) override;
+        void SetLightDir(Vec3 lightDir) override;
 
 		string GetName() override;
 };

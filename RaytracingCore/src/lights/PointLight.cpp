@@ -34,6 +34,11 @@ bool PointLight::CompareDistToLight(Vec3 initalObject, Vec3 distToObject)
     return Vec3::Dist(initalObject, pos) < Vec3::Dist(initalObject, distToObject);
 }
 
+void PointLight::SetLightDir(Vec3 lightDir)
+{
+    this->lightDir = lightDir;
+}
+
 string PointLight::GetName()
 {
     return "Point Light";

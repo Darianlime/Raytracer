@@ -39,8 +39,9 @@ class Light : public Object
         static std::map<LightSourceType, string> GetSourceTypeMap();
 		static std::map<LightType, string> GetTypeMap();
 
-        void SetLightDir(Vec3 lightDir) { this->lightDir = lightDir; }
 		void SetAtLightConst(Vec3 consts)  { this->consts = consts; };
+
+		virtual void SetLightDir(Vec3 lightDir) = 0;
 		virtual Vec3 GetLightDir(Vec3 surfacePos) const { return lightDir; }
 		virtual bool CompareDistToLight(Vec3 initalObject, Vec3 distToObject) { return false; }
 
