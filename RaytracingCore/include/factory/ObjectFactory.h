@@ -14,6 +14,7 @@
 class ObjectFactory {
     private:
         std::unordered_map<std::type_index, unique_ptr<IFactory>> factories;
+        
         vector<Material> materials;
         vector<Texture> textures;
     public:
@@ -42,6 +43,8 @@ class ObjectFactory {
 
             return *factory;
         }
+
+        
 
         std::unordered_map<std::type_index, unique_ptr<IFactory>>& GetFactoryMap();
 

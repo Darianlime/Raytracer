@@ -51,8 +51,6 @@ int main(int argc, char* argv[]) {
 
     // Store shapes and objects inside the object factory
     ObjectFactory objectFactory;
-    objectFactory.CreateFactory<MeshFactory>();
-    objectFactory.CreateFactory<LightFactory>();
     if (File::VaildateObjectsArgs(args, objectFactory) == -1) {
         return 1;
     }

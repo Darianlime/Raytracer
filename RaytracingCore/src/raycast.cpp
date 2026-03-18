@@ -56,8 +56,11 @@ namespace Raytracer {
             }
         }
         if (closest && intersectedPoint.second) {
-            Material mat = factories.GetMatIndex(closest->mat);
-            if (closest->tex != -1) {
+            Material mat = Material(Color(1.0f,0.75f,0.79f,false), Color(1,1,1,false), Vec3(0.2,0.6,0.2), 10.0f);
+            if (closest->mat > -1 && closest->mat < factories.GetMatsSize() && factories.GetMatsSize() > 0) {
+                mat = factories.GetMatIndex(closest->mat);
+            }
+            if (closest->tex > -1 && closest->tex < factories.GetTexSize() && factories.GetTexSize() > 0) {
                 pair<float, float> texUV = closest->GetTexUV(intersectedPoint.first);
                 mat.diffuse = factories.GetTexIndex(closest->tex).GetPixel(texUV.first, texUV.second);
             }

@@ -173,7 +173,7 @@ int File::VaildateArgs(std::unordered_map<string, vector<float>>& args)
 int File::VaildateObjectsArgs(vector<vector<string>>& args, ObjectFactory& objectFactory) {
     Material mtl{};
     Texture tex{};
-    int matIndex{}, texIndex = -1;
+    int matIndex = -1, texIndex = -1;
     for (int i = 0; i < args.size(); i++) {
         string id = args[i][0];
         if (id == "mtlcolor") {

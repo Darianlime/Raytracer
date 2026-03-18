@@ -10,7 +10,7 @@ Ellipsoid::Ellipsoid(vector<float> &args)
 
 EllipsoidData Ellipsoid::ParseArgs(vector<float> &args) {
     if (args.size() < 8) {
-        return EllipsoidData{Vec3(0,0,0), Vec3(1.0f,1.0f,1.0f), 0, 0};
+        return EllipsoidData{Vec3(0,0,0), Vec3(1.0f,1.0f,1.0f), -1, -1};
     }
     return EllipsoidData{Vec3(args[0], args[1], args[2]), Vec3(args[3], args[4], args[5]), (int)args[6], int(args[7])};
 }
