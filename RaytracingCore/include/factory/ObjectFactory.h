@@ -9,12 +9,14 @@
 #include "factory/MeshFactory.h"
 #include "material.h"
 #include "texture.h"
+#include "camera.h"
 
 // Factory to create new object factories
 class ObjectFactory {
     private:
         std::unordered_map<std::type_index, unique_ptr<IFactory>> factories;
         
+        vector<Raytracer::Camera> cameras;
         vector<Material> materials;
         vector<Texture> textures;
     public:
@@ -44,17 +46,20 @@ class ObjectFactory {
             return *factory;
         }
 
-        
-
         std::unordered_map<std::type_index, unique_ptr<IFactory>>& GetFactoryMap();
 
+        void AddCamera(Raytracer::Camera camera);
+        const vector<Raytracer::Camera> &GetCameras() const;
+        Raytracer::Camera& GetCameraIndex(int index);
+        const int GetCameraSize() const;
+
         void AddMaterial(Material mat);
-        void AddTexture(Texture tex);
         const vector<Material> &GetMats() const;
         const int GetMatsSize() const;
         Material& GetMatIndex(int index);
         const Material& GetMatIndex(int index) const;
 
+        void AddTexture(Texture tex);
         Texture& GetTexIndex(int index);
         const int GetTexSize() const;
 };

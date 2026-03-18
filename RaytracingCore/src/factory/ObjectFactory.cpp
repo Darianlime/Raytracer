@@ -9,6 +9,26 @@ std::unordered_map<std::type_index, unique_ptr<IFactory>>& ObjectFactory::GetFac
     return factories;
 }
 
+void ObjectFactory::AddCamera(Raytracer::Camera camera)
+{
+    cameras.push_back(camera);
+}
+
+const vector<Raytracer::Camera> &ObjectFactory::GetCameras() const
+{
+    return cameras;
+}
+
+Raytracer::Camera &ObjectFactory::GetCameraIndex(int index)
+{
+    return cameras[index];
+}
+
+const int ObjectFactory::GetCameraSize() const
+{
+    return cameras.size();
+}
+
 void ObjectFactory::AddMaterial(Material mat)
 {
     materials.push_back(mat);
