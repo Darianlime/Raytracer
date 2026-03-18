@@ -6,14 +6,15 @@
 namespace Raytracer {
 class Camera {
     private:
-        Vec3 eye;
-        Vec3 viewdir;   
         Vec3 updir;
-        float vfov;
 
         Vec3 u;
         Vec3 v;
     public:
+        Vec3 eye;
+        Vec3 viewdir;  
+        float vfov;
+
         Camera();
         Camera(Vec3 eye, Vec3 viewdir, Vec3 updir, float vfov);
         void CalcCoords();
