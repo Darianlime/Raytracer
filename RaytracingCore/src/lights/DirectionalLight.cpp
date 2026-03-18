@@ -1,7 +1,6 @@
 #include "lights/DirectionalLight.h"
 
-DirectionalLight::DirectionalLight(Vec3 direction, float intensity) : Light(direction, intensity, LightType::DIRECTIONAL)
-{
+DirectionalLight::DirectionalLight(Vec3 direction, float intensity) : Light(direction, intensity, LightType::DIRECTIONAL) {
     SetLightDir((-direction) / direction.Mag()); 
 }
 

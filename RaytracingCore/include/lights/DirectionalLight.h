@@ -6,6 +6,7 @@
 class DirectionalLight : public Light
 {
 	public:
+        DirectionalLight();
 		DirectionalLight(Vec3 direction, float intensity);
         DirectionalLight(LightData data);
         DirectionalLight(vector<float> &args);

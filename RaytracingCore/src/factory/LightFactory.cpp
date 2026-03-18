@@ -1,22 +1,31 @@
 #include "factory/LightFactory.h"
 
-LightFactory::LightFactory() {}
+LightFactory::LightFactory() {
+    lightMap["directional"] = [](vector<float>& args) { return make_unique<DirectionalLight>(args); };
+    lightMap["point"] = [](vector<float>& args) { return make_unique<PointLight>(args); };
+}
 
 string LightFactory::GetTypeIndex(int index)
 {
-    LightSourceType type = static_cast<LightSourceType>(index);
+    LightType type = static_cast<LightType>(index);
     return Light::GetTypeMap()[type];
 }
 
 int LightFactory::CreateObject(string& objectName, vector<string>& args)
 {
-    map<LightSourceType, std::string> type = Light::GetTypeMap();
-    if (objectName != type[LightSourceType::LIGHT] && objectName != type[LightSourceType::ATTLIGHT]) { return 0; }
+    if (lightMap.find(objectName) != lightMap.end()) {
+        vector<float> lights;
+        objects.push_back(lightMap[objectName](lights));
+        return 0;
+    }
+
+    if (objectName != "light" && objectName != "attlight") { return 0; }
 
     vector<float> lightsArgs(args.size());
     for (int i = 0; i < lightsArgs.size(); i++) {
         lightsArgs[i] = stof(args[i]);
     }
+
     switch ((int)lightsArgs[3]) {
         case (int)LightType::DIRECTIONAL:
             std::cout << "created dir light" << std::endl;
@@ -32,5 +41,5 @@ int LightFactory::CreateObject(string& objectName, vector<string>& args)
 
 int LightFactory::GetTypeMapSize()
 {
-    return Light::GetTypeMap().size();
+    return Light::GetSourceTypeMap().size();
 }
