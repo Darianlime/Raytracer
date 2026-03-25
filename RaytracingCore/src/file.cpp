@@ -181,7 +181,9 @@ int File::VaildateObjectsArgs(vector<vector<string>>& args, ObjectFactory& objec
                 Color(stof(args[i][1]), stof(args[i][2]), stof(args[i][3]), false),
                 Color(stof(args[i][4]), stof(args[i][5]), stof(args[i][6]), false), 
                 Vec3(stof(args[i][7]), stof(args[i][8]), stof(args[i][9])),
-                stof(args[i][10])
+                stof(args[i][10]),
+                stof(args[i][11]),
+                stof(args[i][12])
             );
             objectFactory.AddMaterial(mtl);
             matIndex++;

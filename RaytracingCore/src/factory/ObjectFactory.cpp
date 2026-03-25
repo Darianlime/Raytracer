@@ -3,6 +3,7 @@
 ObjectFactory::ObjectFactory() {
     CreateFactory<MeshFactory>();
     CreateFactory<LightFactory>();
+    AddMaterial(Material(Color(1.0f,0.75f,0.79f,false), Color(1,1,1,false), Vec3(0.2,0.6,0.2), 10.0f));
 }
 
 std::unordered_map<std::type_index, unique_ptr<IFactory>>& ObjectFactory::GetFactoryMap() {
@@ -56,10 +57,13 @@ Material &ObjectFactory::GetMatIndex(int index)
 
 const Material& ObjectFactory::GetMatIndex(int index) const
 {
-    return materials[index];
+    if (index > -1 && index < GetMatsSize() && GetMatsSize() > 1) {
+        return materials[index+1];
+    }
+    return materials[0];
 }
 
-Texture& ObjectFactory::GetTexIndex(int index)
+const Texture& ObjectFactory::GetTexIndex(int index) const
 {
     return textures[index];
 }

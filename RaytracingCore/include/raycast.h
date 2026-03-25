@@ -8,20 +8,35 @@
 #include <map>
 
 namespace Raytracer {
+
+struct RayHit {
+    bool hit;
+    Mesh* mesh;
+    Material mat; 
+    Vec3 intersectedPoint;
+    Vec3 viewDir; 
+
+    operator bool() const {
+        return hit;
+    }
+};
+
 class Raycast {
     private:
+        const ObjectFactory& objectFactory;
         Vec3 eye;
     public:
         Raycast() = default;
-        Raycast(Vec3 eye);
+        Raycast(Vec3 eye, const ObjectFactory& objectFactory);
 
         Vec3 GetEye();
         void SetEye(Vec3 eye);
         Vec3 CalcRayDirAtPoint(Vec3 point) const;
         Vec3 CalcRayDirAtPoint(Vec3 point, Vec3 intersectedPoint) const;
-        bool IsShadow(Light *light, Vec3 eye, Mesh *intersectedShape, vector<unique_ptr<Mesh>>& meshs);
-        Color TraceRay(Vec3 point, Color background, ObjectFactory &factories, pair<Vec3, bool> &intersectedPoint);
-        Color ShadeRay(Mesh *obj, Material mat, Vec3 intersectedPoint, vector<unique_ptr<Mesh>> &meshs, vector<unique_ptr<Light>> &lights);
+        RayHit GetRayHit(Ray ray);
+        bool IsShadow(Light *light, Vec3 eye, Mesh *intersectedShape);
+        Color TraceRay(Vec3 point, Color background, pair<Vec3, bool> &intersectedPoint);
+        Color ShadeRay(RayHit hit, Color background, int depth);
 };
 }
 #endif

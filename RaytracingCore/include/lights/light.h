@@ -40,6 +40,7 @@ class Light : public Object
 		static std::map<LightType, string> GetTypeMap();
 
 		void SetAtLightConst(Vec3 consts)  { this->consts = consts; };
+		Vec3 GetH(Vec3 viewDir) { return (lightDir + viewDir).Normalize(); }
 
 		virtual void SetLightDir(Vec3 lightDir) = 0;
 		virtual Vec3 GetLightDir(Vec3 surfacePos) const { return lightDir; }

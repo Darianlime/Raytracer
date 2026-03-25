@@ -25,7 +25,7 @@ class Viewport {
         Color bkgcolor;
 
         Viewport();
-        Viewport(int width, int height, Color bkgcolor);
+        Viewport(int width, int height, Color bkgcolor, float bkgRefractionIndex);
         void CalcWindowCorners(Camera cam);
         int GetWidth() const { return width; }
         int GetHeight() const { return height; }

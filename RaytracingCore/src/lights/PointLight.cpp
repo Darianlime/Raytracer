@@ -10,7 +10,7 @@ PointLight::PointLight(vector<float> &args)
 
 LightData PointLight::ParseArgs(vector<float> &args) {
     if (args.size() < 4) {
-        return LightData{Vec3(0.0f,0.0f,0.0f), 1.0f};
+        return LightData{Vec3(0.0f,10.0f,0.0f), 1.0f};
     }
     if (args.size() >= 7) {
         Vec3 consts(args[5], args[6], args[7]);

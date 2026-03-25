@@ -1,7 +1,9 @@
 #include "camera.h"
 
 namespace Raytracer {
-    Camera::Camera() {}
+    Camera::Camera() : eye(Vec3(0.0f,0.0f,0.0f)), viewdir(Vec3(0.0f,0.0f,-1.0f)), updir(Vec3(0.0f,1.0f,0.0f)), vfov(45.0f) {
+        CalcCoords();
+    }
 
     Camera::Camera(Vec3 eye, Vec3 viewdir, Vec3 updir, float vfov) 
         : eye(eye), viewdir(viewdir), updir(updir), vfov(vfov) 

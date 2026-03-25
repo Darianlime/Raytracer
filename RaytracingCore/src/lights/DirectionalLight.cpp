@@ -15,7 +15,7 @@ DirectionalLight::DirectionalLight(vector<float> &args)
 LightData DirectionalLight::ParseArgs(vector<float> &args) {
     if (args.size() < 4) {
         std::cout << "<4" << std::endl;
-        return LightData{Vec3(0.0f,0.0f,0.0f), 1.0f};
+        return LightData{Vec3(0.0f,-10.0f,0.0f), 1.0f};
     }
     std::cout << ">4" << std::endl;
     return LightData{Vec3(args[0], args[1], args[2]), args[4]};

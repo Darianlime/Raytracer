@@ -31,7 +31,7 @@ class ObjectFactory {
 
         // Gets Factory based on class name
         template <typename T> 
-        T& GetFactory() {
+        T& GetFactory() const {
             auto it = factories.find(typeid(T));
             if (it == factories.end()) {
                 throw std::runtime_error("Factory not registered");
@@ -60,7 +60,7 @@ class ObjectFactory {
         const Material& GetMatIndex(int index) const;
 
         void AddTexture(Texture tex);
-        Texture& GetTexIndex(int index);
+        const Texture& GetTexIndex(int index) const;
         const int GetTexSize() const;
 };
 

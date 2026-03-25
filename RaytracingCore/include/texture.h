@@ -12,7 +12,7 @@ struct Texture {
 
 	Texture();
     Texture(int width, int height, std::vector<Color> &pixels);
-    Color GetPixel(float u, float v);
+    Color GetPixel(float u, float v) const;
 };
 
 #endif

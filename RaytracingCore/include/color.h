@@ -11,6 +11,7 @@ struct Color {
 	float r;
 	float g;
 	float b;
+	float refractionIndex;
 	bool isNormalized;
 
 	Color();
@@ -22,7 +23,7 @@ struct Color {
     void ClampValues(bool isNormalized);
 	void Normlize();
 
-    Vec3 GetVec() { return Vec3(r, g, b); }
+    Vec3 GetVec() const { return Vec3(r, g, b); }
 	std::string ToString() const;
 	int CheckArgs();
 };

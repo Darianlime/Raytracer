@@ -4,7 +4,7 @@ Texture::Texture() : width(0), height(0), pixels() {}
 
 Texture::Texture(int width, int height, std::vector<Color>& pixels) : width(width), height(height), pixels(pixels) {}
 
-Color Texture::GetPixel(float u, float v) {
+Color Texture::GetPixel(float u, float v) const {
     if (u > 1 || v > 1) {
         double interI;
         double interJ;

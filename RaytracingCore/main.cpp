@@ -65,10 +65,10 @@ int main(int argc, char* argv[]) {
         Vec3(argsMap["updir"][0], argsMap["updir"][1], argsMap["updir"][2]),
         argsMap["vfov"][0]);
 
-    Viewport screen(argsMap["imsize"][0], argsMap["imsize"][1], Color(argsMap["bkgcolor"][0], argsMap["bkgcolor"][1], argsMap["bkgcolor"][2], false));
+    Viewport screen(argsMap["imsize"][0], argsMap["imsize"][1], Color(argsMap["bkgcolor"][0], argsMap["bkgcolor"][1], argsMap["bkgcolor"][2], false), argsMap["bkgcolor"][3]);
     screen.CalcWindowCorners(cam);
     
-    Raycast ray(Vec3(argsMap["eye"][0], argsMap["eye"][1], argsMap["eye"][2]));
+    Raycast ray(Vec3(argsMap["eye"][0], argsMap["eye"][1], argsMap["eye"][2]), objectFactory);
 
     // If Depthcueing is enabled store arguments
     Color depthCueColor;
@@ -88,7 +88,7 @@ int main(int argc, char* argv[]) {
         for (int j = 0; j < w; j++) {
             float alphaDepthCue = 1.0f;
             pair<Vec3, bool> intersectedPoint(Vec3(numeric_limits<float>::infinity(), numeric_limits<float>::infinity(), numeric_limits<float>::infinity()), false);
-            Color color = ray.TraceRay(screen.GetWindowLocation(j,i), screen.bkgcolor, objectFactory, intersectedPoint);
+            Color color = ray.TraceRay(screen.GetWindowLocation(j,i), screen.bkgcolor, intersectedPoint);
             // Calculate for deothcueing if enabled
             if (argsMap.find("depthcueing") != argsMap.end() && intersectedPoint.second) {
                 float distObj = Vec3::Dist(intersectedPoint.first, ray.GetEye());
