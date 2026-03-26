@@ -45,9 +45,9 @@ namespace Raytracer {
                 pair<float, float> texUV = closest->GetTexUV(intersection.first);
                 mat.diffuse = objectFactory.GetTexIndex(closest->tex).GetPixel(texUV.first, texUV.second);
             }
-            return RayHit{true, closest, mat, intersection.first, (ray.origin - intersection.first).Normalize()};
+            return RayHit{true, closest, mat, intersection.first};
         }
-        return RayHit{false, closest, Material(), Vec3(0,0,0), Vec3(0,0,0)};
+        return RayHit{false, closest, Material(), Vec3(0,0,0)};
     }
 
 
@@ -90,32 +90,33 @@ namespace Raytracer {
         Vec3 intersectedPoint = hit.intersectedPoint;
         Vec3 normal = hit.mesh->GetNormal(hit.intersectedPoint).Normalize();
         Vec3 ambient = mat.diffuse.GetVec() * mat.k.x;
-
-        Vec3 summation(0,0,0);
+        Vec3 viewDir = (eye - intersectedPoint).Normalize();
+    
+        Vec3 summation(0, 0, 0);
 
         for (unique_ptr<Light>& light : lights) {
             Vec3 lightDir = light->GetLightDir(intersectedPoint);
-            Vec3 halfway = light->GetH(hit.viewDir);
+            Vec3 halfway = (lightDir + viewDir).Normalize();
             Vec3 diffuse = mat.diffuse.GetVec() * mat.k.y * std::max(0.0f, Vec3::Dot(normal, lightDir));
             Vec3 specular = mat.specular.GetVec() * mat.k.z * pow(std::max(0.0f, Vec3::Dot(normal, halfway)), mat.n);
             int shadow = IsShadow(light.get(), intersectedPoint, hit.mesh);
             float d = Vec3::Dist(intersectedPoint, light->pos);
             float attenuation = 1 / (light->consts.x + light->consts.y * d + light->consts.z * pow(d, 2));
-            
+
             summation = summation + (diffuse + specular) * light->intensity * shadow * attenuation;
         }
-        
+
         // reflective material
-        Vec3 reflectionColor{0,0,0};
+        Vec3 reflectionColor{ 0,0,0 };
         float frensnel = pow(((mat.refractionIndex - 1) / (mat.refractionIndex + 1)), 2);
         Vec3 incomingRay = -((intersectedPoint - eye).Normalize());
         float NdotIncomingRay = Vec3::Dot(normal, incomingRay);
         float frensnelR = frensnel + (1 - frensnel) * pow(1 - NdotIncomingRay, 5);
         if (mat.k.z > 0 && depth > 0) {
-            Vec3 reflectiveRay = normal * Vec3::Dot(normal, incomingRay) * 2 - incomingRay;
+            Vec3 reflectiveRay = (normal * Vec3::Dot(normal, incomingRay) * 2 - incomingRay).Normalize();
             const float EPSILON = 1e-4f;
             Vec3 origin = intersectedPoint + normal * EPSILON;
-            RayHit hit = GetRayHit(Ray{origin, reflectiveRay});
+            RayHit hit = GetRayHit(Ray{ origin, reflectiveRay });
             reflectionColor = ShadeRay(hit, background, depth - 1).GetVec();
         }
 
@@ -131,6 +132,5 @@ namespace Raytracer {
         //return Color(ambient + summation * (1 - frensnelR) + reflectionColor + refractionColor * (1 - frensnelR) * (1 - mat.opacity), false);
         return Color(ambient + summation * (1 - frensnelR) + reflectionColor, false);
     }
-
 }
 
