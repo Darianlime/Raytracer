@@ -52,7 +52,7 @@ const int ObjectFactory::GetMatsSize() const
 
 Material &ObjectFactory::GetMatIndex(int index)
 {
-    if (index > -1 && index < GetMatsSize() && GetMatsSize() > 1) {
+    if (index > -1 && index + 1 < GetMatsSize() && GetMatsSize() > 1) {
         return materials[index+1];
     }
     return materials[0];
@@ -60,7 +60,7 @@ Material &ObjectFactory::GetMatIndex(int index)
 
 const Material& ObjectFactory::GetMatIndex(int index) const
 {
-    if (index > -1 && index < GetMatsSize() && GetMatsSize() > 1) {
+    if (index > -1 && index + 1 < GetMatsSize() && GetMatsSize() > 1) {
         return materials[index+1];
     }
     return materials[0];
