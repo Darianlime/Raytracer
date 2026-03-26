@@ -45,9 +45,9 @@ namespace Raytracer {
                 pair<float, float> texUV = closest->GetTexUV(intersection.first);
                 mat.diffuse = objectFactory.GetTexIndex(closest->tex).GetPixel(texUV.first, texUV.second);
             }
-            return RayHit{true, closest, mat, intersection.first, (ray.origin - intersection.first).Normalize()};
+            return RayHit{true, closest, mat, intersection.first};
         }
-        return RayHit{false, closest, Material(), Vec3(0,0,0), Vec3(0,0,0)};
+        return RayHit{false, closest, Material(), Vec3(0,0,0)};
     }
 
 
@@ -95,7 +95,8 @@ namespace Raytracer {
 
         for (unique_ptr<Light>& light : lights) {
             Vec3 lightDir = light->GetLightDir(intersectedPoint);
-            Vec3 halfway = light->GetH(hit.viewDir);
+            Vec3 viewDir = (eye - intersectedPoint).Normalize();
+            Vec3 halfway = (lightDir + viewDir).Normalize();
             Vec3 diffuse = mat.diffuse.GetVec() * mat.k.y * std::max(0.0f, Vec3::Dot(normal, lightDir));
             Vec3 specular = mat.specular.GetVec() * mat.k.z * pow(std::max(0.0f, Vec3::Dot(normal, halfway)), mat.n);
             int shadow = IsShadow(light.get(), intersectedPoint, hit.mesh);

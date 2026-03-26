@@ -21,6 +21,10 @@ int LightFactory::CreateObject(string& objectName, vector<string>& args)
 
     if (objectName != "light" && objectName != "attlight") { return 0; }
 
+    args.pop_back();
+    args.pop_back();
+    std::cout << "light size " << args.size() << std::endl;
+
     vector<float> lightsArgs(args.size());
     for (int i = 0; i < lightsArgs.size(); i++) {
         lightsArgs[i] = stof(args[i]);

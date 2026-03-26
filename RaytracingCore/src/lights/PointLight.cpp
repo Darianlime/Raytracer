@@ -9,6 +9,7 @@ PointLight::PointLight(vector<float> &args)
     : PointLight(ParseArgs(args)) {}
 
 LightData PointLight::ParseArgs(vector<float> &args) {
+    std::cout << "light size " << args.size() << std::endl;
     if (args.size() < 4) {
         return LightData{Vec3(0.0f,10.0f,0.0f), 1.0f};
     }
