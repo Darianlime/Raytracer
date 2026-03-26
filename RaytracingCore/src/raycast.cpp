@@ -45,9 +45,9 @@ namespace Raytracer {
                 pair<float, float> texUV = closest->GetTexUV(intersection.first);
                 mat.diffuse = objectFactory.GetTexIndex(closest->tex).GetPixel(texUV.first, texUV.second);
             }
-            return RayHit{true, closest, mat, intersection.first};
+            return RayHit{true, closest, mat, intersection.first, (intersection.first - ray.origin).Normalize()};
         }
-        return RayHit{false, closest, Material(), Vec3(0,0,0)};
+        return RayHit{false, closest, Material(), Vec3(0,0,0), Vec3(0,0,0)};
     }
 
 
@@ -57,10 +57,10 @@ namespace Raytracer {
         for (unique_ptr<Mesh>& mesh : meshs) {
             if (mesh.get() == intersectedShape) continue;
             pair<Vec3, bool> o = mesh->CheckIntersection(Ray{intersectedPoint, light->GetLightDir(intersectedPoint)});
-            if (o.second) {
-                if (!light->CompareDistToLight(intersectedShape->pos, o.first)) {
-                    return false;
-                }
+            const float EPSILON = 1e-4f;
+            Vec3 origin = intersectedPoint + light->GetLightDir(intersectedPoint) * EPSILON;
+            if (o.second && !light->CompareDistToLight(origin, o.first)) {
+                return false;
             }
         }
         return true;
@@ -91,7 +91,6 @@ namespace Raytracer {
         Vec3 normal = hit.mesh->GetNormal(hit.intersectedPoint).Normalize();
         Vec3 ambient = mat.diffuse.GetVec() * mat.k.x;
         Vec3 viewDir = (eye - intersectedPoint).Normalize();
-    
         Vec3 summation(0, 0, 0);
 
         for (unique_ptr<Light>& light : lights) {
@@ -109,7 +108,7 @@ namespace Raytracer {
         // reflective material
         Vec3 reflectionColor{ 0,0,0 };
         float frensnel = pow(((mat.refractionIndex - 1) / (mat.refractionIndex + 1)), 2);
-        Vec3 incomingRay = -((intersectedPoint - eye).Normalize());
+        Vec3 incomingRay = -hit.viewDir;
         float NdotIncomingRay = Vec3::Dot(normal, incomingRay);
         float frensnelR = frensnel + (1 - frensnel) * pow(1 - NdotIncomingRay, 5);
         if (mat.k.z > 0 && depth > 0) {

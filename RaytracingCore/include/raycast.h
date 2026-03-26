@@ -14,6 +14,7 @@ struct RayHit {
     Mesh* mesh;
     Material mat; 
     Vec3 intersectedPoint;
+    Vec3 viewDir;
 
     operator bool() const {
         return hit;
