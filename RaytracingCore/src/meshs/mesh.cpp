@@ -10,6 +10,7 @@ map<MeshType, string> Mesh::typeMap = {
 
 Mesh::Mesh(int mat, int tex, MeshType type) : mat(mat), tex(tex), type(type) {}
 Mesh::Mesh(Vec3 pos, int mat, int tex, MeshType type) : Object(pos), mat(mat), tex(tex), type(type) {}
+Mesh::Mesh(Vec3 pos, Vec3 rot, Vec3 size, int mat, int tex, MeshType type) : Object(pos, rot, size), mat(mat), tex(tex), type(type) {}
 
 float Mesh::GetHitDistance(float A, float B, float C)
 {
@@ -18,18 +19,13 @@ float Mesh::GetHitDistance(float A, float B, float C)
         return -1;
     }
 
-    float t = (-B - sqrt(discriminant)) / (2 * A); 
+    float t1 = (-B - sqrt(discriminant)) / (2 * A); 
     float t2 = (-B + sqrt(discriminant)) / (2 * A); 
-    if (t < 0 && t2 < 0) {
-        return -1;
-    }
-    if (t < 0 && t2 > 0) {
-        t = t2;
-    }
-    if (t2 < t && t2 > 0) {
-        t = t2;
-    }
-    return t;
+
+    const float EPSILON = 1e-4f;
+    if (t1 > EPSILON) return t1;  // outside sphere, normal near hit
+    if (t2 > EPSILON) return t2;  // inside sphere, use far hit
+    return -1;
 }
 
 map<MeshType, string> &Mesh::GetTypeMap() {

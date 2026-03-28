@@ -26,6 +26,7 @@ struct Mesh : public Object {
         Mesh() = default;
         Mesh(int mat, int tex, MeshType type);
         Mesh(Vec3 pos, int mat, int tex, MeshType type);
+        Mesh(Vec3 pos, Vec3 rot, Vec3 size, int mat, int tex, MeshType type);
         virtual ~Mesh() {};
 
         virtual pair<Vec3, bool> CheckIntersection(Ray ray) = 0;

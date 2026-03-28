@@ -15,10 +15,14 @@ class Object {
         string name;
     public:
         Vec3 pos;
+        Vec3 rot;
+        Vec3 size;
 
         Object() = default;
         Object(Vec3 pos);
+        Object(Vec3 pos, Vec3 rot, Vec3 size);
         Object(Vec3 pos, string name);
+        Object(Vec3 pos, Vec3 rot, Vec3 size, string name);
         virtual ~Object() {};
         virtual string GetName() { return name; }
 
