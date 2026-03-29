@@ -31,7 +31,7 @@ namespace Raytracer {
         float closestDist = numeric_limits<float>::infinity();
         pair<Vec3, bool> intersection(Vec3(numeric_limits<float>::infinity(), numeric_limits<float>::infinity(), numeric_limits<float>::infinity()), false);
         for (unique_ptr<Mesh>& mesh : meshs) {
-            //if (currentMeshHit == mesh.get()) continue;
+            if (currentMeshHit == mesh.get()) continue;
 
             pair<Vec3, bool> o = mesh->CheckIntersection(ray);
             float dist = Vec3::Dist(ray.origin, o.first);
@@ -58,7 +58,8 @@ namespace Raytracer {
 
 
     // Shoots a shadow ray from intersected point to light and checks for object intersections
-    bool Raycast::IsShadow(Light* light, Vec3 intersectedPoint, Mesh* intersectedShape) {
+    float Raycast::IsShadow(Light* light, Vec3 intersectedPoint, Mesh* intersectedShape) {
+        float S = 1.0f;
         vector<unique_ptr<Mesh>>& meshs = objectFactory.GetFactory<MeshFactory>().GetObjects();
         for (unique_ptr<Mesh>& mesh : meshs) {
             if (mesh.get() == intersectedShape) continue;
@@ -66,10 +67,10 @@ namespace Raytracer {
             const float EPSILON = 1e-4f;
             Vec3 origin = intersectedPoint + light->GetLightDir(intersectedPoint) * EPSILON;
             if (o.second && !light->CompareDistToLight(origin, o.first)) {
-                return false;
+                S = S * (1 - objectFactory.GetMatIndex(mesh->mat).opacity);
             }
         }
-        return true;
+        return S;
     }
 
     // Check each object in the screen
@@ -97,8 +98,6 @@ namespace Raytracer {
         Vec3 normal = hit.mesh->GetNormal(intersectedPoint).Normalize();
         Vec3 viewDir = (eye - intersectedPoint).Normalize();
 
-        // Ambient + direct lighting
-        Vec3 ambient = mat.diffuse.GetVec() * mat.k.x;
         Vec3 summation(0, 0, 0);
 
         for (unique_ptr<Light>& light : lights) {
@@ -107,13 +106,14 @@ namespace Raytracer {
             Vec3 diffuse = mat.diffuse.GetVec() * mat.k.y * std::max(0.0f, Vec3::Dot(normal, lightDir));
             Vec3 specular = mat.specular.GetVec() * mat.k.z * pow(std::max(0.0f, Vec3::Dot(normal, halfway)), mat.n);
 
-            float shadow = IsShadow(light.get(), intersectedPoint, hit.mesh) ? 1.0f : 0.0f;
+            float shadow = IsShadow(light.get(), intersectedPoint, hit.mesh);
             float d = Vec3::Dist(intersectedPoint, light->pos);
             float attenuation = 1 / (light->consts.x + light->consts.y * d + light->consts.z * pow(d, 2));
 
             summation = summation + (diffuse + specular) * light->intensity * shadow * attenuation;
         }
 
+        Vec3 ambient = mat.diffuse.GetVec() * mat.k.x;
         Vec3 surfaceColor = ambient + summation;
 
         Vec3 reflectionColor(0,0,0);
@@ -123,11 +123,10 @@ namespace Raytracer {
             const float EPSILON = 1e-4f;
             Vec3 origin = intersectedPoint + normal * EPSILON; // offset outside surface
 
-            RayHit reflectionHit = GetRayHit(Ray{origin, R}, nullptr); 
+            RayHit reflectionHit = GetRayHit(Ray{intersectedPoint, R}, hit.mesh); 
             reflectionColor = ShadeRay(reflectionHit, background, depth-1, currentIOR).GetVec();
         }
 
-        // --- Refraction ---
         Vec3 refractionColor(0,0,0);
         if (mat.opacity < 1.0f && depth > 0) {
             Vec3 I = -hit.viewDir;
@@ -149,8 +148,8 @@ namespace Raytracer {
                 //Vec3 T = (-n * sqrt(sinT2) + (n * cosI - I) * eta).Normalize();
                 const float EPSILON = 1e-4f;
                 Vec3 origin = intersectedPoint + T * EPSILON;
-                //Mesh* skipMesh = entering ? nullptr : hit.mesh;
-                RayHit refractionHit = GetRayHit(Ray{origin, T}, nullptr);
+                Mesh* skipMesh = entering ? nullptr : hit.mesh;
+                RayHit refractionHit = GetRayHit(Ray{intersectedPoint, T}, skipMesh);
                 refractionColor = ShadeRay(refractionHit, background, depth-1, nextIOR).GetVec();
             } else {
                 refractionColor = reflectionColor;
