@@ -29,11 +29,11 @@ struct Mesh : public Object {
         Mesh(Vec3 pos, Vec3 rot, Vec3 size, int mat, int tex, MeshType type);
         virtual ~Mesh() {};
 
-        virtual pair<Vec3, bool> CheckIntersection(Ray ray) = 0;
+        virtual bool CheckIntersection(Ray ray, float& entryIntersection, float& exitIntersection, Vec3& intersection) = 0;
         virtual Vec3 GetNormal(Vec3 intersectedPoint) = 0;
         virtual pair<float, float> GetTexUV(Vec3 intersectedPoint) = 0;
-        float GetHitDistance(float A, float B, float C);
 
+        pair<float, float> GetHitDistance(float A, float B, float C);
         static map<MeshType, string>& GetTypeMap();
         string GetName() override;
 }; 

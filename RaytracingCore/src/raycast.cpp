@@ -29,45 +29,60 @@ namespace Raytracer {
         vector<unique_ptr<Mesh>>& meshs = objectFactory.GetFactory<MeshFactory>().GetObjects();
         Mesh* closest = nullptr; 
         float closestDist = numeric_limits<float>::infinity();
-        pair<Vec3, bool> intersection(Vec3(numeric_limits<float>::infinity(), numeric_limits<float>::infinity(), numeric_limits<float>::infinity()), false);
+        Vec3 closestIntersection(numeric_limits<float>::infinity(), numeric_limits<float>::infinity(), numeric_limits<float>::infinity());
+        Vec3 intersection(numeric_limits<float>::infinity(), numeric_limits<float>::infinity(), numeric_limits<float>::infinity());
+        //Vec3 entryIntersection(numeric_limits<float>::infinity(), numeric_limits<float>::infinity(), numeric_limits<float>::infinity());
+        //Vec3 exitIntersection(numeric_limits<float>::infinity(), numeric_limits<float>::infinity(), numeric_limits<float>::infinity());
+        float entryT{}, exitT{};
+        float closestEntryT{}, closestExitT{};
         for (unique_ptr<Mesh>& mesh : meshs) {
             if (currentMeshHit == mesh.get()) continue;
-
-            pair<Vec3, bool> o = mesh->CheckIntersection(ray);
-            float dist = Vec3::Dist(ray.origin, o.first);
-            if (o.second) {
+            bool o = mesh->CheckIntersection(ray, entryT, exitT, intersection);
+            if (o) {
+                float dist = Vec3::Dist(ray.origin, intersection);
                 const float EPSILON = 1e-4f;
                 if (dist > EPSILON && dist < closestDist) {
                     closest = mesh.get();
-                    intersection.first = o.first;
-                    intersection.second = true;
+                    //entryIntersection = ray.GetRay(entryT);
+                    //exitIntersection = ray.GetRay(exitT);
+                    closestEntryT = entryT;
+                    closestExitT = exitT;
+                    closestIntersection = intersection;
                     closestDist = dist;
                 }
             }
         }
-        if (closest && intersection.second) {
+        if (closest) {
             Material mat = objectFactory.GetMatIndex(closest->mat);
             if (closest->tex > -1 && closest->tex < objectFactory.GetTexSize() && objectFactory.GetTexSize() > 0) {
-                pair<float, float> texUV = closest->GetTexUV(intersection.first);
+                pair<float, float> texUV = closest->GetTexUV(closestIntersection);
                 mat.diffuse = objectFactory.GetTexIndex(closest->tex).GetPixel(texUV.first, texUV.second);
             }
-            return RayHit{true, closest, mat, intersection.first, (ray.origin - intersection.first).Normalize()};
+            return RayHit{true, closest, mat, closestIntersection, (ray.origin - closestIntersection).Normalize(), closestExitT - closestEntryT };
         }
-        return RayHit{false, closest, Material(), Vec3(0,0,0), Vec3(0,0,0)};
+        return RayHit{false, nullptr, Material(), Vec3(0,0,0), Vec3(0,0,0)};
     }
 
 
     // Shoots a shadow ray from intersected point to light and checks for object intersections
-    float Raycast::IsShadow(Light* light, Vec3 intersectedPoint, Mesh* intersectedShape) {
-        float S = 1.0f;
+    Vec3 Raycast::IsShadow(Light* light, Vec3 intersectedPoint, Mesh* intersectedShape) {
+        Vec3 S(1.0f,1.0f,1.0f);
         vector<unique_ptr<Mesh>>& meshs = objectFactory.GetFactory<MeshFactory>().GetObjects();
         for (unique_ptr<Mesh>& mesh : meshs) {
             if (mesh.get() == intersectedShape) continue;
-            pair<Vec3, bool> o = mesh->CheckIntersection(Ray{intersectedPoint, light->GetLightDir(intersectedPoint)});
+            Vec3 lightDir = light->GetLightDir(intersectedPoint);
+            Ray ray{intersectedPoint, lightDir}; 
+            float entryT{}, exitT{};
+            Vec3 intersection(numeric_limits<float>::infinity(), numeric_limits<float>::infinity(), numeric_limits<float>::infinity());
+            bool o = mesh->CheckIntersection(ray, entryT, exitT, intersection);
             const float EPSILON = 1e-4f;
-            Vec3 origin = intersectedPoint + light->GetLightDir(intersectedPoint) * EPSILON;
-            if (o.second && !light->CompareDistToLight(origin, o.first)) {
-                S = S * (1 - objectFactory.GetMatIndex(mesh->mat).opacity);
+            Vec3 origin = intersectedPoint + lightDir * EPSILON;
+            if (o && !light->CompareDistToLight(origin, intersection)) {
+                Vec3 alpha = objectFactory.GetMatIndex(mesh->mat).alpha.GetVec();
+                float distance = exitT - entryT;
+                S.x *= exp(-alpha.x * distance);
+                S.y *= exp(-alpha.y * distance);
+                S.z *= exp(-alpha.z * distance);
             }
         }
         return S;
@@ -106,7 +121,7 @@ namespace Raytracer {
             Vec3 diffuse = mat.diffuse.GetVec() * mat.k.y * std::max(0.0f, Vec3::Dot(normal, lightDir));
             Vec3 specular = mat.specular.GetVec() * mat.k.z * pow(std::max(0.0f, Vec3::Dot(normal, halfway)), mat.n);
 
-            float shadow = IsShadow(light.get(), intersectedPoint, hit.mesh);
+            Vec3 shadow = IsShadow(light.get(), intersectedPoint, hit.mesh);
             float d = Vec3::Dist(intersectedPoint, light->pos);
             float attenuation = 1 / (light->consts.x + light->consts.y * d + light->consts.z * pow(d, 2));
 
@@ -123,12 +138,12 @@ namespace Raytracer {
             const float EPSILON = 1e-4f;
             Vec3 origin = intersectedPoint + normal * EPSILON; // offset outside surface
 
-            RayHit reflectionHit = GetRayHit(Ray{intersectedPoint, R}, hit.mesh); 
+            RayHit reflectionHit = GetRayHit(Ray{origin, R}, hit.mesh); 
             reflectionColor = ShadeRay(reflectionHit, background, depth-1, currentIOR).GetVec();
         }
 
         Vec3 refractionColor(0,0,0);
-        if (mat.opacity < 1.0f && depth > 0) {
+        if ((mat.alpha.r < 1.0f || mat.alpha.g < 1.0f || mat.alpha.b < 1.0f) && depth > 0) {
             Vec3 I = -hit.viewDir;
             bool entering = Vec3::Dot(normal, I) < 0;
             Vec3 n = normal;
@@ -149,8 +164,12 @@ namespace Raytracer {
                 const float EPSILON = 1e-4f;
                 Vec3 origin = intersectedPoint + T * EPSILON;
                 Mesh* skipMesh = entering ? nullptr : hit.mesh;
-                RayHit refractionHit = GetRayHit(Ray{intersectedPoint, T}, skipMesh);
+                RayHit refractionHit = GetRayHit(Ray{origin, T}, skipMesh);
                 refractionColor = ShadeRay(refractionHit, background, depth-1, nextIOR).GetVec();
+                Vec3 alpha = objectFactory.GetMatIndex(hit.mesh->mat).alpha.GetVec();
+                refractionColor.x *= exp(-alpha.x * refractionHit.t);
+                refractionColor.y *= exp(-alpha.y * refractionHit.t);
+                refractionColor.z *= exp(-alpha.z * refractionHit.t);
             } else {
                 refractionColor = reflectionColor;
             }
@@ -159,8 +178,7 @@ namespace Raytracer {
         float f0 = pow((mat.refractionIndex - 1)/(mat.refractionIndex + 1), 2);
         float cosTheta = fabs(Vec3::Dot(normal, -hit.viewDir));
         float fresnelR = f0 + (1 - f0) * pow(1 - cosTheta, 5);
-        
-        Vec3 finalColor =  surfaceColor + reflectionColor * fresnelR + refractionColor * (1 - fresnelR) * (1 - mat.opacity); 
+        Vec3 finalColor =  surfaceColor + reflectionColor * fresnelR + refractionColor * (1 - fresnelR); 
         return Color(finalColor, false);
     }
 }

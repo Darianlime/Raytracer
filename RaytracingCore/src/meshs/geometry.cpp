@@ -25,7 +25,7 @@ Indices Triangle::ParseArgs(vector<float> &args) {
     return Indices{vertices[0], vertices[1], vertices[2]};
 }
 
-pair<Vec3, bool> Triangle::CheckIntersection(Ray ray)
+bool Triangle::CheckIntersection(Ray ray, float& entryIntersection, float& exitIntersection, Vec3& intersection)
 {
     Vec3 e1 = indices.v2.pos - indices.v1.pos;
     Vec3 e2 = indices.v3.pos - indices.v1.pos;
@@ -35,11 +35,11 @@ pair<Vec3, bool> Triangle::CheckIntersection(Ray ray)
     float D = -(Vec3::Dot(n, indices.v1.pos));
 
     float denominator = Vec3::Dot(n, ray.raydir);
-    if (fabs(denominator) < 1e-6) { return pair<Vec3, bool>(Vec3(0,0,0), false); } 
+    if (fabs(denominator) < 1e-6) { return false; } 
 
     float t = -(Vec3::Dot(n, ray.origin) + D) / denominator;
     if (t < 0) {
-        return pair<Vec3, bool>(Vec3(0,0,0), false);
+        return false;
     }
 
     Vec3 intersectedPoint = ray.GetRay(t);
@@ -52,7 +52,7 @@ pair<Vec3, bool> Triangle::CheckIntersection(Ray ray)
     float d2p = Vec3::Dot(e2, ep);
 
     float determinant = (d11 * d22) - (d12 * d12);
-    if (determinant == 0) { return pair<Vec3, bool>(Vec3(0,0,0), false); }
+    if (determinant == 0) { return false; }
 
     float beta = (d22*d1p - d12*d2p) / determinant;
     float gamma = (d11*d2p - d12*d1p) / determinant;
@@ -66,9 +66,12 @@ pair<Vec3, bool> Triangle::CheckIntersection(Ray ray)
     }
     if ((0 <= alpha && alpha <= 1) && (0 <= beta && beta <= 1) && (0 <= gamma && gamma <= 1))
     {
-        return pair<Vec3, bool>(intersectedPoint, true);
+        entryIntersection = t;
+        exitIntersection = t;
+        intersection = intersectedPoint;
+        return true;
     }
-    return pair<Vec3, bool>(Vec3(0,0,0), false);
+    return false;
 }
 
 Vec3 Triangle::GetNormal(Vec3 intersectedPoint)

@@ -48,7 +48,7 @@ struct Triangle : public Mesh {
 
         Indices ParseArgs(vector<float> &args);
 
-        pair<Vec3, bool> CheckIntersection(Ray ray) override;
+        bool CheckIntersection(Ray ray, float& entryIntersection, float& exitIntersection, Vec3& intersection) override;
         Vec3 GetNormal(Vec3 intersectedPoint) override;
         pair<float, float> GetTexUV(Vec3 intersectedPoint) override;
 

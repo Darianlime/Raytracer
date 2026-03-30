@@ -10,12 +10,12 @@ struct Material {
     Color specular;
     Vec3 k; // scalar values 
     float n;
-    float opacity;
+    Color alpha;
     float refractionIndex;
 
 	Material();
 	Material(Color diffuse, Color specular, Vec3 k, float n);
-    Material(Color diffuse, Color specular, Vec3 k, float n, float opacity, float refractionIndex);
+    Material(Color diffuse, Color specular, Vec3 k, float n, Color alpha, float refractionIndex);
 
 	std::string ToString() const;
 	//int CheckArgs();

@@ -16,7 +16,7 @@ ConeData Cone::ParseArgs(vector<float> &args) {
     return ConeData{Vec3(args[0], args[1], args[2]), Vec3(args[3], args[4], args[5]), args[6], args[7], int(args[8]), int(args[9])};
 }
 
-pair<Vec3, bool> Cone::CheckIntersection(Ray ray) {
+bool Cone::CheckIntersection(Ray ray, float& entryIntersection, float& exitIntersection, Vec3& intersection) {
     Vec3 unitDir = direction / direction.Mag();
     Vec3 point = ray.origin - pos;
 
@@ -24,19 +24,23 @@ pair<Vec3, bool> Cone::CheckIntersection(Ray ray) {
     float B = 2 * (Vec3::Dot(point, unitDir) * Vec3::Dot(ray.raydir, unitDir) - pow(cos(angle * M_PI / 180), 2) * Vec3::Dot(point, ray.raydir));
     float C = pow(Vec3::Dot(point, unitDir), 2) - pow(cos(angle * M_PI / 180), 2) *  pow(point.Mag(), 2);
 
-    float t = GetHitDistance(A, B, C);
-    if (t < 0) {
-        return pair<Vec3, bool>(Vec3(0,0,0), false);
+    pair<float, float> t = GetHitDistance(A, B, C);
+    if (t.first < 0 && t.second < 0) {
+        return false;
     }
-    
-    Vec3 intersectedPoint = ray.GetRay(t);
+    entryIntersection = t.first;
+    exitIntersection = t.second;
+    intersection = ray.GetRay(entryIntersection);
+    if (entryIntersection <= 0) {
+        intersection = ray.GetRay(exitIntersection);
+    }
     
     // Check if point lies between 0 and height
-    float checkPoint = Vec3::Dot(intersectedPoint - pos, unitDir);
+    float checkPoint = Vec3::Dot(intersection - pos, unitDir);
     if (0 <= checkPoint && checkPoint <= height) {
-        return pair<Vec3, bool>(intersectedPoint, true);
+        return true;
     }
-    return pair<Vec3, bool>(Vec3(0,0,0), false);
+    return false;
 }
 
 Vec3 Cone::GetNormal(Vec3 intersectedPoint)

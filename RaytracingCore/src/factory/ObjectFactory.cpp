@@ -3,7 +3,7 @@
 ObjectFactory::ObjectFactory() {
     CreateFactory<MeshFactory>();
     CreateFactory<LightFactory>();
-    AddMaterial(Material(Color(1.0f,0.75f,0.79f,false), Color(1,1,1,false), Vec3(0.2,0.6,0.2), 10.0f, 1.0f, 1.0f));
+    AddMaterial(Material(Color(1.0f,0.75f,0.79f,false), Color(1,1,1,false), Vec3(0.2,0.6,0.2), 10.0f, Color(1.0f,1.0f,1.0f,false), 1.0f));
 }
 
 std::unordered_map<std::type_index, unique_ptr<IFactory>>& ObjectFactory::GetFactoryMap() {
