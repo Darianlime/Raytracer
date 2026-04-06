@@ -47,6 +47,7 @@ int MeshFactory::CreateObject(string &objectName, vector<string> &args)
         vector<float> vertsArgs(args.size());
         // parse triangle
         if (geoIndex->first == "f") {
+            std::cout << "f size: " << args.size() << std::endl;
             MeshFactory::ParseTriangle(args, vertsArgs);
         } else {
             for (int i = 0; i < vertsArgs.size(); i++) {
@@ -62,10 +63,10 @@ void MeshFactory::ParseTriangle(vector<string> &args, vector<float>& vertsArgs) 
 
     const int INDICE_SIZE = 8;
     const int EXTRA_ARGS = 3;
-    vertsArgs.resize((args.size()-1) * INDICE_SIZE + EXTRA_ARGS);
+    vertsArgs.resize((args.size()-2) * INDICE_SIZE + EXTRA_ARGS);
     bool texPresent = false;
     bool normalPresent = false;
-    for (int i = 0; i < args.size()-1; i++) {
+    for (int i = 0; i < args.size()-2; i++) {
         const char* toChar = args[i].c_str();
         const char* ptr = toChar;
         const char* end = toChar + strlen(toChar);

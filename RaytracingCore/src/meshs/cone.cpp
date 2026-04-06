@@ -11,7 +11,8 @@ Cone::Cone(vector<float> &args)
 
 ConeData Cone::ParseArgs(vector<float> &args) {
     if (args.size() < 10) {
-        return ConeData{Vec3(0.0f,0.0f,0.0f), Vec3(0.0f, -1.0f, 0.0f), 1.0f, 1.0f, -1, -1};
+        std::cout << "created cone" << std::endl;
+        return ConeData{Vec3(0.0f,0.0f,0.0f), Vec3(0.0f, -1.0f, 0.0f), 20.0f, 6.0f, -1, -1};
     }
     return ConeData{Vec3(args[0], args[1], args[2]), Vec3(args[3], args[4], args[5]), args[6], args[7], int(args[8]), int(args[9])};
 }
@@ -19,33 +20,74 @@ ConeData Cone::ParseArgs(vector<float> &args) {
 bool Cone::CheckIntersection(Ray ray, float& entryIntersection, float& exitIntersection, Vec3& intersection) {
     Vec3 unitDir = direction / direction.Mag();
     Vec3 point = ray.origin - pos;
+    float cosA = cos(angle * M_PI / 180);
+    float sinA = sin(angle * M_PI / 180);
 
     float A = pow(Vec3::Dot(ray.raydir, unitDir), 2) - pow(cos(angle * M_PI / 180), 2) * pow(ray.raydir.Mag(), 2);
     float B = 2 * (Vec3::Dot(point, unitDir) * Vec3::Dot(ray.raydir, unitDir) - pow(cos(angle * M_PI / 180), 2) * Vec3::Dot(point, ray.raydir));
     float C = pow(Vec3::Dot(point, unitDir), 2) - pow(cos(angle * M_PI / 180), 2) *  pow(point.Mag(), 2);
 
     pair<float, float> t = GetHitDistance(A, B, C);
-    if (t.first < 0 && t.second < 0) {
-        return false;
-    }
-    entryIntersection = t.first;
-    exitIntersection = t.second;
-    intersection = ray.GetRay(entryIntersection);
-    if (entryIntersection <= 0) {
-        intersection = ray.GetRay(exitIntersection);
-    }
-    
-    // Check if point lies between 0 and height
-    float checkPoint = Vec3::Dot(intersection - pos, unitDir);
+    float tVal = t.first >= 0 ? t.first : t.second;
+    if (tVal < 0) return false;
+
+     float bestT = -1;
+
+    Vec3 intersectedPoint = ray.GetRay(tVal);
+    float checkPoint = Vec3::Dot(intersectedPoint - pos, unitDir);
     if (0 <= checkPoint && checkPoint <= height) {
-        return true;
+        entryIntersection = tVal;
+        exitIntersection = t.second;
+        intersection = intersectedPoint;
+        bestT = entryIntersection;
     }
-    return false;
+
+    // Test cap
+    Vec3 capCenter = pos + unitDir * height;
+    float denom = Vec3::Dot(ray.raydir, unitDir);
+    if (fabs(denom) > 1e-6f) {
+        float capT = Vec3::Dot(capCenter - ray.origin, unitDir) / denom;
+        if (capT >= 0) {
+            Vec3 capHit = ray.GetRay(capT);
+            float capRadius = height * (sinA / cosA); 
+            float distFromAxis = (capHit - capCenter).Mag();
+            if (distFromAxis <= capRadius) {
+                if (bestT < 0 || capT < bestT) {
+                    bestT = capT;
+                    intersection = capHit;
+                }
+            }
+        }
+    }
+
+    if (bestT < 0) return false;
+
+    entryIntersection = bestT;
+    exitIntersection = t.second;
+    
+    return true;
 }
 
 Vec3 Cone::GetNormal(Vec3 intersectedPoint)
 {
-    return Vec3();
+    Vec3 unitDir = direction.Normalize();
+    Vec3 capCenter = pos + unitDir * height;
+
+    float capRadius = height * tan(angle * M_PI / 180);
+    float distFromAxis = (intersectedPoint - capCenter).Mag();
+
+    // If P is on the cap
+    if (distFromAxis <= capRadius + 1e-4f) {
+        float proj = Vec3::Dot(intersectedPoint - pos, unitDir);
+        if (fabs(proj - height) < 1e-3f)
+            return unitDir; // flat cap normal
+    }
+
+    // Otherwise cone surface normal
+    float proj = Vec3::Dot(intersectedPoint - pos, unitDir);
+    Vec3 axisPoint = pos + unitDir * proj;
+    Vec3 radial = (intersectedPoint - axisPoint).Normalize();
+    return (radial * cos(angle * M_PI / 180) - unitDir * sin(angle * M_PI / 180)).Normalize();
 }
 
 pair<float, float> Cone::GetTexUV(Vec3 intersectedPoint)

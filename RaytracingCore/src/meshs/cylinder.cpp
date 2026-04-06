@@ -11,7 +11,7 @@ Cylinder::Cylinder(vector<float> &args)
 
 CylinderData Cylinder::ParseArgs(vector<float> &args) {
     if (args.size() < 10) {
-        return CylinderData{Vec3(0.0f,0.0f,0.0f), Vec3(0.0f, -1.0f, 0.0f), 1.0f, 1.0f, -1, -1};
+        return CylinderData{Vec3(0.0f,0.0f,0.0f), Vec3(0.0f, -1.0f, 0.0f), 0.5f, 1.0f, -1, -1};
     }
     return CylinderData{Vec3(args[0], args[1], args[2]), Vec3(args[3], args[4], args[5]), args[6], args[7], int(args[8]), int(args[9])};
 }
@@ -43,7 +43,11 @@ bool Cylinder::CheckIntersection(Ray ray, float& entryIntersection, float& exitI
 
 Vec3 Cylinder::GetNormal(Vec3 intersectedPoint)
 {
-    return Vec3();
+    Vec3 unitDir = direction.Normalize();
+    float proj = Vec3::Dot(intersectedPoint - pos, unitDir);
+    Vec3 axisPoint = pos + unitDir * proj;
+
+    return (intersectedPoint - axisPoint).Normalize();
 }
 
 pair<float, float> Cylinder::GetTexUV(Vec3 intersectedPoint)

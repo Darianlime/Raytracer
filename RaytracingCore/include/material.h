@@ -15,6 +15,7 @@ struct Material {
 
 	Material();
 	Material(Color diffuse, Color specular, Vec3 k, float n);
+    Material(Color diffuse, Color specular, Vec3 k, float n, float alpha, float refractionIndex);
     Material(Color diffuse, Color specular, Vec3 k, float n, Color alpha, float refractionIndex);
 
 	std::string ToString() const;

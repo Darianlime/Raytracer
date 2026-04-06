@@ -9,14 +9,26 @@ Triangle::Triangle(Indices data)
 Triangle::Triangle(vector<float> & args) : Triangle(ParseArgs(args)) {}
 
 Indices Triangle::ParseArgs(vector<float> &args) {
-    Vec3 s = Vec3(args[0], args[1], args[2]);
+    std::cout << "crash" << args.size() << std::endl;
     vector<Vertex> vertices(3);
     const int INDICE_SIZE = 8;
-    for (int i = 0; i < vertices.size(); i++) {
-        int index = i*INDICE_SIZE;
-        vertices[i].pos = Vec3(args[index], args[index+1], args[index+2]);
-        vertices[i].normal = Vec3(args[index+3], args[index+4], args[index+5]);
-        vertices[i].texture = Vec2(args[index+6], args[index+7]);
+    if (args.size() < 27) {
+        vertices[0].pos = Vec3(-1, 1, 0);
+        vertices[0].normal = Vec3(0, 0, 0);
+        vertices[0].texture = Vec2(0, 0);
+        vertices[1].pos = Vec3(-1, -1, 0);
+        vertices[1].normal = Vec3(0, 0, 0);
+        vertices[1].texture = Vec2(0, 0);
+        vertices[2].pos = Vec3(1, -1, 0);
+        vertices[2].normal = Vec3(0, 0, 0);
+        vertices[2].texture = Vec2(0, 0);
+    } else {
+        for (int i = 0; i < vertices.size(); i++) {
+            int index = i*INDICE_SIZE;
+            vertices[i].pos = Vec3(args[index], args[index+1], args[index+2]);
+            vertices[i].normal = Vec3(args[index+3], args[index+4], args[index+5]);
+            vertices[i].texture = Vec2(args[index+6], args[index+7]);
+        }
     }
     mat = (int)args[args.size()-3];
     tex = (int)args[args.size()-2];

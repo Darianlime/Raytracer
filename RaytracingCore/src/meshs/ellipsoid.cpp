@@ -3,7 +3,7 @@
 Ellipsoid::Ellipsoid(Vec3 pos, Vec3 radius, int mat) : Mesh(pos, mat, tex, MeshType::ELLIPSOID), radius(radius) {}
 
 Ellipsoid::Ellipsoid(EllipsoidData data)
-    : Mesh(data.pos, Vec3(0,0,0), data.radius, data.mat, data.tex, MeshType::SPHERE), radius(data.radius) {}
+    : Mesh(data.pos, Vec3(0,0,0), data.radius, data.mat, data.tex, MeshType::ELLIPSOID), radius(data.radius) {}
 
 Ellipsoid::Ellipsoid(vector<float> &args) 
     : Ellipsoid(ParseArgs(args)) {}

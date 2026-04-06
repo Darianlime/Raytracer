@@ -31,6 +31,7 @@ pair<float, float> Mesh::GetHitDistance(float A, float B, float C)
     if (t1 < 0) {
         t1 = 0.0f;
     }
+    
     return pair<float, float>(t1, t2);
     
     // const float EPSILON = 1e-4f;
