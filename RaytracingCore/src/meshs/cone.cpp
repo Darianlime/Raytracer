@@ -1,10 +1,10 @@
 #include "meshs/cone.h"
 
 Cone::Cone(Vec3 pos, Vec3 direction, float angle, float height, int mat, int tex) 
-    : Mesh(pos, mat, tex, MeshType::CONE), angle(angle), direction(direction), height(height) {}
+    : Mesh(pos, Vec3(direction.x * 180 / M_PI, direction.y * 180 / M_PI, direction.z * 180 / M_PI), Vec3(1,1,1), mat, tex, MeshType::CONE), angle(angle), direction(direction), height(height) {}
 
 Cone::Cone(ConeData data)
-    : Mesh(data.pos, data.mat, data.tex, MeshType::CONE), angle(data.angle), direction(data.direction), height(data.height) {}
+    : Mesh(data.pos, Vec3(data.direction.x * 180 / M_PI, data.direction.y * 180 / M_PI, data.direction.z * 180 / M_PI), Vec3(1,1,1), data.mat, data.tex, MeshType::CONE), angle(data.angle), direction(data.direction), height(data.height) {}
 
 Cone::Cone(vector<float> &args) 
     : Cone(ParseArgs(args)) {}
@@ -18,7 +18,11 @@ ConeData Cone::ParseArgs(vector<float> &args) {
 }
 
 bool Cone::CheckIntersection(Ray ray, float& entryIntersection, float& exitIntersection, Vec3& intersection) {
-    Vec3 unitDir = direction / direction.Mag();
+    direction.x = rot.x * M_PI / 180;
+    direction.y = rot.y * M_PI / 180;
+    direction.z = rot.z * M_PI / 180;
+
+    Vec3 unitDir = direction.Normalize();
     Vec3 point = ray.origin - pos;
     float cosA = cos(angle * M_PI / 180);
     float sinA = sin(angle * M_PI / 180);

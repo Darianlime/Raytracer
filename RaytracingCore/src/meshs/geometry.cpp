@@ -14,14 +14,26 @@ Indices Triangle::ParseArgs(vector<float> &args) {
     const int INDICE_SIZE = 8;
     if (args.size() < 27) {
         vertices[0].pos = Vec3(-1, 1, 0);
-        vertices[0].normal = Vec3(0, 0, 0);
         vertices[0].texture = Vec2(0, 0);
         vertices[1].pos = Vec3(-1, -1, 0);
-        vertices[1].normal = Vec3(0, 0, 0);
         vertices[1].texture = Vec2(0, 0);
         vertices[2].pos = Vec3(1, -1, 0);
-        vertices[2].normal = Vec3(0, 0, 0);
         vertices[2].texture = Vec2(0, 0);
+        Vec3 e1 =  vertices[1].pos - vertices[0].pos;
+        Vec3 e2 =  vertices[2].pos -  vertices[0].pos;
+        Vec3 n = Vec3::Cross(e2, e1); // normal vector of triangle
+        vertices[0].normal = n.Normalize();
+
+        e1 =  vertices[0].pos - vertices[1].pos;
+        e2 =  vertices[2].pos -  vertices[1].pos;
+        n = Vec3::Cross(e2, e1); // normal vector of triangle
+        vertices[1].normal = n.Normalize();
+
+        e1 =  vertices[0].pos - vertices[2].pos;
+        e2 =  vertices[1].pos -  vertices[2].pos;
+        n = Vec3::Cross(e1, e2); // normal vector of triangle
+        vertices[2].normal = n.Normalize();
+        
     } else {
         for (int i = 0; i < vertices.size(); i++) {
             int index = i*INDICE_SIZE;
@@ -42,7 +54,7 @@ bool Triangle::CheckIntersection(Ray ray, float& entryIntersection, float& exitI
     Vec3 e1 = indices.v2.pos - indices.v1.pos;
     Vec3 e2 = indices.v3.pos - indices.v1.pos;
     Vec3 n = Vec3::Cross(e1, e2); // normal vector of triangle
-    normal = n / n.Mag();
+    normal = n.Normalize();
     
     float D = -(Vec3::Dot(n, indices.v1.pos));
 
