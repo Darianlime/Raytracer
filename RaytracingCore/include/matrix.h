@@ -29,15 +29,6 @@ struct Matrix4 {
             }
             return *this;
         }
-        // bool operator==(const Vec3 &other) const {
-        //     return x == other.x &&  y == other.y &&  z == other.z;
-        // }
-
-        // Matrix4 operator-() const {
-        //     return Matrix4(-x, -y, -z);
-        // }
-
-
 
         Matrix4 operator+(const Matrix4 &other) const {
             Matrix4 mat4{};
@@ -54,14 +45,6 @@ struct Matrix4 {
             }
             return mat4;
         }
-
-        // Vec3 operator/(const float scalar) const {
-        //     return Vec3(x/scalar, y/scalar, z/scalar);
-        // }
-
-        // Vec3 operator*(const float scalar) const {
-        //     return Vec3(x*scalar, y*scalar, z*scalar);
-        // }
 
         Matrix4 operator*(const Matrix4& other) const {
             Matrix4 mat4{};
@@ -195,27 +178,6 @@ struct Matrix4 {
             }
             return result;
         }
-
-        // static float Dist(Vec3 vec1, Vec3 vec2) {
-        //     return sqrt(pow(vec2.x - vec1.x, 2) + pow(vec2.y - vec1.y, 2) + pow(vec2.z - vec1.z, 2));
-        // }
-
-        // float Mag() {
-        //     return sqrt(pow(x, 2) + pow(y, 2) + pow(z, 2));
-        // }
-
-        // static float Dot(Vec3 vec1, Vec3 vec2) {
-        //     return vec1.x * vec2.x + vec1.y * vec2.y + vec1.z * vec2.z;
-        // }
-
-        // static Vec3 Cross(Vec3 vec1, Vec3 vec2) {
-        //     return Vec3(vec1.y * vec2.z - vec1.z * vec2.y, -(vec1.x * vec2.z - vec1.z * vec2.x), vec1.x * vec2.y - vec1.y * vec2.x);
-        // }
-
-        // Vec3 Normalize() {
-        //     float m = Mag();
-        //     return Vec3(x/m,y/m,z/m);
-        // }
 
         static Matrix4 Identity() {
             return Matrix4();
