@@ -35,6 +35,11 @@ void ObjectFactory::AddMaterial(Material mat)
     materials.push_back(mat);
 }
 
+void ObjectFactory::RemoveMaterial(int index)
+{
+    materials.erase(materials.begin() + index + 1);
+}
+
 void ObjectFactory::AddTexture(Texture tex)
 {
     textures.push_back(tex);

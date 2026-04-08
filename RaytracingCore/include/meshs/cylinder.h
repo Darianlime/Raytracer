@@ -27,7 +27,7 @@ struct Cylinder : public Mesh {
 
         bool CheckIntersection(Ray ray, float& entryIntersection, float& exitIntersection, Vec3& intersection) override;
 
-        Vec3 GetNormal(Vec3 intersectedPoint) override;
+        Vec3 GetNormal(Vec3 intersectedPoint, Vec3 raydir) override;
         pair<float, float> GetTexUV(Vec3 intersectedPoint) override;
 
         string GetName() override;

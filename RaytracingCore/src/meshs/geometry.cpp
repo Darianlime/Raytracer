@@ -9,7 +9,6 @@ Triangle::Triangle(Indices data)
 Triangle::Triangle(vector<float> & args) : Triangle(ParseArgs(args)) {}
 
 Indices Triangle::ParseArgs(vector<float> &args) {
-    std::cout << "crash" << args.size() << std::endl;
     vector<Vertex> vertices(3);
     const int INDICE_SIZE = 8;
     if (args.size() < 27) {
@@ -45,7 +44,6 @@ Indices Triangle::ParseArgs(vector<float> &args) {
     mat = (int)args[args.size()-3];
     tex = (int)args[args.size()-2];
     shadeType = (int)args[args.size()-1];
-    std::cout << shadeType << std::endl;
     return Indices{vertices[0], vertices[1], vertices[2]};
 }
 
@@ -98,7 +96,7 @@ bool Triangle::CheckIntersection(Ray ray, float& entryIntersection, float& exitI
     return false;
 }
 
-Vec3 Triangle::GetNormal(Vec3 intersectedPoint)
+Vec3 Triangle::GetNormal(Vec3 intersectedPoint, Vec3 raydir)
 {
     return normal;
 }

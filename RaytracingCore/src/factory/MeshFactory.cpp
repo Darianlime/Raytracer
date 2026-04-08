@@ -47,7 +47,6 @@ int MeshFactory::CreateObject(string &objectName, vector<string> &args)
         vector<float> vertsArgs(args.size());
         // parse triangle
         if (geoIndex->first == "f") {
-            std::cout << "f size: " << args.size() << std::endl;
             MeshFactory::ParseTriangle(args, vertsArgs);
         } else {
             for (int i = 0; i < vertsArgs.size(); i++) {
@@ -57,6 +56,10 @@ int MeshFactory::CreateObject(string &objectName, vector<string> &args)
         geometryMap[objectName](vertsArgs);
     }
     return 0;
+}
+
+void MeshFactory::RemoveMesh(int index) {
+    objects.erase(objects.begin() + index);
 }
 
 void MeshFactory::ParseTriangle(vector<string> &args, vector<float>& vertsArgs) {

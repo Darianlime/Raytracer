@@ -14,6 +14,7 @@ class LightFactory : public FactoryBase<Light> {
         LightFactory();
         ~LightFactory() {};
         int CreateObject(string& objectName, vector<string>& args) override;
+        void RemoveLight(int index);
         int GetTypeMapSize() override;
         string GetTypeIndex(int index) override;
 

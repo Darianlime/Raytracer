@@ -30,9 +30,9 @@ struct Mesh : public Object {
         virtual ~Mesh() {};
 
         virtual bool CheckIntersection(Ray ray, float& entryIntersection, float& exitIntersection, Vec3& intersection) = 0;
-        virtual Vec3 GetNormal(Vec3 intersectedPoint) = 0;
+        virtual Vec3 GetNormal(Vec3 intersectedPoint, Vec3 raydir) = 0;
         virtual pair<float, float> GetTexUV(Vec3 intersectedPoint) = 0;
-
+        
         pair<float, float> GetHitDistance(float A, float B, float C);
         static map<MeshType, string>& GetTypeMap();
         string GetName() override;

@@ -54,6 +54,7 @@ class ObjectFactory {
         const int GetCameraSize() const;
 
         void AddMaterial(Material mat);
+        void RemoveMaterial(int index);
         const vector<Material> &GetMats() const;
         const int GetMatsSize() const;
         Material& GetMatIndex(int index);

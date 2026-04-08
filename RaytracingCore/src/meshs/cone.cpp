@@ -1,10 +1,10 @@
 #include "meshs/cone.h"
 
 Cone::Cone(Vec3 pos, Vec3 direction, float angle, float height, int mat, int tex) 
-    : Mesh(pos, Vec3(direction.x * 180 / M_PI, direction.y * 180 / M_PI, direction.z * 180 / M_PI), Vec3(1,1,1), mat, tex, MeshType::CONE), angle(angle), direction(direction), height(height) {}
+    : Mesh(pos, direction * M_PI / 180, Vec3(1,1,1), mat, tex, MeshType::CONE), angle(angle), direction(direction), height(height) {}
 
 Cone::Cone(ConeData data)
-    : Mesh(data.pos, Vec3(data.direction.x * 180 / M_PI, data.direction.y * 180 / M_PI, data.direction.z * 180 / M_PI), Vec3(1,1,1), data.mat, data.tex, MeshType::CONE), angle(data.angle), direction(data.direction), height(data.height) {}
+    : Mesh(data.pos, data.direction * M_PI / 180, Vec3(1,1,1), data.mat, data.tex, MeshType::CONE), angle(data.angle), direction(data.direction), height(data.height) {}
 
 Cone::Cone(vector<float> &args) 
     : Cone(ParseArgs(args)) {}
@@ -18,47 +18,44 @@ ConeData Cone::ParseArgs(vector<float> &args) {
 }
 
 bool Cone::CheckIntersection(Ray ray, float& entryIntersection, float& exitIntersection, Vec3& intersection) {
-    direction.x = rot.x * M_PI / 180;
-    direction.y = rot.y * M_PI / 180;
-    direction.z = rot.z * M_PI / 180;
+    // direction.x = rot.x * M_PI / 180;
+    // direction.y = rot.y * M_PI / 180;
+    // direction.z = rot.z * M_PI / 180;
 
-    Vec3 unitDir = direction.Normalize();
-    Vec3 point = ray.origin - pos;
+    Vec3 localOrigin3 = (worldToLocal * Vec4(ray.origin)).toVec3();
+    Vec3 localDir3 = (worldToLocal * Vec4(ray.raydir, 0.0f)).toVec3().Normalize(); 
+
+    Vec3 unitDir = Vec3(0, -1, 0);
+
     float cosA = cos(angle * M_PI / 180);
     float sinA = sin(angle * M_PI / 180);
-
-    float A = pow(Vec3::Dot(ray.raydir, unitDir), 2) - pow(cos(angle * M_PI / 180), 2) * pow(ray.raydir.Mag(), 2);
-    float B = 2 * (Vec3::Dot(point, unitDir) * Vec3::Dot(ray.raydir, unitDir) - pow(cos(angle * M_PI / 180), 2) * Vec3::Dot(point, ray.raydir));
-    float C = pow(Vec3::Dot(point, unitDir), 2) - pow(cos(angle * M_PI / 180), 2) *  pow(point.Mag(), 2);
+    float A = pow(Vec3::Dot(localDir3, unitDir), 2) - pow(cosA, 2) * pow(localDir3.Mag(), 2);
+    float B = 2 * (Vec3::Dot(localOrigin3, unitDir) * Vec3::Dot(localDir3, unitDir) - pow(cosA, 2) * Vec3::Dot(localOrigin3, localDir3));
+    float C = pow(Vec3::Dot(localOrigin3, unitDir), 2) - pow(cosA, 2) *  pow(localOrigin3.Mag(), 2);
 
     pair<float, float> t = GetHitDistance(A, B, C);
     float tVal = t.first >= 0 ? t.first : t.second;
     if (tVal < 0) return false;
 
-     float bestT = -1;
+    float bestT = -1;
 
-    Vec3 intersectedPoint = ray.GetRay(tVal);
-    float checkPoint = Vec3::Dot(intersectedPoint - pos, unitDir);
+    Vec3 localHit = localDir3 * tVal + localOrigin3;
+    float checkPoint = Vec3::Dot(localHit - Vec3(0,0,0), unitDir);
     if (0 <= checkPoint && checkPoint <= height) {
-        entryIntersection = tVal;
-        exitIntersection = t.second;
-        intersection = intersectedPoint;
-        bestT = entryIntersection;
+        bestT = tVal;
     }
 
     // Test cap
-    Vec3 capCenter = pos + unitDir * height;
-    float denom = Vec3::Dot(ray.raydir, unitDir);
+    Vec3 capCenter = unitDir * height;
+    float denom = Vec3::Dot(localDir3, unitDir);
     if (fabs(denom) > 1e-6f) {
-        float capT = Vec3::Dot(capCenter - ray.origin, unitDir) / denom;
+        float capT = Vec3::Dot(capCenter - localOrigin3, unitDir) / denom;
         if (capT >= 0) {
-            Vec3 capHit = ray.GetRay(capT);
-            float capRadius = height * (sinA / cosA); 
-            float distFromAxis = (capHit - capCenter).Mag();
-            if (distFromAxis <= capRadius) {
+            Vec3 capHit = localDir3 * capT + localOrigin3;
+            float capRadius = height * (sinA / cosA);
+            if ((capHit - capCenter).Mag() <= capRadius) {
                 if (bestT < 0 || capT < bestT) {
                     bestT = capT;
-                    intersection = capHit;
                 }
             }
         }
@@ -69,29 +66,38 @@ bool Cone::CheckIntersection(Ray ray, float& entryIntersection, float& exitInter
     entryIntersection = bestT;
     exitIntersection = t.second;
     
+    intersection = (localToWorld * Vec4(localDir3 * bestT + localOrigin3)).toVec3();
     return true;
 }
 
-Vec3 Cone::GetNormal(Vec3 intersectedPoint)
+Vec3 Cone::GetNormal(Vec3 intersectedPoint, Vec3 raydir)
 {
-    Vec3 unitDir = direction.Normalize();
-    Vec3 capCenter = pos + unitDir * height;
+    Vec3 unitDir = Vec3(0, -1, 0);
+    Vec3 coneAxisLocal = (worldToLocal * Vec4(unitDir, 0)).toVec3().Normalize();
+    Vec3 local = (worldToLocal * Vec4(intersectedPoint, 0)).toVec3();
+    Matrix4 normalMatrix = worldToLocal.Transpose();
 
+    float proj = Vec3::Dot(local, coneAxisLocal);
+
+    // test cap
     float capRadius = height * tan(angle * M_PI / 180);
-    float distFromAxis = (intersectedPoint - capCenter).Mag();
-
-    // If P is on the cap
-    if (distFromAxis <= capRadius + 1e-4f) {
-        float proj = Vec3::Dot(intersectedPoint - pos, unitDir);
-        if (fabs(proj - height) < 1e-3f)
-            return unitDir; // flat cap normal
+    Vec3 capCenter = coneAxisLocal * height;
+    
+    if (fabs(proj - height) < 1e-3f && (local - capCenter).Mag() <= capRadius + 1e-4f) {
+        return (normalMatrix * Vec4(coneAxisLocal, 0)).toVec3().Normalize(); // cap normal in world space
     }
 
     // Otherwise cone surface normal
-    float proj = Vec3::Dot(intersectedPoint - pos, unitDir);
-    Vec3 axisPoint = pos + unitDir * proj;
-    Vec3 radial = (intersectedPoint - axisPoint).Normalize();
-    return (radial * cos(angle * M_PI / 180) - unitDir * sin(angle * M_PI / 180)).Normalize();
+    Vec3 axisPoint = coneAxisLocal * proj;
+    Vec3 radial = (local - axisPoint).Normalize();
+    Vec3 localNormal = (radial * cos(angle * M_PI / 180) - coneAxisLocal * sin(angle * M_PI / 180)).Normalize();
+    Vec3 worldNormal = (normalMatrix * Vec4(localNormal,0)).toVec3().Normalize();
+
+    Vec3 tipWorld = (localToWorld * Vec4(Vec3(0,height,0))).toVec3();
+    if (Vec3::Dot(worldNormal, intersectedPoint - tipWorld) < 0) {
+        worldNormal = -worldNormal;
+    }
+    return worldNormal;
 }
 
 pair<float, float> Cone::GetTexUV(Vec3 intersectedPoint)

@@ -110,13 +110,16 @@ namespace Raytracer {
         vector<unique_ptr<Light>>& lights = objectFactory.GetFactory<LightFactory>().GetObjects();
         Material mat = hit.mat;
         Vec3 intersectedPoint = hit.intersectedPoint;
-        Vec3 normal = hit.mesh->GetNormal(intersectedPoint).Normalize();
+        Vec3 normal = hit.mesh->GetNormal(intersectedPoint, hit.viewDir).Normalize();
         Vec3 viewDir = (eye - intersectedPoint).Normalize();
 
         Vec3 summation(0, 0, 0);
 
         for (unique_ptr<Light>& light : lights) {
             Vec3 lightDir = light->GetLightDir(intersectedPoint);
+            // printf("normal: %f %f %f\n", normal.x, normal.y, normal.z);
+            // printf("lightDir: %f %f %f\n", lightDir.x, lightDir.y, lightDir.z);
+            // printf("dot: %f\n", Vec3::Dot(normal, lightDir));
             Vec3 halfway = (lightDir + hit.viewDir).Normalize();
             Vec3 diffuse = mat.diffuse.GetVec() * mat.k.y * std::max(0.0f, Vec3::Dot(normal, lightDir));
             Vec3 specular = mat.specular.GetVec() * mat.k.z * pow(std::max(0.0f, Vec3::Dot(normal, halfway)), mat.n);

@@ -34,12 +34,11 @@ bool Ellipsoid::CheckIntersection(Ray ray, float& entryIntersection, float& exit
     return true;
 }
 
-Vec3 Ellipsoid::GetNormal(Vec3 intersectedPoint)
+Vec3 Ellipsoid::GetNormal(Vec3 intersectedPoint, Vec3 raydir)
 {
     // P is in world space, so shift to ellipsoid's local space first
     Vec3 local = intersectedPoint - pos;
 
-    // Gradient of the implicit function (x/a)²+(y/b)²+(z/c)²=1
     Vec3 normal(
         local.x / (size.x * size.x),
         local.y / (size.y * size.y),

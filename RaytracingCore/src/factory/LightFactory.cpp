@@ -43,6 +43,10 @@ int LightFactory::CreateObject(string& objectName, vector<string>& args)
     return 0;
 }
 
+void LightFactory::RemoveLight(int index) {
+    objects.erase(objects.begin() + index);
+}
+
 int LightFactory::GetTypeMapSize()
 {
     return Light::GetSourceTypeMap().size();

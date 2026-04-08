@@ -21,6 +21,7 @@ class MeshFactory : public FactoryBase<Mesh> {
         ~MeshFactory() {};
 
         int CreateObject(string& objectName, vector<string>& args) override;
+        void RemoveMesh(int index);
         string GetTypeIndex(int index) override;
         int GetTypeMapSize() override;
 
