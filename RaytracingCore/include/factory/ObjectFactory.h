@@ -6,7 +6,7 @@
 #include <typeindex>
 #include <memory>
 #include "factory/LightFactory.h"
-#include "factory/MeshFactory.h"
+#include "factory/ModelFactory.h"
 #include "material.h"
 #include "texture.h"
 #include "camera.h"

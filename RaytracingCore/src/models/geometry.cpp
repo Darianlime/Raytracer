@@ -1,10 +1,9 @@
-#include "meshs/geometry.h"
+#include "models/geometry.h"
+using std::vector;
 
-Triangle::Triangle(Indices indices, int mat, int tex) : Mesh(mat, tex, MeshType::TRIANGLE), indices(indices) {}
+Triangle::Triangle(Indices indices, int mat, int tex) : indices(indices) {}
 
-Triangle::Triangle(Indices data)
-    : Mesh(mat, tex, MeshType::TRIANGLE), indices(data) {
-    }
+Triangle::Triangle(Indices data) : indices(data) {}
 
 Triangle::Triangle(vector<float> & args) : Triangle(ParseArgs(args)) {}
 
@@ -12,6 +11,7 @@ Indices Triangle::ParseArgs(vector<float> &args) {
     vector<Vertex> vertices(3);
     const int INDICE_SIZE = 8;
     if (args.size() < 27) {
+        std::cout << "created defualt triangle" << std::endl;
         vertices[0].pos = Vec3(-1, 1, 0);
         vertices[0].texture = Vec2(0, 0);
         vertices[1].pos = Vec3(-1, -1, 0);
@@ -47,8 +47,11 @@ Indices Triangle::ParseArgs(vector<float> &args) {
     return Indices{vertices[0], vertices[1], vertices[2]};
 }
 
-bool Triangle::CheckIntersection(Ray ray, float& entryIntersection, float& exitIntersection, Vec3& intersection)
+bool Triangle::CheckIntersection(Ray ray, float& entryIntersection, float& exitIntersection, Vec3& intersection, Vec3& normal, Vec2& texture)
 {
+    // indices.v1.pos.ToString();
+    // indices.v2.pos.ToString();
+    // indices.v3.pos.ToString();
     Vec3 e1 = indices.v2.pos - indices.v1.pos;
     Vec3 e2 = indices.v3.pos - indices.v1.pos;
     Vec3 n = Vec3::Cross(e1, e2); // normal vector of triangle
@@ -94,19 +97,4 @@ bool Triangle::CheckIntersection(Ray ray, float& entryIntersection, float& exitI
         return true;
     }
     return false;
-}
-
-Vec3 Triangle::GetNormal(Vec3 intersectedPoint, Vec3 raydir)
-{
-    return normal;
-}
-
-pair<float, float> Triangle::GetTexUV(Vec3 intersectedPoint)
-{
-    return pair<float, float>(texture.x, texture.y);
-}
-
-string Triangle::GetName()
-{
-    return GetTypeMap()[type];
 }

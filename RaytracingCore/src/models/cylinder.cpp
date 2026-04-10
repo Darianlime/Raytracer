@@ -1,10 +1,10 @@
-#include "meshs/cylinder.h"
+#include "models/cylinder.h"
 
 Cylinder::Cylinder(Vec3 pos, Vec3 direction, float radius, float length, int mat) 
-    : Mesh(pos, mat, tex, MeshType::CYLINDER), radius(radius), direction(direction), length(length) {}
+    : Model(pos, mat, tex, ModelType::CYLINDER), radius(radius), direction(direction), length(length) {}
 
 Cylinder::Cylinder(CylinderData data)
-    : Mesh(data.pos, data.mat, data.tex, MeshType::CYLINDER), radius(data.radius), direction(data.direction), length(data.length) {}
+    : Model(data.pos, data.mat, data.tex, ModelType::CYLINDER), radius(data.radius), direction(data.direction), length(data.length) {}
 
 Cylinder::Cylinder(vector<float> &args) 
     : Cylinder(ParseArgs(args)) {}
@@ -50,9 +50,9 @@ Vec3 Cylinder::GetNormal(Vec3 intersectedPoint, Vec3 raydir)
     return (intersectedPoint - axisPoint).Normalize();
 }
 
-pair<float, float> Cylinder::GetTexUV(Vec3 intersectedPoint)
+Vec2 Cylinder::GetTexUV(Vec3 intersectedPoint)
 {
-    return pair<float, float>();
+    return Vec2();
 }
 
 string Cylinder::GetName()

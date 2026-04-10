@@ -1,44 +1,59 @@
-#include "factory/MeshFactory.h"
-
+#include "factory/ModelFactory.h"
 using std::function;
 
-MeshFactory::MeshFactory() {
-    meshMap["sphere"] = [](vector<float>& args) { return make_unique<Sphere>(args); };
-    meshMap["cylinder"] = [](vector<float>& args) { return make_unique<Cylinder>(args); };
-    meshMap["cone"] = [](vector<float>& args) { return make_unique<Cone>(args); };
-    meshMap["ellipsoid"] = [](vector<float>& args) { return make_unique<Ellipsoid>(args); };  
+ModelFactory::ModelFactory() : indexOfCurrentMesh(-1) {
+    modelMap["sphere"] = [](vector<float>& args) { return make_unique<Sphere>(args); };
+    modelMap["cylinder"] = [](vector<float>& args) { return make_unique<Cylinder>(args); };
+    modelMap["cone"] = [](vector<float>& args) { return make_unique<Cone>(args); };
+    modelMap["ellipsoid"] = [](vector<float>& args) { return make_unique<Ellipsoid>(args); };  
 
-    geometryMap["f"] = [this](vector<float>& args) { AddTriangle(args); };
+    geometryMap["f"] = [this](vector<float>& args) { AddIndice(args); };
     geometryMap["v"] = [this](vector<float>& args) { AddVertPos(args); };
     geometryMap["vn"] = [this](vector<float>& args) { AddVertNormal(args); };
     geometryMap["vt"] = [this](vector<float>& args) { AddVertTex(args); };
 }
 
-void MeshFactory::AddVertPos(vector<float>& args) {
+void ModelFactory::AddVertPos(vector<float>& args) {
     vertsPos.emplace_back(args[0],args[1],args[2]);
 }
 
-void MeshFactory::AddVertNormal(vector<float>& args) {
+void ModelFactory::AddVertNormal(vector<float>& args) {
     vertsNormal.emplace_back(args[0],args[1],args[2]);
 }
 
-void MeshFactory::AddVertTex(vector<float>& args) {
+void ModelFactory::AddVertTex(vector<float>& args) {
     vertsTex.emplace_back(args[0],args[1]);
 }
 
-void MeshFactory::AddTriangle(vector<float>& args) {
-    objects.push_back(make_unique<Triangle>(args));
+void ModelFactory::AddIndice(vector<float>& args) {
+    objects[indexOfCurrentMesh]->GetTriangles().emplace_back(args);
 }
 
-int MeshFactory::CreateObject(string &objectName, vector<string> &args)
+void ModelFactory::AddMesh(string name, vector<int> modelArgs) {
+    indexOfCurrentMesh = objects.size();
+    objects.push_back(make_unique<Mesh>(name, modelArgs));
+}
+
+int ModelFactory::CreateObject(string &objectName, vector<string> &args)
 {
     // create meshs
-    if (meshMap.find(objectName) != meshMap.end()) {
-        vector<float> meshArgs(args.size());
-        for (int i = 0; i < meshArgs.size(); i++) {
-            meshArgs[i] = stof(args[i]);
+    if (objectName == "o") {
+        vector<int> modelArgs = {-1, -1};
+        // for (int i = 1; i < modelArgs.size(); i++) {
+        //     modelArgs[i] = stoi(args[i]);
+        // }
+        std::cout << "o: mesh created" << std::endl;
+        AddMesh(args[0], modelArgs);
+        return 0;
+    }
+
+    if (modelMap.find(objectName) != modelMap.end()) {
+        vector<float> modelArgs(args.size());
+        for (int i = 0; i < modelArgs.size(); i++) {
+            modelArgs[i] = stof(args[i]);
         }
-        objects.push_back(meshMap[objectName](meshArgs));
+        objects.push_back(modelMap[objectName](modelArgs));
+        return 0;
     }
 
     // create geometry
@@ -47,22 +62,27 @@ int MeshFactory::CreateObject(string &objectName, vector<string> &args)
         vector<float> vertsArgs(args.size());
         // parse triangle
         if (geoIndex->first == "f") {
-            MeshFactory::ParseTriangle(args, vertsArgs);
+            ModelFactory::ParseTriangle(args, vertsArgs);
         } else {
             for (int i = 0; i < vertsArgs.size(); i++) {
                 vertsArgs[i] = stof(args[i]);
-            }           
+            }      
+            if (vertsPos.size() == 0 && indexOfCurrentMesh == -1) {
+                std::cout << "mesh created" << std::endl;
+                vector<int> modelArgs = {(int)vertsArgs[vertsArgs.size()-2], (int)vertsArgs[vertsArgs.size()-1]};
+                AddMesh("mesh", modelArgs);
+            }
         }
         geometryMap[objectName](vertsArgs);
     }
     return 0;
 }
 
-void MeshFactory::RemoveMesh(int index) {
+void ModelFactory::RemoveModel(int index) {
     objects.erase(objects.begin() + index);
 }
 
-void MeshFactory::ParseTriangle(vector<string> &args, vector<float>& vertsArgs) {
+void ModelFactory::ParseTriangle(vector<string> &args, vector<float>& vertsArgs) {
 
     const int INDICE_SIZE = 8;
     const int EXTRA_ARGS = 3;
@@ -104,23 +124,23 @@ void MeshFactory::ParseTriangle(vector<string> &args, vector<float>& vertsArgs) 
     vertsArgs[vertsArgs.size()-(EXTRA_ARGS-2)] = texPresent + (normalPresent << 1);
 }
 
-string MeshFactory::GetTypeIndex(int index)
+string ModelFactory::GetTypeIndex(int index)
 {
-    MeshType type = static_cast<MeshType>(index);
-    return Mesh::GetTypeMap()[type];
+    ModelType type = static_cast<ModelType>(index);
+    return Model::GetTypeMap()[type];
 }
 
-int MeshFactory::GetTypeMapSize()
+int ModelFactory::GetTypeMapSize()
 {
-    return Mesh::GetTypeMap().size();
+    return Model::GetTypeMap().size();
 }
 
-map<string, function<unique_ptr<Mesh>(vector<float> &)>> &MeshFactory::GetMeshMap()
+map<string, function<unique_ptr<Model>(vector<float> &)>> &ModelFactory::GetModelMap()
 {
-    return meshMap;
+    return modelMap;
 }
 
-map<string, function<void(vector<float>&)>> &MeshFactory::GetGeometryMap()
+map<string, function<void(vector<float>&)>> &ModelFactory::GetGeometryMap()
 {
     return geometryMap;
 }

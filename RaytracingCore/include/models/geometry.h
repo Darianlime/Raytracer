@@ -1,7 +1,9 @@
 #ifndef GEOMETRY_H
 #define GEOMETRY_H
 
-#include "mesh.h"
+#include "vector.h"
+#include <vector>
+#include <ray.h>
 
 enum class BufferType {
     VERTEX,
@@ -32,11 +34,9 @@ struct Indices  {
     Indices(Vertex v1, Vertex v2, Vertex v3) : v1(v1), v2(v2), v3(v3) {}
 };
 
-struct Triangle : public Mesh {
+struct Triangle {
     private:
         Indices indices;
-        Vec3 normal;
-        Vec2 texture;
         int mat;
         int tex;
         int shadeType; 
@@ -44,15 +44,11 @@ struct Triangle : public Mesh {
         Triangle() = default;
         Triangle(Indices indices, int mat, int tex);
         Triangle(Indices data);
-        Triangle(vector<float> &args);
+        Triangle(std::vector<float> &args);
 
-        Indices ParseArgs(vector<float> &args);
+        Indices ParseArgs(std::vector<float> &args);
 
-        bool CheckIntersection(Ray ray, float& entryIntersection, float& exitIntersection, Vec3& intersection) override;
-        Vec3 GetNormal(Vec3 intersectedPoint, Vec3 raydir) override;
-        pair<float, float> GetTexUV(Vec3 intersectedPoint) override;
-
-        string GetName() override;
+        bool CheckIntersection(Ray ray, float &entryIntersection, float &exitIntersection, Vec3 &intersection, Vec3 &normal, Vec2 &texture);
 }; 
 
 #endif

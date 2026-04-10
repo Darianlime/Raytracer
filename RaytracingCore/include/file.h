@@ -3,7 +3,7 @@
 
 #include "color.h"
 #include "factory/ObjectFactory.h"
-#include "factory/MeshFactory.h"
+#include "factory/ModelFactory.h"
 #include "factory/LightFactory.h"
 
 #include <iostream>
@@ -17,6 +17,7 @@
 class File {
     public:
         static int ParseArgs(string inputFile, vector<vector<string>> &args, std::unordered_map<string, vector<float>> &argsMap);
+        static int ReadOBJ(string inputFileName, ObjectFactory &objectFactory);
         static int ReadPPMBinary(string inputFileName, int &width, int &height, vector<Color> &pixels);
         static int ReadPPM(string inputFileName, int &width, int &height, vector<Color> &pixels);
         static int WriteToPPM(string inputFileName, vector<vector<Color>> &pixels);

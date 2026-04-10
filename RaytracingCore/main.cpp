@@ -55,7 +55,7 @@ int main(int argc, char* argv[]) {
         return 1;
     }
 
-    for (auto& shape : objectFactory.GetFactory<MeshFactory>().GetObjects()) {
+    for (auto& shape : objectFactory.GetFactory<ModelFactory>().GetObjects()) {
         cout << shape->mat << endl;
     }
 

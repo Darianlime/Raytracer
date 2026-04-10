@@ -1,7 +1,7 @@
 #ifndef CONE_H
 #define CONE_H
 
-#include "mesh.h"
+#include "model.h"
 
 struct ConeData {
     Vec3 pos;
@@ -12,7 +12,7 @@ struct ConeData {
     int tex;
 };
 
-struct Cone : public Mesh {
+struct Cone : public Model {
     public:
         float angle;
         float height;
@@ -28,7 +28,7 @@ struct Cone : public Mesh {
         bool CheckIntersection(Ray ray, float& entryIntersection, float& exitIntersection, Vec3& intersection) override;
 
         Vec3 GetNormal(Vec3 intersectedPoint, Vec3 raydir) override;
-        pair<float, float> GetTexUV(Vec3 intersectedPoint) override;
+        Vec2 GetTexUV(Vec3 intersectedPoint) override;
 
         string GetName() override;
 }; 

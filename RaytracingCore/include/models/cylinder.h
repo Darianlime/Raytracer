@@ -1,7 +1,7 @@
 #ifndef CYLINDER_H
 #define CYLINDER_H
 
-#include "mesh.h"
+#include "model.h"
 
 struct CylinderData {
     Vec3 pos;
@@ -12,7 +12,7 @@ struct CylinderData {
     int tex;
 };
 
-struct Cylinder : public Mesh {
+struct Cylinder : public Model {
     public:
         float radius;
         float length;
@@ -28,7 +28,7 @@ struct Cylinder : public Mesh {
         bool CheckIntersection(Ray ray, float& entryIntersection, float& exitIntersection, Vec3& intersection) override;
 
         Vec3 GetNormal(Vec3 intersectedPoint, Vec3 raydir) override;
-        pair<float, float> GetTexUV(Vec3 intersectedPoint) override;
+        Vec2 GetTexUV(Vec3 intersectedPoint) override;
 
         string GetName() override;
 }; 

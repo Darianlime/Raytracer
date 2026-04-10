@@ -22,9 +22,11 @@ int File::ParseArgs(string inputFile, vector<vector<string>>& args, std::unorder
     int index = 0;
     while (getline(fin, inputLine, '\n'))
     {
-        if (inputLine.empty()) {
+        size_t firstChar = inputLine.find_first_not_of(" \t");
+        if (firstChar == std::string::npos || inputLine[firstChar] == '#') {
             continue;
         }
+
         std::stringstream input(inputLine);
         string keyword;
         
@@ -57,6 +59,52 @@ int File::ParseArgs(string inputFile, vector<vector<string>>& args, std::unorder
     fin.close();
     return 0;
 }
+
+int File::ReadOBJ(string inputFileName, ObjectFactory& objectFactory)
+{
+    ifstream fin(inputFileName);
+    if (!fin.is_open()) {
+        cerr << "Error creating obj file" << endl;
+        return -1;
+    }
+
+    string inputLine;
+    int index = 0;
+    while (getline(fin, inputLine, '\n'))
+    {
+        std::vector<string> args{};
+        size_t firstChar = inputLine.find_first_not_of(" \t");
+        if (firstChar == std::string::npos || inputLine[firstChar] == '#') {
+            continue;
+        }
+
+        std::stringstream input(inputLine);
+        string keyword;
+        
+        getline(input, keyword, ' ');
+
+        string arg;
+        while (getline(input, arg, ' ')) {
+            args.push_back(arg);
+        }
+        args.push_back(to_string(-1));
+        args.push_back(to_string(-1));
+        objectFactory.GetFactory<ModelFactory>().CreateObject(keyword, args);
+        cout << "Input line OBJ: " << inputLine << endl;
+    }
+
+    if (fin.eof()) {
+        cout << "Reached end of file." << endl;
+    }
+    else {
+        cerr << "Error: File reading failed!" << endl;
+        return -1;
+    }
+
+    fin.close();
+    return 0;
+}
+
 
 int File::ReadPPMBinary(string inputFileName, int &width, int &height, vector<Color> &pixels) {
     std::cout << "reading p6" << std::endl;
@@ -197,6 +245,8 @@ int File::VaildateObjectsArgs(vector<vector<string>>& args, ObjectFactory& objec
             tex = Texture(width, height, pixels);
             objectFactory.AddTexture(tex);
             texIndex++;
+        } else if (id == "obj") {
+            File::ReadOBJ(args[i][1], objectFactory);
         } else {
             vector<string> arg = args[i];
             arg.erase(arg.begin());
