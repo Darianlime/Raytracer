@@ -17,7 +17,7 @@
 class File {
     public:
         static int ParseArgs(string inputFile, vector<vector<string>> &args, std::unordered_map<string, vector<float>> &argsMap);
-        static int ReadOBJ(string inputFileName, ObjectFactory &objectFactory);
+        static int ReadOBJ(string inputFileName, int matIndex, int texIndex, ObjectFactory &objectFactory);
         static int ReadPPMBinary(string inputFileName, int &width, int &height, vector<Color> &pixels);
         static int ReadPPM(string inputFileName, int &width, int &height, vector<Color> &pixels);
         static int WriteToPPM(string inputFileName, vector<vector<Color>> &pixels);

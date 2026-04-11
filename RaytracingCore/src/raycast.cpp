@@ -78,6 +78,11 @@ namespace Raytracer {
             Vec3 origin = intersectedPoint + lightDir * EPSILON;
             if (o && !light->CompareDistToLight(origin, intersection)) {
                 Vec3 alpha = objectFactory.GetMatIndex(model->mat).alpha.GetVec();
+                
+                if (alpha.x >= 1.0f && alpha.y >= 1.0f && alpha.z >= 1.0f) {
+                    return Vec3(0.0f, 0.0f, 0.0f);
+                }
+
                 float distance = exitT - entryT;
                 S.x *= exp(-alpha.x * distance);
                 S.y *= exp(-alpha.y * distance);

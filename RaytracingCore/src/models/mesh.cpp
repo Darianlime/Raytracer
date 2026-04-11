@@ -23,25 +23,26 @@ bool Mesh::CheckIntersection(Ray ray, float& entryIntersection, float& exitInter
     //         }
     //     }
     // }
-    float closestDist(numeric_limits<float>::infinity());
-    float entryTriangle{};
-    float exitTriangle{};
-    Vec3 intersectionTriangle(numeric_limits<float>::infinity(), numeric_limits<float>::infinity(), numeric_limits<float>::infinity());
-    bool isIntersected = false;
-    for (int i = 0; i < triangles.size(); i++) {
-        if (triangles[i].CheckIntersection(ray, entryTriangle, exitTriangle, intersectionTriangle, currentNormal, currentTexture)) {
-            float dist = Vec3::Dist(ray.origin, intersectionTriangle);
-            const float EPSILON = 1e-4f;
-            if (dist > EPSILON && dist < closestDist) {
-                entryIntersection = entryTriangle;
-                exitIntersection = exitTriangle;
-                intersection = intersectionTriangle;
-                closestDist = dist;
-                isIntersected = true;
-            }
-        }
-    }
-    return isIntersected;
+    // float closestDist(numeric_limits<float>::infinity());
+    // float entryTriangle{};
+    // float exitTriangle{};
+    // Vec3 intersectionTriangle(numeric_limits<float>::infinity(), numeric_limits<float>::infinity(), numeric_limits<float>::infinity());
+    // bool isIntersected = false;
+    // for (int i = 0; i < triangles.size(); i++) {
+    //     if (triangles[i].CheckIntersection(ray, entryTriangle, exitTriangle, intersectionTriangle, currentNormal, currentTexture)) {
+    //         float dist = Vec3::Dist(ray.origin, intersectionTriangle);
+    //         const float EPSILON = 1e-4f;
+    //         if (dist > EPSILON && dist < closestDist) {
+    //             entryIntersection = entryTriangle;
+    //             exitIntersection = exitTriangle;
+    //             intersection = intersectionTriangle;
+    //             closestDist = dist;
+    //             isIntersected = true;
+    //         }
+    //     }
+    // }
+    // return isIntersected;
+    return false;
 }
 
 Vec3 Mesh::GetNormal(Vec3 intersectedPoint, Vec3 raydir)

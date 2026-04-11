@@ -1,9 +1,9 @@
 #include "models/geometry.h"
 using std::vector;
 
-Triangle::Triangle(Indices indices, int mat, int tex) : indices(indices) {}
+Triangle::Triangle(Indices indices, int mat, int tex) :  Model(pos, mat, tex, ModelType::MESH), indices(indices) {}
 
-Triangle::Triangle(Indices data) : indices(data) {}
+Triangle::Triangle(Indices data) :  Model(pos, mat, tex, ModelType::MESH), indices(data) {}
 
 Triangle::Triangle(vector<float> & args) : Triangle(ParseArgs(args)) {}
 
@@ -42,12 +42,13 @@ Indices Triangle::ParseArgs(vector<float> &args) {
         }
     }
     mat = (int)args[args.size()-3];
+    std::cout << "triangle mat: " << mat << std::endl; 
     tex = (int)args[args.size()-2];
     shadeType = (int)args[args.size()-1];
     return Indices{vertices[0], vertices[1], vertices[2]};
 }
 
-bool Triangle::CheckIntersection(Ray ray, float& entryIntersection, float& exitIntersection, Vec3& intersection, Vec3& normal, Vec2& texture)
+bool Triangle::CheckIntersection(Ray ray, float& entryIntersection, float& exitIntersection, Vec3& intersection)
 {
     // indices.v1.pos.ToString();
     // indices.v2.pos.ToString();
@@ -97,4 +98,19 @@ bool Triangle::CheckIntersection(Ray ray, float& entryIntersection, float& exitI
         return true;
     }
     return false;
+}
+
+Vec3 Triangle::GetNormal(Vec3 intersectedPoint, Vec3 raydir)
+{
+    return normal;
+}
+
+Vec2 Triangle::GetTexUV(Vec3 intersectedPoint)
+{
+    return texture;
+}
+
+string Triangle::GetName()
+{
+    return "triangle";
 }

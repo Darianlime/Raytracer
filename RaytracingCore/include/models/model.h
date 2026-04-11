@@ -3,7 +3,6 @@
 
 #include "object.h"
 #include "material.h"
-#include "geometry.h"
 #include "ray.h"
 
 using std::pair;
@@ -19,7 +18,6 @@ enum class ModelType {
 struct Model : public Object {
     protected:
         static map<ModelType, string> typeMap;
-        vector<Triangle> triangles;
     public:
         int mat;
         int tex;
@@ -37,7 +35,6 @@ struct Model : public Object {
         virtual Vec3 GetNormal(Vec3 intersectedPoint, Vec3 raydir) = 0;
         virtual Vec2 GetTexUV(Vec3 intersectedPoint) = 0;
         
-        vector<Triangle>& GetTriangles() { return triangles; };
         pair<float, float> GetHitDistance(float A, float B, float C);
         static map<ModelType, string>& GetTypeMap();
         string GetName() override;

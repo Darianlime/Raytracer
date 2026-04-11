@@ -60,7 +60,7 @@ int File::ParseArgs(string inputFile, vector<vector<string>>& args, std::unorder
     return 0;
 }
 
-int File::ReadOBJ(string inputFileName, ObjectFactory& objectFactory)
+int File::ReadOBJ(string inputFileName, int matIndex, int texIndex, ObjectFactory& objectFactory)
 {
     ifstream fin(inputFileName);
     if (!fin.is_open()) {
@@ -87,8 +87,8 @@ int File::ReadOBJ(string inputFileName, ObjectFactory& objectFactory)
         while (getline(input, arg, ' ')) {
             args.push_back(arg);
         }
-        args.push_back(to_string(-1));
-        args.push_back(to_string(-1));
+        args.push_back(to_string(matIndex));
+        args.push_back(to_string(texIndex));
         objectFactory.GetFactory<ModelFactory>().CreateObject(keyword, args);
         cout << "Input line OBJ: " << inputLine << endl;
     }
@@ -246,7 +246,7 @@ int File::VaildateObjectsArgs(vector<vector<string>>& args, ObjectFactory& objec
             objectFactory.AddTexture(tex);
             texIndex++;
         } else if (id == "obj") {
-            File::ReadOBJ(args[i][1], objectFactory);
+            File::ReadOBJ(args[i][1], matIndex, texIndex, objectFactory);
         } else {
             vector<string> arg = args[i];
             arg.erase(arg.begin());

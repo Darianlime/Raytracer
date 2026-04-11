@@ -1,7 +1,6 @@
 #ifndef MESH_H
 #define MESH_H
 
-#include "geometry.h"
 #include "model.h"
 
 struct Mesh : public Model {

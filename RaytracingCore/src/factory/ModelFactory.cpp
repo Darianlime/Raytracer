@@ -26,12 +26,15 @@ void ModelFactory::AddVertTex(vector<float>& args) {
 }
 
 void ModelFactory::AddIndice(vector<float>& args) {
-    objects[indexOfCurrentMesh]->GetTriangles().emplace_back(args);
+    objects.push_back(make_unique<Triangle>(args));
+    // if (indexOfCurrentMesh != -1) {
+    //     objects[indexOfCurrentMesh]->GetTriangles().emplace_back(args);
+    // }
 }
 
 void ModelFactory::AddMesh(string name, vector<int> modelArgs) {
-    indexOfCurrentMesh = objects.size();
-    objects.push_back(make_unique<Mesh>(name, modelArgs));
+    //indexOfCurrentMesh = objects.size();
+    //objects.push_back(make_unique<Mesh>(name, modelArgs));
 }
 
 int ModelFactory::CreateObject(string &objectName, vector<string> &args)
@@ -65,7 +68,7 @@ int ModelFactory::CreateObject(string &objectName, vector<string> &args)
             ModelFactory::ParseTriangle(args, vertsArgs);
         } else {
             for (int i = 0; i < vertsArgs.size(); i++) {
-                vertsArgs[i] = stof(args[i]);
+                vertsArgs[i] = stof(args[i]); 
             }      
             if (vertsPos.size() == 0 && indexOfCurrentMesh == -1) {
                 std::cout << "mesh created" << std::endl;
