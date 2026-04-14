@@ -1,7 +1,7 @@
 #include "factory/ModelFactory.h"
 using std::function;
 
-ModelFactory::ModelFactory() : indexOfCurrentMesh(-1) {
+ModelFactory::ModelFactory() : currentVertexStart(0) {
     modelMap["sphere"] = [](vector<float>& args) { return make_unique<Sphere>(args); };
     modelMap["cylinder"] = [](vector<float>& args) { return make_unique<Cylinder>(args); };
     modelMap["cone"] = [](vector<float>& args) { return make_unique<Cone>(args); };
@@ -14,7 +14,7 @@ ModelFactory::ModelFactory() : indexOfCurrentMesh(-1) {
 }
 
 void ModelFactory::AddVertPos(vector<float>& args) {
-    vertsPos.emplace_back(args[0],args[1],args[2]);
+    meshs[meshs.size()-1].verts.emplace_back(args[0],args[1],args[2]);
 }
 
 void ModelFactory::AddVertNormal(vector<float>& args) {
@@ -27,19 +27,46 @@ void ModelFactory::AddVertTex(vector<float>& args) {
 
 void ModelFactory::AddIndice(vector<float>& args) {
     objects.push_back(make_unique<Triangle>(args));
+    meshs[meshs.size()-1].endIndice = objects.size();
     // if (indexOfCurrentMesh != -1) {
     //     objects[indexOfCurrentMesh]->GetTriangles().emplace_back(args);
     // }
 }
 
 void ModelFactory::AddMesh(string name, vector<int> modelArgs) {
-    //indexOfCurrentMesh = objects.size();
+    if (!meshs.empty() && notResetingVertCount) {
+        currentVertexStart += meshs[meshs.size()-1].verts.size();
+    }
+    notResetingVertCount = true;
+    meshs.push_back(Mesh(name, modelArgs));
+    meshs[meshs.size()-1].startIndice = objects.size();
+    meshs[meshs.size()-1].endIndice = objects.size();
     //objects.push_back(make_unique<Mesh>(name, modelArgs));
 }
 
+const vector<Mesh> &ModelFactory::GetMeshs() const
+{
+    return meshs;
+}
+
+Mesh &ModelFactory::GetMeshAtIndex(int index)
+{
+    return meshs[index];
+}
+
+void ModelFactory::ResetCurrentVertexStart()
+{
+    currentVertexStart = 0;
+    notResetingVertCount = false;
+}
+// const vector<Vec3> &ModelFactory::GetVertsPos() const
+// {
+//     return vertsPos;
+// }
+
 int ModelFactory::CreateObject(string &objectName, vector<string> &args)
 {
-    // create meshs
+    // create meshs            
     if (objectName == "o") {
         vector<int> modelArgs = {-1, -1};
         // for (int i = 1; i < modelArgs.size(); i++) {
@@ -69,8 +96,8 @@ int ModelFactory::CreateObject(string &objectName, vector<string> &args)
         } else {
             for (int i = 0; i < vertsArgs.size(); i++) {
                 vertsArgs[i] = stof(args[i]); 
-            }      
-            if (vertsPos.size() == 0 && indexOfCurrentMesh == -1) {
+            } 
+            if (meshs.empty()) {
                 std::cout << "mesh created" << std::endl;
                 vector<int> modelArgs = {(int)vertsArgs[vertsArgs.size()-2], (int)vertsArgs[vertsArgs.size()-1]};
                 AddMesh("mesh", modelArgs);
@@ -86,12 +113,13 @@ void ModelFactory::RemoveModel(int index) {
 }
 
 void ModelFactory::ParseTriangle(vector<string> &args, vector<float>& vertsArgs) {
-
+    std::cout << "current: " << currentVertexStart << std::endl;
     const int INDICE_SIZE = 8;
     const int EXTRA_ARGS = 3;
     vertsArgs.resize((args.size()-2) * INDICE_SIZE + EXTRA_ARGS);
     bool texPresent = false;
     bool normalPresent = false;
+    int meshSize = meshs.size()-1;
     for (int i = 0; i < args.size()-2; i++) {
         const char* toChar = args[i].c_str();
         const char* ptr = toChar;
@@ -99,9 +127,10 @@ void ModelFactory::ParseTriangle(vector<string> &args, vector<float>& vertsArgs)
         int v, vn, vt;
         int index = i*INDICE_SIZE;
         std::from_chars_result res = std::from_chars(ptr, end, v);
-        vertsArgs[index] = vertsPos[v-1].x;
-        vertsArgs[index+1] = vertsPos[v-1].y;
-        vertsArgs[index+2] = vertsPos[v-1].z;
+        int vertIndex = v-currentVertexStart-1;
+        vertsArgs[index] = meshs[meshSize].verts[vertIndex].x;
+        vertsArgs[index+1] = meshs[meshSize].verts[vertIndex].y;
+        vertsArgs[index+2] = meshs[meshSize].verts[vertIndex].z;
         ptr = res.ptr;
         if (*ptr == '/') {
             ptr++;
@@ -125,6 +154,7 @@ void ModelFactory::ParseTriangle(vector<string> &args, vector<float>& vertsArgs)
     vertsArgs[vertsArgs.size()-EXTRA_ARGS] = stoi(args[args.size()-2]);
     vertsArgs[vertsArgs.size()-(EXTRA_ARGS-1)] = stoi(args[args.size()-1]);
     vertsArgs[vertsArgs.size()-(EXTRA_ARGS-2)] = texPresent + (normalPresent << 1);
+    std::cout << "size: " << meshs.size()-1 << std::endl;
 }
 
 string ModelFactory::GetTypeIndex(int index)

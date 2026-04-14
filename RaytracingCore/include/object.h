@@ -29,7 +29,7 @@ class Object {
         Object(Vec3 pos, Vec3 rot, Vec3 size, string name);
 
         void SetMatrix(Vec3 pos, Vec3 rot, Vec3 size);
-        void UpdateTransformation();
+        virtual void UpdateTransformation();
 
         virtual ~Object() {};
         virtual string GetName() { return name; }

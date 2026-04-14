@@ -246,6 +246,7 @@ int File::VaildateObjectsArgs(vector<vector<string>>& args, ObjectFactory& objec
             objectFactory.AddTexture(tex);
             texIndex++;
         } else if (id == "obj") {
+            objectFactory.GetFactory<ModelFactory>().ResetCurrentVertexStart();
             File::ReadOBJ(args[i][1], matIndex, texIndex, objectFactory);
         } else {
             vector<string> arg = args[i];

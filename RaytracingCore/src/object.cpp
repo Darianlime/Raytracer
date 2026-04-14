@@ -29,12 +29,12 @@ void Object::SetMatrix(Vec3 pos, Vec3 rot, Vec3 size)
     localToWorld = M_Translate * M_Rot * M_Size;
     worldToLocal = localToWorld.InverseAffine();
 
-    printf("SetMatrix rot=%f %f %f\n", rot.x, rot.y, rot.z);
-    printf("M = [%f %f %f %f\n     %f %f %f %f\n     %f %f %f %f\n     %f %f %f %f]\n",localToWorld.M[0],localToWorld.M[4],localToWorld.M[8],localToWorld.M[12], localToWorld.M[1],localToWorld.M[5],localToWorld.M[9],localToWorld.M[13], localToWorld.M[2],localToWorld.M[6],localToWorld.M[10],localToWorld.M[14], localToWorld.M[3],localToWorld.M[7],localToWorld.M[11],localToWorld.M[15]);
+    //printf("SetMatrix rot=%f %f %f\n", rot.x, rot.y, rot.z);
+    //printf("M = [%f %f %f %f\n     %f %f %f %f\n     %f %f %f %f\n     %f %f %f %f]\n",localToWorld.M[0],localToWorld.M[4],localToWorld.M[8],localToWorld.M[12], localToWorld.M[1],localToWorld.M[5],localToWorld.M[9],localToWorld.M[13], localToWorld.M[2],localToWorld.M[6],localToWorld.M[10],localToWorld.M[14], localToWorld.M[3],localToWorld.M[7],localToWorld.M[11],localToWorld.M[15]);
 }
 
 void Object::UpdateTransformation()
 {
-    SetMatrix(pos, rot * M_PI / 180, Vec3(1,1,1));
+    SetMatrix(pos, rot * M_PI / 180, size);
 }
 

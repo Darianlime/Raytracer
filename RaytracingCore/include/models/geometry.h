@@ -34,6 +34,7 @@ struct Indices  {
 
 struct Triangle : public Model {
     private:
+        Indices originalIndices;
         Indices indices;
         int mat;
         int tex;
@@ -51,6 +52,7 @@ struct Triangle : public Model {
         bool CheckIntersection(Ray ray, float &entryIntersection, float &exitIntersection, Vec3 &intersection) override;
         Vec3 GetNormal(Vec3 intersectedPoint, Vec3 raydir) override;
         Vec2 GetTexUV(Vec3 intersectedPoint) override;
+        void UpdateTransformation() override;
         string GetName() override;
 }; 
 
