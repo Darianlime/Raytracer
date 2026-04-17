@@ -23,6 +23,7 @@ struct Model : public Object {
     protected:
         static map<ModelType, string> typeMap;
         std::vector<Vec3> verts;
+        std::vector<Vec3> orignalVerts;
         std::vector<Triangle> originalTriangles;
         std::vector<Triangle> triangles;
     public:
@@ -41,9 +42,11 @@ struct Model : public Object {
         virtual bool CheckIntersection(Ray ray, HitRecord& hitRecord) = 0;
         virtual Vec3 GetNormal(Vec3 intersectedPoint, Vec3 raydir) = 0;
         virtual Vec2 GetTexUV(Vec3 intersectedPoint) = 0;
-        
+
+        void CalculateCentriod();
         std::vector<Vec3>& GetVertices();
-        std::vector<Triangle>& GetTriangles();
+        std::vector<Vec3> &GetOrgVertices();
+        std::vector<Triangle> &GetTriangles();
         pair<float, float> GetHitDistance(float A, float B, float C);
         static map<ModelType, string>& GetTypeMap();
         string GetName() override;

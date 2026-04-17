@@ -28,10 +28,11 @@ struct Vertex {
 };
 
 struct Indices  {
-    Vertex v1;
-    Vertex v2;
-    Vertex v3;
-    Indices(Vertex v1, Vertex v2, Vertex v3) : v1(v1), v2(v2), v3(v3) {}
+    int v1P, v1N, v1T;
+    int v2P, v2N, v2T;
+    int v3P, v3N, v3T;
+    Indices(int v1P, int v1N, int v1T, int v2P, int v2N, int v2T, int v3P, int v3N, int v3T) 
+        : v1P(v1P), v1N(v1N), v1T(v1T), v2P(v2P), v2N(v2N), v2T(v2T), v3P(v3P), v3N(v3N), v3T(v3T) {}
 };
 
 struct Triangle {
@@ -46,13 +47,14 @@ struct Triangle {
         Triangle() = default;
         Triangle(Indices indices, int mat, int tex);
         Triangle(Indices data);
-        Triangle(std::vector<float> &args);
+        Triangle(std::vector<int> &args);
 
-        Indices ParseArgs(std::vector<float> &args);
+        Indices ParseArgs(std::vector<int> &args);
 
-        bool CheckIntersection(Ray ray, float &entryIntersection, float &exitIntersection, Vec3 &intersection);
+        bool CheckIntersection(Ray ray, float &entryIntersection, float &exitIntersection, Vec3 &intersection, std::vector<Vec3> &verts);
         Vec3 GetNormal();
         Vec2 GetTexUV();
+        Indices GetIndices();
         // void UpdateTransformation() override;
         // string GetName() override;
 }; 

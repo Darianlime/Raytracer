@@ -12,9 +12,8 @@ struct Mesh : public Model {
         Mesh();
         Mesh(std::string name, std::vector<int> args);
 
-        void CalculateCentriod();
-
         bool CheckIntersection(Ray ray, HitRecord& hitRecord) override;
+        void UpdateTransformation() override;
         Vec3 GetNormal(Vec3 intersectedPoint, Vec3 raydir) override;
         Vec2 GetTexUV(Vec3 intersectedPoint) override;
 

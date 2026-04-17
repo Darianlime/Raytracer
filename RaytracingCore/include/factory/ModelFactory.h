@@ -19,7 +19,7 @@ class ModelFactory : public FactoryBase<Model> {
         vector<Vec2> vertsTex;
         //vector<Triangle> indices;
         int currentVertexStart;
-        bool notResetingVertCount;
+        bool isAddingToVertCount;
         int indexOfCurrentMesh;
     public:
         ModelFactory();
@@ -30,13 +30,13 @@ class ModelFactory : public FactoryBase<Model> {
         string GetTypeIndex(int index) override;
         int GetTypeMapSize() override;
 
-        void ParseTriangle(vector<string> &args, vector<float> &vertsArgs);
+        void ParseTriangle(vector<string> &args, vector<int>& vertsArgs);
         map<string, std::function<unique_ptr<Model>(vector<float>&)>>& GetModelMap();
         map<string, std::function<void(vector<float>&)>>& GetGeometryMap();
         void AddVertPos(vector<float> &args);
         void AddVertNormal(vector<float> &args);
         void AddVertTex(vector<float> &args);
-        void AddIndice(vector<float> &args);
+        void AddIndice(vector<int> &args);
         void AddMesh(string name, vector<int> modelArgs);
         void ResetCurrentVertexStart();
 

@@ -52,7 +52,7 @@ namespace Raytracer {
                     }
                 }
             };
-            if (model->GetTriangles().empty()) {
+            if (model->type != ModelType::MESH) {
                 if (currentModelHit == model.get()) continue;
                 ClosestIntersection(-1);
             }
@@ -98,7 +98,7 @@ namespace Raytracer {
                 }
                 return true;
             };
-            if (model->GetTriangles().empty()) {
+            if (model->type != ModelType::MESH) {
                 if (model.get() == intersectedModel) continue;
                 if (!BeersLaw(-1)) return Vec3(0.0f, 0.0f, 0.0f);
             }
@@ -134,7 +134,7 @@ namespace Raytracer {
         Material mat = hit.mat;
         Vec3 intersectedPoint = hit.intersectedPoint;
         Vec3 normal{};
-        if (hit.model->GetTriangles().empty()) {
+        if (hit.model->type != ModelType::MESH) {
             normal = hit.model->GetNormal(intersectedPoint, hit.viewDir).Normalize();
         } else { 
             normal = hit.model->GetTriangles()[hit.triangleHitIndex].GetNormal().Normalize();

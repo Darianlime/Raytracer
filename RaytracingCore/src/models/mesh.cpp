@@ -7,19 +7,21 @@ Mesh::Mesh() : Model(Vec3(0,0,0), -1, -1, ModelType::MESH), name("Mesh") {}
 
 Mesh::Mesh(std::string name, vector<int> args) : Model(Vec3(0,0,0), -1, -1, ModelType::MESH), name(name) {}
 
-void Mesh::CalculateCentriod() {
-    for(auto& vert : verts) {
-        pos = pos + vert;
-    }
-    pos = pos / verts.size();
-}
-
 bool Mesh::CheckIntersection(Ray ray, HitRecord& hitRecord)
 {
-    if (triangles[hitRecord.triangleHitIndex].CheckIntersection(ray, hitRecord.entryIntersection, hitRecord.exitIntersection, hitRecord.intersection)) {
+    if (triangles[hitRecord.triangleHitIndex].CheckIntersection(ray, hitRecord.entryIntersection, hitRecord.exitIntersection, hitRecord.intersection, GetVertices())) {
         return true;
     }    
     return false;
+}
+
+void Mesh::UpdateTransformation()
+{
+    SetMatrix(pos, rot * M_PI / 180, size);
+    //Matrix4 normalMatrix = worldToLocal.Transpose();
+    for (int i = 0; i < verts.size(); i++) {
+        verts[i] = (localToWorld * Vec4(orignalVerts[i])).toVec3();
+    }
 }
 
 Vec3 Mesh::GetNormal(Vec3 intersectedPoint, Vec3 raydir)
