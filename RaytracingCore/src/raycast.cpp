@@ -25,30 +25,40 @@ namespace Raytracer {
         return (point - intersectedPoint).Normalize();
     }
 
-    RayHit Raycast::GetRayHit(Ray ray, Model* currentModelHit) {
+    RayHit Raycast::GetRayHit(Ray ray, Model* currentModelHit, int triangleHitIndex) {
         vector<unique_ptr<Model>>& models = objectFactory.GetFactory<ModelFactory>().GetObjects();
         Model* closest = nullptr; 
         float closestDist = numeric_limits<float>::infinity();
         Vec3 closestIntersection(numeric_limits<float>::infinity(), numeric_limits<float>::infinity(), numeric_limits<float>::infinity());
-        Vec3 intersection(numeric_limits<float>::infinity(), numeric_limits<float>::infinity(), numeric_limits<float>::infinity());
-        //Vec3 entryIntersection(numeric_limits<float>::infinity(), numeric_limits<float>::infinity(), numeric_limits<float>::infinity());
-        //Vec3 exitIntersection(numeric_limits<float>::infinity(), numeric_limits<float>::infinity(), numeric_limits<float>::infinity());
-        float entryT{}, exitT{};
         float closestEntryT{}, closestExitT{};
+        int closestTriangleHit{};
+        //IgnoreTriangle ignore{currentModelHit, triangleHitIndex};
         for (unique_ptr<Model>& model : models) {
-            if (currentModelHit == model.get()) continue;
-            if (model->CheckIntersection(ray, entryT, exitT, intersection)) {
-                float dist = Vec3::Dist(ray.origin, intersection);
-                const float EPSILON = 1e-4f;
-                if (dist > EPSILON && dist < closestDist) {
-                    closest = model.get();
-                    //entryIntersection = ray.GetRay(entryT);
-                    //exitIntersection = ray.GetRay(exitT);
-                    closestEntryT = entryT;
-                    closestExitT = exitT;
-                    closestIntersection = intersection;
-                    closestDist = dist;
+            auto ClosestIntersection = [&](int triangleIndex) {
+                HitRecord rec{};
+                rec.triangleHitIndex = triangleIndex;
+                if (model->CheckIntersection(ray, rec)) {
+                    float dist = Vec3::Dist(ray.origin, rec.intersection);
+                    const float EPSILON = 1e-4f;
+                    if (dist > EPSILON && dist < closestDist) {
+                        closest = model.get();
+                        //entryIntersection = ray.GetRay(entryT);
+                        //exitIntersection = ray.GetRay(exitT);
+                        closestEntryT = rec.entryIntersection;
+                        closestExitT = rec.exitIntersection;
+                        closestIntersection = rec.intersection;
+                        closestTriangleHit = rec.triangleHitIndex;
+                        closestDist = dist;
+                    }
                 }
+            };
+            if (model->GetTriangles().empty()) {
+                if (currentModelHit == model.get()) continue;
+                ClosestIntersection(-1);
+            }
+            for (int i = 0; i < model->GetTriangles().size(); i++) {
+                if (currentModelHit == model.get() && triangleHitIndex == i) continue;
+                ClosestIntersection(i);
             }
         }
         if (closest) {
@@ -57,36 +67,45 @@ namespace Raytracer {
                 Vec2 texUV = closest->GetTexUV(closestIntersection);
                 mat.diffuse = objectFactory.GetTexIndex(closest->tex).GetPixel(texUV.x, texUV.y);
             }
-            return RayHit{true, closest, mat, closestIntersection, (ray.origin - closestIntersection).Normalize(), closestExitT - closestEntryT };
+            return RayHit{true, closest, mat, closestIntersection, (ray.origin - closestIntersection).Normalize(), closestExitT - closestEntryT, closestTriangleHit };
         }
         return RayHit{false, nullptr, Material(), Vec3(0,0,0), Vec3(0,0,0)};
     }
 
-
     // Shoots a shadow ray from intersected point to light and checks for object intersections
-    Vec3 Raycast::IsShadow(Light* light, Vec3 intersectedPoint, Model* intersectedModel) {
+    Vec3 Raycast::IsShadow(Light* light, Vec3 intersectedPoint, Model* intersectedModel, int triangleHitIndex) {
         Vec3 S(1.0f,1.0f,1.0f);
+        const float EPSILON = 1e-4f;
+        Vec3 lightDir = light->GetLightDir(intersectedPoint);
+        Vec3 origin = intersectedPoint + lightDir * EPSILON;
+        Ray ray{origin, lightDir};
         vector<unique_ptr<Model>>& models = objectFactory.GetFactory<ModelFactory>().GetObjects();
         for (unique_ptr<Model>& model : models) {
-            if (model.get() == intersectedModel) continue;
-            Vec3 lightDir = light->GetLightDir(intersectedPoint);
-            Ray ray{intersectedPoint, lightDir}; 
-            float entryT{}, exitT{};
-            Vec3 intersection(numeric_limits<float>::infinity(), numeric_limits<float>::infinity(), numeric_limits<float>::infinity());
-            bool o = model->CheckIntersection(ray, entryT, exitT, intersection);
-            const float EPSILON = 1e-4f;
-            Vec3 origin = intersectedPoint + lightDir * EPSILON;
-            if (o && !light->CompareDistToLight(origin, intersection)) {
-                Vec3 alpha = objectFactory.GetMatIndex(model->mat).alpha.GetVec();
-                
-                if (alpha.x >= 1.0f && alpha.y >= 1.0f && alpha.z >= 1.0f) {
-                    return Vec3(0.0f, 0.0f, 0.0f);
+            auto BeersLaw = [&](int triangleIndex) -> bool {
+                HitRecord rec{};
+                rec.triangleHitIndex = triangleIndex;
+                if (model->CheckIntersection(ray, rec) && !light->CompareDistToLight(origin, rec.intersection)) {
+                    Vec3 alpha = objectFactory.GetMatIndex(model->mat).alpha.GetVec();
+                    
+                    if (alpha.x >= 1.0f && alpha.y >= 1.0f && alpha.z >= 1.0f) {
+                        return false;
+                    }
+                    // Beers law
+                    float distance = rec.exitIntersection - rec.entryIntersection;
+                    S.x *= exp(-alpha.x * distance);
+                    S.y *= exp(-alpha.y * distance);    
+                    S.z *= exp(-alpha.z * distance);
                 }
-
-                float distance = exitT - entryT;
-                S.x *= exp(-alpha.x * distance);
-                S.y *= exp(-alpha.y * distance);
-                S.z *= exp(-alpha.z * distance);
+                return true;
+            };
+            if (model->GetTriangles().empty()) {
+                if (model.get() == intersectedModel) continue;
+                if (!BeersLaw(-1)) return Vec3(0.0f, 0.0f, 0.0f);
+            }
+            for (int i = 0; i < model->GetTriangles().size(); i++) {
+                //if (triangleHitIndex >= 0) std::cout << "tri: "<< (model.get() == intersectedModel && triangleHitIndex == i) << std::endl;
+                if (model.get() == intersectedModel && triangleHitIndex == i) continue;
+                if (!BeersLaw(i)) return Vec3(0.0f, 0.0f, 0.0f);
             }
         }
         return S;
@@ -97,7 +116,7 @@ namespace Raytracer {
     // otherwise call ShadeRay()
     Color Raycast::TraceRay(Vec3 point, Color background, pair<Vec3, bool> &intersectedPoint)
     {
-        RayHit hit = GetRayHit(Ray{eye, CalcRayDirAtPoint(point)}, nullptr);
+        RayHit hit = GetRayHit(Ray{eye, CalcRayDirAtPoint(point)}, nullptr, -1);
         if (hit) {
             intersectedPoint.first = hit.intersectedPoint;
             intersectedPoint.second = hit.hit;
@@ -114,7 +133,12 @@ namespace Raytracer {
         vector<unique_ptr<Light>>& lights = objectFactory.GetFactory<LightFactory>().GetObjects();
         Material mat = hit.mat;
         Vec3 intersectedPoint = hit.intersectedPoint;
-        Vec3 normal = hit.model->GetNormal(intersectedPoint, hit.viewDir).Normalize();
+        Vec3 normal{};
+        if (hit.model->GetTriangles().empty()) {
+            normal = hit.model->GetNormal(intersectedPoint, hit.viewDir).Normalize();
+        } else { 
+            normal = hit.model->GetTriangles()[hit.triangleHitIndex].GetNormal().Normalize();
+        }
         Vec3 viewDir = (eye - intersectedPoint).Normalize();
 
         Vec3 summation(0, 0, 0);
@@ -128,7 +152,8 @@ namespace Raytracer {
             Vec3 diffuse = mat.diffuse.GetVec() * mat.k.y * std::max(0.0f, Vec3::Dot(normal, lightDir));
             Vec3 specular = mat.specular.GetVec() * mat.k.z * pow(std::max(0.0f, Vec3::Dot(normal, halfway)), mat.n);
 
-            Vec3 shadow = IsShadow(light.get(), intersectedPoint, hit.model);
+            
+            Vec3 shadow = IsShadow(light.get(), intersectedPoint, hit.model, hit.triangleHitIndex);
             float d = Vec3::Dist(intersectedPoint, light->pos);
             float attenuation = 1 / (light->consts.x + light->consts.y * d + light->consts.z * pow(d, 2));
 
@@ -145,7 +170,7 @@ namespace Raytracer {
             const float EPSILON = 1e-4f;
             Vec3 origin = intersectedPoint + normal * EPSILON; // offset outside surface
 
-            RayHit reflectionHit = GetRayHit(Ray{origin, R}, hit.model); 
+            RayHit reflectionHit = GetRayHit(Ray{origin, R}, hit.model, hit.triangleHitIndex); 
             reflectionColor = ShadeRay(reflectionHit, background, depth-1, currentIOR).GetVec();
         }
 
@@ -171,7 +196,7 @@ namespace Raytracer {
                 const float EPSILON = 1e-4f;
                 Vec3 origin = intersectedPoint + T * EPSILON;
                 Model* skipModel = entering ? nullptr : hit.model;
-                RayHit refractionHit = GetRayHit(Ray{origin, T}, skipModel);
+                RayHit refractionHit = GetRayHit(Ray{origin, T}, skipModel, hit.triangleHitIndex);
                 refractionColor = ShadeRay(refractionHit, background, depth-1, nextIOR).GetVec();
                 Vec3 alpha = objectFactory.GetMatIndex(hit.model->mat).alpha.GetVec();
                 refractionColor.x *= exp(-alpha.x * refractionHit.t);

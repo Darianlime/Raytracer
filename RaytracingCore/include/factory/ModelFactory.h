@@ -17,10 +17,10 @@ class ModelFactory : public FactoryBase<Model> {
         vector<Vec3> vertsPos;
         vector<Vec3> vertsNormal;
         vector<Vec2> vertsTex;
-        vector<Triangle> indices;
-        vector<Mesh> meshs;
+        //vector<Triangle> indices;
         int currentVertexStart;
         bool notResetingVertCount;
+        int indexOfCurrentMesh;
     public:
         ModelFactory();
         ~ModelFactory() {};
@@ -38,9 +38,6 @@ class ModelFactory : public FactoryBase<Model> {
         void AddVertTex(vector<float> &args);
         void AddIndice(vector<float> &args);
         void AddMesh(string name, vector<int> modelArgs);
-        const vector<Mesh>& GetMeshs() const;
-        Mesh& GetMeshAtIndex(int index);
-        const vector<Vec3>& GetVertsPosition() const;
         void ResetCurrentVertexStart();
 
         string GetName() override

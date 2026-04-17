@@ -15,7 +15,7 @@ EllipsoidData Ellipsoid::ParseArgs(vector<float> &args) {
     return EllipsoidData{Vec3(args[0], args[1], args[2]), Vec3(args[3], args[4], args[5]), (int)args[6], int(args[7])};
 }
 
-bool Ellipsoid::CheckIntersection(Ray ray, float& entryIntersection, float& exitIntersection, Vec3& intersection)
+bool Ellipsoid::CheckIntersection(Ray ray, HitRecord& hitRecord)
 {
     Vec3 localOrigin = (worldToLocal * Vec4(ray.origin, 1.0f)).toVec3();
     Vec3 localDir = (worldToLocal * Vec4(ray.raydir, 0.0f)).toVec3();
@@ -29,10 +29,10 @@ bool Ellipsoid::CheckIntersection(Ray ray, float& entryIntersection, float& exit
 
     float tVal = t.first >= 0 ? t.first : t.second;
 
-    entryIntersection = tVal;
-    exitIntersection  = t.second;
+    hitRecord.entryIntersection = tVal;
+    hitRecord.exitIntersection  = t.second;
 
-    intersection = (localToWorld * Vec4(localOrigin + localDir * tVal, 1.0f)).toVec3();
+    hitRecord.intersection = (localToWorld * Vec4(localOrigin + localDir * tVal, 1.0f)).toVec3();
     return true;
 }
 

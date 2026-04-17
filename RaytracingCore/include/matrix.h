@@ -183,9 +183,9 @@ struct Matrix4 {
             return Matrix4();
         }
 
-        // void ToString() {
-        //     std::cout << "Vec3 - x: " << x << " y: " << y << " z: " << z << std::endl;
-        // }
+        void ToString() {
+            printf("M = [%f %f %f %f\n     %f %f %f %f\n     %f %f %f %f\n     %f %f %f %f]\n", M[0],M[4],M[8],M[12], M[1],M[5],M[9],M[13], M[2],M[6],M[10],M[14], M[3],M[7],M[11],M[15]);
+        }
 }; 
 
 #endif

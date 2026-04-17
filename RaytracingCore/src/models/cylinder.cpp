@@ -16,7 +16,7 @@ CylinderData Cylinder::ParseArgs(vector<float> &args) {
     return CylinderData{Vec3(args[0], args[1], args[2]), Vec3(args[3], args[4], args[5]), args[6], args[7], int(args[8]), int(args[9])};
 }
 
-bool Cylinder::CheckIntersection(Ray ray, float& entryIntersection, float& exitIntersection, Vec3& intersection) {
+bool Cylinder::CheckIntersection(Ray ray, HitRecord& hitRecord) {
     Vec3 f = ray.origin - pos;
     float A = Vec3::Dot(ray.raydir, ray.raydir) - pow(Vec3::Dot(ray.raydir, direction),2);
     float B = 2 * (Vec3::Dot(ray.raydir, f) - Vec3::Dot(ray.raydir, direction) * Vec3::Dot(f, direction));
@@ -26,13 +26,13 @@ bool Cylinder::CheckIntersection(Ray ray, float& entryIntersection, float& exitI
     if (t.first < 0 && t.second < 0) {
         return false;
     }
-    entryIntersection = t.first;
-    exitIntersection = t.second;
-    intersection = ray.GetRay(entryIntersection);
-    if (entryIntersection <= 0) {
-        intersection = ray.GetRay(exitIntersection);
+    hitRecord.entryIntersection = t.first;
+    hitRecord.exitIntersection = t.second;
+    hitRecord.intersection = ray.GetRay(hitRecord.entryIntersection);
+    if (hitRecord.entryIntersection <= 0) {
+        hitRecord.intersection = ray.GetRay(hitRecord.exitIntersection);
     }
-    Vec3 w = intersection - pos;
+    Vec3 w = hitRecord.intersection - pos;
     float alpha = Vec3::Dot(w, direction) / Vec3::Dot(direction, direction);
     if (0 <= alpha && alpha <= length) {
         return true;

@@ -40,6 +40,15 @@ pair<float, float> Model::GetHitDistance(float A, float B, float C)
     // if (t2 > EPSILON) return t2;  // inside sphere, use far hit
 }
 
+std::vector<Vec3> &Model::GetVertices()
+{
+    return verts;
+}
+
+std::vector<Triangle> &Model::GetTriangles() {
+    return triangles;
+}
+
 map<ModelType, string> &Model::GetTypeMap() {
     return typeMap;
 }

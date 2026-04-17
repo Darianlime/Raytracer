@@ -57,16 +57,16 @@ int main(int argc, char* argv[]) {
 
     std::cout << "size " <<  std::endl;
     ModelFactory& mF = objectFactory.GetFactory<ModelFactory>();
-    std::cout << "mesh size: " <<  mF.GetMeshs().size() << std::endl;
-    for (int i = 0; i < mF.GetMeshs().size(); i++) {
-        Mesh& m = mF.GetMeshAtIndex(i);
-        m.CalculateCentriod();
-        std::cout << "centriod pos: ";
-        m.pos.ToString();
-        for (int i = m.startIndice; i < m.endIndice; i++) {
-            mF.GetObjects()[i]->pos = m.pos;
-        }
-    }
+    // std::cout << "mesh size: " <<  mF.GetMeshs().size() << std::endl;
+    // for (int i = 0; i < mF.GetMeshs().size(); i++) {
+    //     Mesh& m = mF.GetMeshAtIndex(i);
+    //     m.CalculateCentriod();
+    //     std::cout << "centriod pos: ";
+    //     m.pos.ToString();
+    //     for (int i = m.startIndice; i < m.endIndice; i++) {
+    //         mF.GetObjects()[i]->pos = m.pos;
+    //     }
+    // }
 
 
 

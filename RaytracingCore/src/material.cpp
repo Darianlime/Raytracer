@@ -11,6 +11,25 @@ Material::Material(Color diffuse, Color specular, Vec3 k, float n, float alpha, 
 Material::Material(Color diffuse, Color specular, Vec3 k, float n, Color alpha, float refractionIndex)
     : diffuse(diffuse), specular(specular), k(k), n(n), alpha(alpha), refractionIndex(refractionIndex) {}
 
+Material::Material(std::vector<float> &args)
+{
+    if (args.size() >= 14) {
+        diffuse = Color(args[0], args[1], args[2], false);
+        specular = Color(args[3], args[4], args[5], false);
+        k = Vec3(args[6], args[7], args[8]);
+        n = args[9];
+        alpha = Color(args[10], args[11], args[12], false);
+        refractionIndex = args[13];
+    } else {
+        diffuse = Color(args[0], args[1], args[2], false);
+        specular = Color(args[3], args[4], args[5], false);
+        k = Vec3(args[6], args[7], args[8]);
+        n = args[9];
+        alpha = Color(args[10], args[10], args[10], false);
+        refractionIndex = args[11];
+    }
+}
+
 std::string Material::ToString() const {
     return diffuse.ToString() + " " + specular.ToString();
 }

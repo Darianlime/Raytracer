@@ -1,29 +1,22 @@
 #ifndef MESH_H
 #define MESH_H
 
-#include "models/geometry.h"
-#include "vector.h"
-#include <string>
-#include <vector>
+#include "model.h"
 
-struct Mesh {
+struct Mesh : public Model {
     public:
         std::string name;
-        Vec3 pos;
-        Vec3 rotation;
-        Vec3 size;
-        int startIndice;
-        int endIndice;
-        std::vector<Vec3> verts;
+        Vec3 currentNormal;
+        Vec2 currentTexture;
 
         Mesh();
         Mesh(std::string name, std::vector<int> args);
 
         void CalculateCentriod();
 
-        // bool CheckIntersection(Ray ray, float &entryIntersection, float &exitIntersection, Vec3 &intersection) override;
-        // Vec3 GetNormal(Vec3 intersectedPoint, Vec3 raydir) override;
-        // Vec2 GetTexUV(Vec3 intersectedPoint) override;
+        bool CheckIntersection(Ray ray, HitRecord& hitRecord) override;
+        Vec3 GetNormal(Vec3 intersectedPoint, Vec3 raydir) override;
+        Vec2 GetTexUV(Vec3 intersectedPoint) override;
 
         std::string GetName();
 }; 

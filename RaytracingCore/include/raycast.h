@@ -16,6 +16,7 @@ struct RayHit {
     Vec3 intersectedPoint;
     Vec3 viewDir;
     float t; // beers law distance between entry and exit points
+    int triangleHitIndex = -1;
 
     operator bool() const {
         return hit;
@@ -34,8 +35,8 @@ class Raycast {
         void SetEye(Vec3 eye);
         Vec3 CalcRayDirAtPoint(Vec3 point) const;
         Vec3 CalcRayDirAtPoint(Vec3 point, Vec3 intersectedPoint) const;
-        RayHit GetRayHit(Ray ray, Model *currentModelHit);
-        Vec3 IsShadow(Light *light, Vec3 eye, Model *intersectedModel);
+        RayHit GetRayHit(Ray ray, Model *currentModelHit, int triangleHitIndex);
+        Vec3 IsShadow(Light *light, Vec3 eye, Model *intersectedModel, int triangleHitIndex);
         Color TraceRay(Vec3 point, Color background, pair<Vec3, bool> &intersectedPoint);
         Color ShadeRay(RayHit hit, Color background, int depth, float currentIOR);
 };

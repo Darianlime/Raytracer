@@ -1,9 +1,9 @@
 #include "models/geometry.h"
 using std::vector;
 
-Triangle::Triangle(Indices indices, int mat, int tex) :  Model(Vec3(0,0,0), mat, tex, ModelType::MESH), indices(indices), originalIndices(indices) {}
+Triangle::Triangle(Indices indices, int mat, int tex) : indices(indices) {}
 
-Triangle::Triangle(Indices data) :  Model(Vec3(0,0,0), mat, tex, ModelType::MESH), indices(data), originalIndices(data) {}
+Triangle::Triangle(Indices data) : indices(data) {}
 
 Triangle::Triangle(vector<float> & args) : Triangle(ParseArgs(args)) {}
 
@@ -99,27 +99,27 @@ bool Triangle::CheckIntersection(Ray ray, float& entryIntersection, float& exitI
     return false;
 }
 
-Vec3 Triangle::GetNormal(Vec3 intersectedPoint, Vec3 raydir)
+Vec3 Triangle::GetNormal()
 {
     return normal;
 }
 
-Vec2 Triangle::GetTexUV(Vec3 intersectedPoint)
+Vec2 Triangle::GetTexUV()
 {
     return texture;
 }
 
-void Triangle::UpdateTransformation()
-{
-    SetMatrix(pos, rot * M_PI / 180, size);
-    //Matrix4 normalMatrix = worldToLocal.Transpose();
+// void Triangle::UpdateTransformation()
+// {
+//     SetMatrix(pos, rot * M_PI / 180, size);
+//     //Matrix4 normalMatrix = worldToLocal.Transpose();
 
-    indices.v1.pos = (localToWorld * Vec4(originalIndices.v1.pos)).toVec3();
-    indices.v2.pos = (localToWorld * Vec4(originalIndices.v2.pos)).toVec3();
-    indices.v3.pos = (localToWorld * Vec4(originalIndices.v3.pos)).toVec3();
-}
+//     indices.v1.pos = (localToWorld * Vec4(originalIndices.v1.pos)).toVec3();
+//     indices.v2.pos = (localToWorld * Vec4(originalIndices.v2.pos)).toVec3();
+//     indices.v3.pos = (localToWorld * Vec4(originalIndices.v3.pos)).toVec3();
+// }
 
-string Triangle::GetName()
-{
-    return "triangle";
-}
+// string Triangle::GetName()
+// {
+//     return "triangle";
+// }
