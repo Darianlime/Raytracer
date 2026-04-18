@@ -14,6 +14,7 @@ ModelFactory::ModelFactory() : currentVertexStart(0), indexOfCurrentMesh(-1) {
 
 void ModelFactory::AddVertPos(vector<float>& args) {
     vertsPos.emplace_back(args[0],args[1],args[2]);
+    objects[indexOfCurrentMesh]->pos = objects[indexOfCurrentMesh]->pos + Vec3(args[0],args[1],args[2]);
     objects[indexOfCurrentMesh]->GetVertices().emplace_back(args[0],args[1],args[2]);
     objects[indexOfCurrentMesh]->GetOrgVertices().emplace_back(args[0],args[1],args[2]);
 }

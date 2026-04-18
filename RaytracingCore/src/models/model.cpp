@@ -42,9 +42,6 @@ pair<float, float> Model::GetHitDistance(float A, float B, float C)
 
 void Model::CalculateCentriod() {
     if (verts.empty()) return;
-    for(auto& vert : verts) {
-        pos = pos + vert;
-    }
     pos = pos / verts.size();
 }
 
