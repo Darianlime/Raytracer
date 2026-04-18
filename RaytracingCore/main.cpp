@@ -62,7 +62,7 @@ int main(int argc, char* argv[]) {
     //     mF.
     // }
     for (auto& shape : mF.GetObjects()) {
-        shape->CalculateCentriod();
+        //shape->CalculateCentriod();
         shape->pos.ToString();
     }
 

@@ -5,7 +5,6 @@ map<ModelType, string> Model::typeMap = {
     {ModelType::CYLINDER, "cylinder"},
     {ModelType::CONE, "cone"},
     {ModelType::ELLIPSOID, "ellipsoid"},
-    {ModelType::MESH, "o"},
 };
 
 Model::Model(int mat, int tex, ModelType type) : mat(mat), tex(tex), type(type), lastVertIndex(-1), lastIndiceIndex(-1) {}
@@ -42,6 +41,9 @@ pair<float, float> Model::GetHitDistance(float A, float B, float C)
 
 void Model::CalculateCentriod() {
     if (verts.empty()) return;
+    for (Vec3 vert : verts) {
+        pos = pos + vert;
+    }
     pos = pos / verts.size();
 }
 
