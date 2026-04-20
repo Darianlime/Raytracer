@@ -95,9 +95,9 @@ int ModelFactory::CreateObject(string &objectName, vector<string> &args)
     }
 
     if (objectName == "f") {
-        vector<int> vertsArgs{};
-        ModelFactory::ParseTriangle(args, vertsArgs);
+        vector<int> vertsArgs{stoi(args[args.size()-2]), stoi(args[args.size()-1]), 0};
         AddIndice(vertsArgs);
+        ModelFactory::ParseTriangle(args, vertsArgs);
     }
     return 0;
 }
@@ -109,9 +109,10 @@ void ModelFactory::RemoveModel(int index) {
 void ModelFactory::ParseTriangle(vector<string>& args, vector<int>& vertsArgs) {
     const int INDICE_SIZE = 3;
     const int EXTRA_ARGS = 3;
-    vertsArgs.resize((args.size()-2) * INDICE_SIZE + EXTRA_ARGS, -1);
+    //vertsArgs.resize((args.size()-2) * INDICE_SIZE + EXTRA_ARGS, -1);
     bool texPresent = false;
     bool normalPresent = false;
+    Triangle& tri = objects[indexOfCurrentMesh]->GetTriangles().back();
     for (int i = 0; i < INDICE_SIZE; i++) {
         const char* toChar = args[i].c_str();
         const char* ptr = toChar;
@@ -119,27 +120,28 @@ void ModelFactory::ParseTriangle(vector<string>& args, vector<int>& vertsArgs) {
         int v, vn, vt;
         int index = i*INDICE_SIZE;
         std::from_chars_result res = std::from_chars(ptr, end, v);
-        vertsArgs[index] = v - currentVertexStart - 1;
+        tri.SetIndice(i, &objects[indexOfCurrentMesh]->GetVertices()[v - currentVertexStart - 1]);
+        //vertsArgs[index] = v - currentVertexStart - 1;
         ptr = res.ptr;
         if (*ptr == '/') {
             ptr++;
             if (*ptr != '/') {
                 std::from_chars_result res = std::from_chars(ptr, end, vt);
-                vertsArgs[index+2] = vt - currentVertexStart - 1;
+                //vertsArgs[index+2] = vt - currentVertexStart - 1;
                 ptr = res.ptr;
                 texPresent = true;
             }
             if (*ptr == '/') {
                 ptr++;
                 std::from_chars(ptr, end, vn);
-                vertsArgs[index+1] = vn - currentVertexStart - 1;
+                //vertsArgs[index+1] = vn - currentVertexStart - 1;
                 normalPresent = true;
             }
         }
     }
-    vertsArgs[vertsArgs.size()-EXTRA_ARGS] = stoi(args[args.size()-2]);
-    vertsArgs[vertsArgs.size()-(EXTRA_ARGS-1)] = stoi(args[args.size()-1]);
-    vertsArgs[vertsArgs.size()-(EXTRA_ARGS-2)] = texPresent + (normalPresent << 1);
+    //vertsArgs[vertsArgs.size()-EXTRA_ARGS] = stoi(args[args.size()-2]);
+    //vertsArgs[vertsArgs.size()-(EXTRA_ARGS-1)] = stoi(args[args.size()-1]);
+    //vertsArgs[vertsArgs.size()-(EXTRA_ARGS-2)] = texPresent + (normalPresent << 1);
 }
 
 string ModelFactory::GetTypeIndex(int index)

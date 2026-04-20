@@ -20,6 +20,16 @@ Object::Object(Vec3 pos, Vec3 rot, Vec3 size, string name) : pos(pos), rot(rot),
     SetMatrix(pos, rot, size);
 }
 
+void Object::SetMatrix()
+{
+    Matrix4 M_Translate = Matrix4::Translate(pos);
+    Matrix4 M_Rot = Matrix4::FromEuler(rot.x, rot.y, rot.z);
+    Matrix4 M_Size = Matrix4::Scale(size);
+
+    localToWorld = M_Translate * M_Rot * M_Size;
+    worldToLocal = localToWorld.InverseAffine();
+}
+
 void Object::SetMatrix(Vec3 pos, Vec3 rot, Vec3 size)
 {
     Matrix4 M_Translate = Matrix4::Translate(pos);

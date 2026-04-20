@@ -3,6 +3,7 @@
 
 #include "numbers.h"
 #include <iostream>
+#include <algorithm>
 
 using namespace math;
 
@@ -119,6 +120,18 @@ struct Vec3 {
 
         static Vec3 Cross(Vec3 vec1, Vec3 vec2) {
             return Vec3(vec1.y * vec2.z - vec1.z * vec2.y, -(vec1.x * vec2.z - vec1.z * vec2.x), vec1.x * vec2.y - vec1.y * vec2.x);
+        }
+
+        static Vec3 Min(Vec3 vec1, Vec3 vec2) {
+            return Vec3(std::min(vec1.x, vec2.x), std::min(vec1.y, vec2.y), std::min(vec1.z, vec2.z));
+        }
+
+        static Vec3 Max(Vec3 vec1, Vec3 vec2) {
+            return Vec3(std::max(vec1.x, vec2.x), std::max(vec1.y, vec2.y), std::max(vec1.z, vec2.z));
+        }
+
+        float GetAxisValue(int axis) {
+            return axis == 0 ? x : axis == 1 ? y : z; 
         }
 
         Vec3 Normalize() {

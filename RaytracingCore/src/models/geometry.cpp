@@ -20,20 +20,22 @@ Indices Triangle::ParseArgs(vector<int> &args) {
     tex = args[args.size()-2];
     shadeType = args[args.size()-1];
     //std::cout << args[0] << " " << args[1] << " " << args[2] << " " << args[3] << " " << args[4] << " " << args[5] << " " << args[6] << " " << args[7] << " " << args[8] << std::endl;
-    return Indices{args[0], args[1], args[2], args[3], args[4], args[5], args[6], args[7], args[8]};
+    return Indices{nullptr, nullptr, nullptr};
 }
 
-bool Triangle::CheckIntersection(Ray ray, float& entryIntersection, float& exitIntersection, Vec3& intersection, vector<Vec3>& verts)
+bool Triangle::CheckIntersection(Ray ray, float& entryIntersection, float& exitIntersection, Vec3& intersection)
 {
     //verts[indices.v1P].ToString();
     //verts[indices.v2P].ToString();
-    //verts[indices.v3P].ToString();
-    Vec3 e1 = verts[indices.v2P] - verts[indices.v1P];
-    Vec3 e2 = verts[indices.v3P] - verts[indices.v1P];
+    Vec3 ind1 = *indices.v1; 
+    Vec3 ind2 = *indices.v2;
+    Vec3 ind3 = *indices.v3;
+    Vec3 e1 = ind2 - ind1;
+    Vec3 e2 = ind3 - ind1;
     Vec3 n = Vec3::Cross(e1, e2); // normal vector of triangle
     normal = n.Normalize();
     
-    float D = -(Vec3::Dot(n, verts[indices.v1P]));
+    float D = -(Vec3::Dot(n, ind1));
 
     float denominator = Vec3::Dot(n, ray.raydir);
     if (fabs(denominator) < 1e-6) { return false; } 
@@ -44,7 +46,7 @@ bool Triangle::CheckIntersection(Ray ray, float& entryIntersection, float& exitI
     }
 
     Vec3 intersectedPoint = ray.GetRay(t);
-    Vec3 ep = intersectedPoint - verts[indices.v1P];
+    Vec3 ep = intersectedPoint - ind1;
 
     float d11 = Vec3::Dot(e1, e1);
     float d12 = Vec3::Dot(e1, e2);
@@ -75,6 +77,11 @@ bool Triangle::CheckIntersection(Ray ray, float& entryIntersection, float& exitI
     return false;
 }
 
+Vec3 Triangle::CalcCenter()
+{
+    return (*indices.v1 + *indices.v2 + *indices.v3) / 3.0f;
+}
+
 Vec3 Triangle::GetNormal()
 {
     return normal;
@@ -85,8 +92,23 @@ Vec2 Triangle::GetTexUV()
     return texture;
 }
 
-Indices Triangle::GetIndices() {
+Indices& Triangle::GetIndices() {
     return indices;
+}
+
+void Triangle::SetIndice(int index, Vec3* vert) {
+    if (index == 0) {
+        indices.v1 = vert;
+        //indices.v1->ToString();
+    } else if (index == 1) {
+        indices.v2 = vert;
+        //indices.v2->ToString();
+    } else if (index == 2) {
+        indices.v3 = vert;
+        //indices.v3->ToString();
+    } else {
+        throw std::runtime_error("Runtime Error: Get indices out of index");
+    }
 }
 
 

@@ -28,6 +28,7 @@ class Object {
         Object(Vec3 pos, string name);
         Object(Vec3 pos, Vec3 rot, Vec3 size, string name);
 
+        void SetMatrix();
         void SetMatrix(Vec3 pos, Vec3 rot, Vec3 size);
         virtual void UpdateTransformation();
 

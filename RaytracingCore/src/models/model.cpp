@@ -7,9 +7,9 @@ map<ModelType, string> Model::typeMap = {
     {ModelType::ELLIPSOID, "ellipsoid"},
 };
 
-Model::Model(int mat, int tex, ModelType type) : mat(mat), tex(tex), type(type), lastVertIndex(-1), lastIndiceIndex(-1) {}
-Model::Model(Vec3 pos, int mat, int tex, ModelType type) : Object(pos), mat(mat), tex(tex), type(type), lastVertIndex(-1), lastIndiceIndex(-1) {}
-Model::Model(Vec3 pos, Vec3 rot, Vec3 size, int mat, int tex, ModelType type) : Object(pos, rot, size), mat(mat), tex(tex), type(type), lastVertIndex(-1), lastIndiceIndex(-1) {}
+Model::Model(int mat, int tex, ModelType type) : mat(mat), tex(tex), type(type), lastVertIndex(-1), lastIndiceIndex(-1), bvh(4) {}
+Model::Model(Vec3 pos, int mat, int tex, ModelType type) : Object(pos), mat(mat), tex(tex), type(type), lastVertIndex(-1), lastIndiceIndex(-1), bvh(4) {}
+Model::Model(Vec3 pos, Vec3 rot, Vec3 size, int mat, int tex, ModelType type) : Object(pos, rot, size), mat(mat), tex(tex), type(type), lastVertIndex(-1), lastIndiceIndex(-1), bvh(4) {}
 
 // returns the entry hit and exit hit
 pair<float, float> Model::GetHitDistance(float A, float B, float C)
@@ -40,16 +40,16 @@ pair<float, float> Model::GetHitDistance(float A, float B, float C)
 }
 
 void Model::CalculateCentriod() {
-    if (verts.empty()) return;
-    for (Vec3 vert : verts) {
+    if (bvh.verts.empty()) return;
+    for (Vec3 vert : bvh.verts) {
         pos = pos + vert;
     }
-    pos = pos / verts.size();
+    pos = pos / bvh.verts.size();
 }
 
 std::vector<Vec3> &Model::GetVertices()
 {
-    return verts;
+    return bvh.verts;
 }
 
 std::vector<Vec3> &Model::GetOrgVertices()
@@ -58,10 +58,15 @@ std::vector<Vec3> &Model::GetOrgVertices()
 }
 
 std::vector<Triangle> &Model::GetTriangles() {
-    return triangles;
+    return bvh.triangles;
 }
 
-map<ModelType, string> &Model::GetTypeMap() {
+BVH &Model::GetBVH()
+{
+    return bvh;
+}
+map<ModelType, string> &Model::GetTypeMap()
+{
     return typeMap;
 }
 

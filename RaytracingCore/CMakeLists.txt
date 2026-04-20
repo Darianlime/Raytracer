@@ -26,6 +26,9 @@ add_library(lib
     src/models/ellipsoid.cpp
     src/models/geometry.cpp
 
+    src/BVH/BoundingBox.cpp
+    src/BVH/BVH.cpp
+
     src/lights/light.cpp
     src/lights/DirectionalLight.cpp
     src/lights/PointLight.cpp

@@ -64,6 +64,8 @@ int main(int argc, char* argv[]) {
     for (auto& shape : mF.GetObjects()) {
         //shape->CalculateCentriod();
         shape->pos.ToString();
+        shape->GetBVH().Init();
+        shape->GetBVH().Build();
     }
 
     for (auto& shape : mF.GetObjects()) {

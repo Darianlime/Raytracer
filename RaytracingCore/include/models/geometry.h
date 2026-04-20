@@ -4,6 +4,7 @@
 #include "vector.h"
 #include "ray.h"
 #include <vector>
+#include <array>
 
 enum class BufferType {
     VERTEX,
@@ -27,12 +28,20 @@ struct Vertex {
     Vertex(Vec3 pos, Vec3 normal, Vec2 texture) : pos(pos), normal(normal), texture(texture) {}
 };
 
+// struct Indices  {
+//     int v1P, v1N, v1T;
+//     int v2P, v2N, v2T;
+//     int v3P, v3N, v3T;
+//     Indices(int v1P, int v1N, int v1T, int v2P, int v2N, int v2T, int v3P, int v3N, int v3T) 
+//         : v1P(v1P), v1N(v1N), v1T(v1T), v2P(v2P), v2N(v2N), v2T(v2T), v3P(v3P), v3N(v3N), v3T(v3T) {}
+// };
+
 struct Indices  {
-    int v1P, v1N, v1T;
-    int v2P, v2N, v2T;
-    int v3P, v3N, v3T;
-    Indices(int v1P, int v1N, int v1T, int v2P, int v2N, int v2T, int v3P, int v3N, int v3T) 
-        : v1P(v1P), v1N(v1N), v1T(v1T), v2P(v2P), v2N(v2N), v2T(v2T), v3P(v3P), v3N(v3N), v3T(v3T) {}
+    Vec3* v1;
+    Vec3* v2;
+    Vec3* v3;
+    // Indices(Vec3* v1, Vec3* v2, Vec3* v3) 
+    //     : v1(v1), v2(v2), v3(v3) {}
 };
 
 struct Triangle {
@@ -51,10 +60,12 @@ struct Triangle {
 
         Indices ParseArgs(std::vector<int> &args);
 
-        bool CheckIntersection(Ray ray, float &entryIntersection, float &exitIntersection, Vec3 &intersection, std::vector<Vec3> &verts);
+        bool CheckIntersection(Ray ray, float &entryIntersection, float &exitIntersection, Vec3 &intersection);
+        Vec3 CalcCenter();
         Vec3 GetNormal();
         Vec2 GetTexUV();
-        Indices GetIndices();
+        Indices& GetIndices();
+        void SetIndice(int index, Vec3 *vert);
         // void UpdateTransformation() override;
         // string GetName() override;
 }; 

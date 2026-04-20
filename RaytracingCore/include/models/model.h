@@ -4,12 +4,9 @@
 #include "object.h"
 #include "material.h"
 #include "ray.h"
-#include "geometry.h"
+#include "BVH/BVH.h"
 
 using std::pair;
-
-struct Model;
-struct IgnoreTriangle;
 
 enum class ModelType {
     SPHERE,
@@ -22,10 +19,8 @@ enum class ModelType {
 struct Model : public Object {
     protected:
         static map<ModelType, string> typeMap;
-        std::vector<Vec3> verts;
         std::vector<Vec3> orignalVerts;
-        std::vector<Triangle> originalTriangles;
-        std::vector<Triangle> triangles;
+        BVH bvh;
     public:
         int mat;
         int tex;
@@ -47,6 +42,7 @@ struct Model : public Object {
         std::vector<Vec3>& GetVertices();
         std::vector<Vec3> &GetOrgVertices();
         std::vector<Triangle> &GetTriangles();
+        BVH &GetBVH();
         pair<float, float> GetHitDistance(float A, float B, float C);
         static map<ModelType, string>& GetTypeMap();
         string GetName() override;

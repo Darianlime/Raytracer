@@ -1,5 +1,6 @@
 #include "models/mesh.h"
 #include <limits>
+#include <array>
 using std::vector;
 using std::numeric_limits;
 
@@ -9,18 +10,24 @@ Mesh::Mesh(std::string name, vector<int> args) : Model(Vec3(0,0,0), -1, -1, Mode
 
 bool Mesh::CheckIntersection(Ray ray, HitRecord& hitRecord)
 {
-    if (triangles[hitRecord.triangleHitIndex].CheckIntersection(ray, hitRecord.entryIntersection, hitRecord.exitIntersection, hitRecord.intersection, GetVertices())) {
+    if (bvh.triangles[hitRecord.triangleHitIndex].CheckIntersection(ray, hitRecord.entryIntersection, hitRecord.exitIntersection, hitRecord.intersection)) {
         return true;
     }    
     return false;
+}
+
+void Mesh::CenterOrgVertsToCenter() {
+    for (auto& vertex : orignalVerts) {
+		vertex = vertex - pos; 
+    }
 }
 
 void Mesh::UpdateTransformation()
 {
     SetMatrix(pos, rot * M_PI / 180, size);
     //Matrix4 normalMatrix = worldToLocal.Transpose();
-    for (int i = 0; i < verts.size(); i++) {
-        verts[i] = (localToWorld * Vec4(orignalVerts[i])).toVec3();
+    for (int i = 0; i < bvh.verts.size(); i++) {
+        bvh.verts[i] = (localToWorld * Vec4(orignalVerts[i])).toVec3();
     }
 }
 
