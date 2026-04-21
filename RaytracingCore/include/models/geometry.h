@@ -60,7 +60,7 @@ struct Triangle {
 
         Indices ParseArgs(std::vector<int> &args);
 
-        bool CheckIntersection(Ray ray, float &entryIntersection, float &exitIntersection, Vec3 &intersection);
+        bool CheckIntersection(const Ray& ray, float &entryIntersection, float &exitIntersection, Vec3 &intersection);
         Vec3 CalcCenter();
         Vec3 GetNormal();
         Vec2 GetTexUV();

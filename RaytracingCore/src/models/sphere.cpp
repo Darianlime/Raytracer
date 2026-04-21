@@ -16,7 +16,7 @@ SphereData Sphere::ParseArgs(vector<float> &args) {
     return SphereData{Vec3(args[0], args[1], args[2]), args[3], (int)args[4], (int)args[5]};
 }
 
-bool Sphere::CheckIntersection(Ray ray, HitRecord& hitRecord) {
+bool Sphere::CheckIntersection(const Ray& ray, HitRecord& hitRecord) {
     if (size.y != size.x && size.y != size.z) {
         size.x = size.y;
         size.z = size.y;

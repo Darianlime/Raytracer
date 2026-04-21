@@ -12,7 +12,8 @@ struct Mesh : public Model {
         Mesh();
         Mesh(std::string name, std::vector<int> args);
 
-        bool CheckIntersection(Ray ray, HitRecord& hitRecord) override;
+        bool CheckIntersection(const Ray& ray, HitRecord& hitRecord) override;
+        bool CheckBVHIntersection(const Ray &ray, const BVHNode &node, const int ignoreTriangle, HitRecord &hitRecord);
         void CenterOrgVertsToCenter();
         void UpdateTransformation() override;
         Vec3 GetNormal(Vec3 intersectedPoint, Vec3 raydir) override;

@@ -5,15 +5,17 @@
 #include "models/geometry.h"
 
 struct BoundingBox {
-    private:
+    public:
+
         Vec3 min;
         Vec3 max;
         Vec3 center;
-    public:
+
         BoundingBox();
-        Vec3 CalcCenter();
-        Vec3 Size();
-        Vec3 Size(Vec3 center);
+        Vec3 CalcCenter() const;
+        Vec3 Size() const;
+        Vec3 Size(Vec3 center) const;
+        
         void GrowBox(Vec3& vertex);
         void GrowBoxTriangle(Triangle& tri);
         void ToString();

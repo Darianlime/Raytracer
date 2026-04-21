@@ -17,7 +17,7 @@ ConeData Cone::ParseArgs(vector<float> &args) {
     return ConeData{Vec3(args[0], args[1], args[2]), Vec3(args[3], args[4], args[5]), args[6], args[7], int(args[8]), int(args[9])};
 }
 
-bool Cone::CheckIntersection(Ray ray, HitRecord& hitRecord) {
+bool Cone::CheckIntersection(const Ray& ray, HitRecord& hitRecord) {
     Vec3 localOrigin3 = (worldToLocal * Vec4(ray.origin)).toVec3();
     Vec3 localDir3 = (worldToLocal * Vec4(ray.raydir, 0.0f)).toVec3(); 
 

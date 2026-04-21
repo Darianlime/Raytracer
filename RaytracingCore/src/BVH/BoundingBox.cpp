@@ -1,19 +1,21 @@
 #include "BVH/BoundingBox.h"
+#include <numeric>
 
-BoundingBox::BoundingBox() {}
+BoundingBox::BoundingBox() 
+    : min(std::numeric_limits<float>::infinity(), std::numeric_limits<float>::infinity(), std::numeric_limits<float>::infinity()),
+      max(-std::numeric_limits<float>::infinity(), -std::numeric_limits<float>::infinity(), -std::numeric_limits<float>::infinity()) {}
 
-Vec3 BoundingBox::CalcCenter()
+Vec3 BoundingBox::CalcCenter() const
 {
-    center = (max + min) / 2.0f;
-    return center;
+    return (max + min) / 2.0f;
 }
 
-Vec3 BoundingBox::Size()
+Vec3 BoundingBox::Size() const
 {
     return max - CalcCenter(); 
 }
 
-Vec3 BoundingBox::Size(Vec3 center)
+Vec3 BoundingBox::Size(Vec3 center) const
 {
     return max - center; 
 }

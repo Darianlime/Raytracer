@@ -34,7 +34,7 @@ struct Model : public Object {
         Model(Vec3 pos, Vec3 rot, Vec3 size, int mat, int tex, ModelType type);
         virtual ~Model() {};
 
-        virtual bool CheckIntersection(Ray ray, HitRecord& hitRecord) = 0;
+        virtual bool CheckIntersection(const Ray& ray, HitRecord& hitRecord) = 0;
         virtual Vec3 GetNormal(Vec3 intersectedPoint, Vec3 raydir) = 0;
         virtual Vec2 GetTexUV(Vec3 intersectedPoint) = 0;
 

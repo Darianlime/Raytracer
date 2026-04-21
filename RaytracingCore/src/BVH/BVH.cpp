@@ -31,13 +31,15 @@ void BVH::Build()
     Split(nodes[0], 0, 0);
 }
 
-void BVH::Split(BVHNode parent, int parentIndex, int depth = 0) {
+void BVH::Split(const BVHNode& parent, int parentIndex, int depth = 0) {
     if (parent.triangleIndexs.size() <= leafSize || depth >= MAX_DEPTH) {
         return;
     }
     Vec3 center = parent.bounds.CalcCenter();
     Vec3 size = parent.bounds.Size(center);
-    int axis = size.x >= std::max(size.y, size.z) ? 0 : size.y >= size.z ? 1 : 2;
+    int axis = 0;
+    if (size.y > size.x) axis = 1;
+    if (size.z > size.GetAxisValue(axis)) axis = 2;
     float centerAxis = center.GetAxisValue(axis);
 
     int left = nodes.size();
@@ -52,6 +54,10 @@ void BVH::Split(BVHNode parent, int parentIndex, int depth = 0) {
         nodes[inLeftBox].triangleIndexs.emplace_back(triIndex);
         nodes[inLeftBox].bounds.GrowBoxTriangle(tri);
     }
+    
+    if (nodes[left].triangleIndexs.empty() || nodes[right].triangleIndexs.empty()) {
+        return;
+    }
     // std::cout << "split: ";
     // for (int i : nodes[left].triangleIndexs) {
     //     std::cout << i << " ";
@@ -63,10 +69,32 @@ void BVH::Split(BVHNode parent, int parentIndex, int depth = 0) {
     // }
     // std::cout << std::endl;
 
-    nodes[parentIndex].leftChild = left;
-    nodes[parentIndex].rightChild = right;
+    nodes[parentIndex].child = left;
 
-    Split(nodes[left], left, depth++);
-    Split(nodes[right], right, depth++);
+    Split(nodes[left], left, depth + 1);
+    Split(nodes[right], right, depth + 1);
+}
+
+bool BVH::IsBoundsHit(const Ray& ray, const BoundingBox& bounds)
+{
+    float tx1 = (bounds.min.x - ray.origin.x) * ray.invRaydir.x;
+    float tx2 = (bounds.max.x - ray.origin.x) * ray.invRaydir.x;
+
+    float tmin = fminf(tx1, tx2);
+    float tmax = fmaxf(tx1, tx2);
+
+    float ty1 = (bounds.min.y - ray.origin.y) * ray.invRaydir.y;
+    float ty2 = (bounds.max.y - ray.origin.y) * ray.invRaydir.y;
+
+    tmin = fmaxf(tmin, fminf(ty1, ty2));
+    tmax = fminf(tmax, fmaxf(ty1, ty2));
+
+    float tz1 = (bounds.min.z - ray.origin.z) * ray.invRaydir.z;
+    float tz2 = (bounds.max.z - ray.origin.z) * ray.invRaydir.z;
+
+    tmin = fmaxf(tmin, fminf(tz1, tz2));
+    tmax = fminf(tmax, fmaxf(tz1, tz2));
+
+    return tmax >= tmin && tmax > 0.0f;
 }
 

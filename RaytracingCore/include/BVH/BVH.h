@@ -7,8 +7,7 @@
 struct BVHNode {
     BoundingBox bounds;
     std::vector<int> triangleIndexs;
-    int leftChild = -1;
-    int rightChild = -1;
+    int child = -1;
 
     BVHNode() {};
     BVHNode(BoundingBox& bounds, const std::vector<int>& triangleIndexs) : bounds(bounds), triangleIndexs(triangleIndexs) {}
@@ -16,12 +15,12 @@ struct BVHNode {
 
 class BVH {
     private:
-        std::vector<BVHNode> nodes;
         int leafSize;
         int triangleSize;
         const int MAX_DEPTH;
-        void Split(BVHNode parent, int parentIndex, int depth);
+        void Split(const BVHNode &parent, int parentIndex, int depth);
     public:
+        std::vector<BVHNode> nodes;
         std::vector<Triangle> triangles;
         std::vector<Vec3> verts;
 
@@ -29,6 +28,7 @@ class BVH {
         BVH(int leafSize);
         void Init();
         void Build();
+        static bool IsBoundsHit(const Ray &ray, const BoundingBox &bounds);
 };
 
 #endif

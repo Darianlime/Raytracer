@@ -23,8 +23,9 @@ Indices Triangle::ParseArgs(vector<int> &args) {
     return Indices{nullptr, nullptr, nullptr};
 }
 
-bool Triangle::CheckIntersection(Ray ray, float& entryIntersection, float& exitIntersection, Vec3& intersection)
+bool Triangle::CheckIntersection(const Ray& ray, float& entryIntersection, float& exitIntersection, Vec3& intersection)
 {
+    const float EPS = 1e-6f;
     //verts[indices.v1P].ToString();
     //verts[indices.v2P].ToString();
     Vec3 ind1 = *indices.v1; 
@@ -38,10 +39,10 @@ bool Triangle::CheckIntersection(Ray ray, float& entryIntersection, float& exitI
     float D = -(Vec3::Dot(n, ind1));
 
     float denominator = Vec3::Dot(n, ray.raydir);
-    if (fabs(denominator) < 1e-6) { return false; } 
+    if (fabs(denominator) < EPS) { return false; } 
 
     float t = -(Vec3::Dot(n, ray.origin) + D) / denominator;
-    if (t < 0) {
+    if (t < EPS) {
         return false;
     }
 
@@ -67,7 +68,7 @@ bool Triangle::CheckIntersection(Ray ray, float& entryIntersection, float& exitI
     // if (shadeType == (int)ShadeType::TEXTURED || shadeType == (int)ShadeType::SMOOTH_TEXTURED) {
     //     texture = indices.v1.texture*alpha + indices.v2.texture*beta + indices.v3.texture*gamma;
     // }
-    if ((0 <= alpha && alpha <= 1) && (0 <= beta && beta <= 1) && (0 <= gamma && gamma <= 1))
+    if ((alpha >= -EPS && alpha <= 1 + EPS) && (beta  >= -EPS && beta <= 1 + EPS) && (gamma >= -EPS && gamma <= 1 + EPS))
     {
         entryIntersection = t;
         exitIntersection = t;

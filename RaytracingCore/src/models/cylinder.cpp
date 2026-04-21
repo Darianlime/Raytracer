@@ -16,7 +16,7 @@ CylinderData Cylinder::ParseArgs(vector<float> &args) {
     return CylinderData{Vec3(args[0], args[1], args[2]), Vec3(args[3], args[4], args[5]), args[6], args[7], int(args[8]), int(args[9])};
 }
 
-bool Cylinder::CheckIntersection(Ray ray, HitRecord& hitRecord) {
+bool Cylinder::CheckIntersection(const Ray& ray, HitRecord& hitRecord) {
     Vec3 f = ray.origin - pos;
     float A = Vec3::Dot(ray.raydir, ray.raydir) - pow(Vec3::Dot(ray.raydir, direction),2);
     float B = 2 * (Vec3::Dot(ray.raydir, f) - Vec3::Dot(ray.raydir, direction) * Vec3::Dot(f, direction));
