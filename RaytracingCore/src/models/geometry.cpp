@@ -35,6 +35,10 @@ bool Triangle::CheckIntersection(const Ray& ray, float& entryIntersection, float
     Vec3 e2 = ind3 - ind1;
     Vec3 n = Vec3::Cross(e1, e2); // normal vector of triangle
     normal = n.Normalize();
+
+    if (Vec3::Dot(n, ray.raydir) > 0) {
+        normal = -normal;
+    }
     
     float D = -(Vec3::Dot(n, ind1));
 
