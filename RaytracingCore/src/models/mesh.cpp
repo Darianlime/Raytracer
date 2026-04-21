@@ -52,7 +52,6 @@ void Mesh::UpdateTransformation()
     for (int i = 0; i < bvh.verts.size(); i++) {
         bvh.verts[i] = (localToWorld * Vec4(orignalVerts[i])).toVec3();
     }
-
     bvh.Build();
 }
 

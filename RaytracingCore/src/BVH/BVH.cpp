@@ -13,6 +13,7 @@ void BVH::Init() {
 
 void BVH::Build()
 {
+    nodes.clear();
     BoundingBox bounds;
 
     // expand bounds to mesh
