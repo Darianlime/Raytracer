@@ -55,9 +55,9 @@ void Mesh::UpdateTransformation()
     bvh.Build();
 }
 
-Vec3 Mesh::GetNormal(Vec3 intersectedPoint, Vec3 raydir)
+Vec3 Mesh::GetNormal(Vec3 intersectedPoint, Vec3 raydir, const int triangleIndex)
 {
-    return currentNormal;
+    return GetTriangles()[triangleIndex].GetNormal(raydir).Normalize();
 }
 
 Vec2 Mesh::GetTexUV(Vec3 intersectedPoint)

@@ -81,7 +81,7 @@ int main(int argc, char* argv[]) {
     Viewport screen(argsMap["imsize"][0], argsMap["imsize"][1], Color(argsMap["bkgcolor"][0], argsMap["bkgcolor"][1], argsMap["bkgcolor"][2], false), argsMap["bkgcolor"][3]);
     screen.CalcWindowCorners(cam);
     
-    Raycast ray(Vec3(argsMap["eye"][0], argsMap["eye"][1], argsMap["eye"][2]), objectFactory);
+    Raycast ray(Vec3(argsMap["eye"][0], argsMap["eye"][1], argsMap["eye"][2]), objectFactory, 4);
 
     // If Depthcueing is enabled store arguments
     Color depthCueColor;

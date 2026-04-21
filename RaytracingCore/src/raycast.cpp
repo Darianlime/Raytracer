@@ -3,7 +3,7 @@
 using std::numeric_limits;
 
 namespace Raytracer {
-    Raycast::Raycast(Vec3 eye, const ObjectFactory &objectFactory) : eye(eye), objectFactory(objectFactory) {}
+    Raycast::Raycast(Vec3 eye, const ObjectFactory &objectFactory, const int SHADE_DEPTH) : eye(eye), objectFactory(objectFactory), SHADE_DEPTH(SHADE_DEPTH) {}
 
     Vec3 Raycast::GetEye()
     {
@@ -63,9 +63,9 @@ namespace Raytracer {
                 Vec2 texUV = closest->GetTexUV(closestIntersection);
                 mat.diffuse = objectFactory.GetTexIndex(closest->tex).GetPixel(texUV.x, texUV.y);
             }
-            return RayHit{true, closest, mat, closestIntersection, (ray.origin - closestIntersection).Normalize(), closestExitT - closestEntryT, closestTriangleHit };
+            return RayHit{true, closest, mat, closestIntersection, (ray.origin - closestIntersection).Normalize(), closest->GetNormal(closestIntersection, ray.raydir, closestTriangleHit), closestExitT - closestEntryT, closestTriangleHit };
         }
-        return RayHit{false, nullptr, Material(), Vec3(0,0,0), Vec3(0,0,0)};
+        return RayHit{false, nullptr, Material(), Vec3(0,0,0), Vec3(0,0,0), Vec3(0,0,0)};
     }
 
     // Shoots a shadow ray from intersected point to light and checks for object intersections
@@ -113,7 +113,7 @@ namespace Raytracer {
         if (hit) {
             intersectedPoint.first = hit.intersectedPoint;
             intersectedPoint.second = hit.hit;
-            return ShadeRay(hit, background, 10, 1.0f);
+            return ShadeRay(hit, background, SHADE_DEPTH, 1.0f);
         }
         return background;
     }
@@ -126,12 +126,12 @@ namespace Raytracer {
         vector<unique_ptr<Light>>& lights = objectFactory.GetFactory<LightFactory>().GetObjects();
         Material mat = hit.mat;
         Vec3 intersectedPoint = hit.intersectedPoint;
-        Vec3 normal{};
-        if (hit.model->type != ModelType::MESH) {
-            normal = hit.model->GetNormal(intersectedPoint, hit.viewDir).Normalize();
-        } else { 
-            normal = hit.model->GetTriangles()[hit.triangleHitIndex].GetNormal(hit.viewDir).Normalize();
-        }
+        //Vec3 normal{};
+        // if (hit.model->type != ModelType::MESH) {
+        //     normal = hit.model->GetNormal(intersectedPoint, hit.viewDir).Normalize();
+        // } else { 
+        //     normal = hit.model->GetTriangles()[hit.triangleHitIndex].GetNormal(hit.viewDir).Normalize();
+        // }
         Vec3 viewDir = (eye - intersectedPoint).Normalize();
 
         Vec3 summation(0, 0, 0);
@@ -142,8 +142,8 @@ namespace Raytracer {
             // printf("lightDir: %f %f %f\n", lightDir.x, lightDir.y, lightDir.z);
             // printf("dot: %f\n", Vec3::Dot(normal, lightDir));
             Vec3 halfway = (lightDir + hit.viewDir).Normalize();
-            Vec3 diffuse = mat.diffuse.GetVec() * mat.k.y * std::max(0.0f, Vec3::Dot(normal, lightDir));
-            Vec3 specular = mat.specular.GetVec() * mat.k.z * pow(std::max(0.0f, Vec3::Dot(normal, halfway)), mat.n);
+            Vec3 diffuse = mat.diffuse.GetVec() * mat.k.y * std::max(0.0f, Vec3::Dot(hit.normal, lightDir));
+            Vec3 specular = mat.specular.GetVec() * mat.k.z * pow(std::max(0.0f, Vec3::Dot(hit.normal, halfway)), mat.n);
 
             
             Vec3 shadow = IsShadow(light.get(), intersectedPoint, hit.model, hit.triangleHitIndex);
@@ -157,25 +157,26 @@ namespace Raytracer {
         Vec3 surfaceColor = ambient + summation;
 
         Vec3 reflectionColor(0,0,0);
-        if (mat.k.z > 0.0f && depth > 0) {
+        if (mat.k.z > 0.1f && depth > 0) {
             Vec3 I = -hit.viewDir; 
-            Vec3 R = (I - normal * 2.0f * Vec3::Dot(I, normal)).Normalize();
+            Vec3 R = (I - hit.normal * 2.0f * Vec3::Dot(I, hit.normal)).Normalize();
             const float EPSILON = 1e-4f;
-            Vec3 origin = intersectedPoint + normal * EPSILON; // offset outside surface
+            Vec3 origin = intersectedPoint + hit.normal * EPSILON; // offset outside surface
 
             RayHit reflectionHit = GetRayHit(Ray{origin, R}, hit.model, hit.triangleHitIndex); 
             reflectionColor = ShadeRay(reflectionHit, background, depth-1, currentIOR).GetVec();
         }
 
         Vec3 refractionColor(0,0,0);
-        if ((mat.alpha.r < 1.0f || mat.alpha.g < 1.0f || mat.alpha.b < 1.0f) && depth > 0) {
+        float transparency = (mat.alpha.r + mat.alpha.g + mat.alpha.b) / 3.0f;
+        if (transparency < 0.99f && depth > 0) {
             Vec3 I = -hit.viewDir;
-            bool entering = Vec3::Dot(normal, I) < 0;
-            Vec3 n = normal;
+            bool entering = Vec3::Dot(hit.normal, I) < 0;
+            Vec3 n = hit.normal;
             float nextIOR = mat.refractionIndex;
 
             if (!entering) {
-                n = -normal;          // flip normal if exiting
+                n = -hit.normal;          // flip normal if exiting
                 nextIOR = 1.0f;       // air
             }
 
@@ -190,7 +191,7 @@ namespace Raytracer {
                 Vec3 origin = intersectedPoint + T * EPSILON;
                 Model* skipModel = entering ? nullptr : hit.model;
                 RayHit refractionHit = GetRayHit(Ray{origin, T}, skipModel, hit.triangleHitIndex);
-                refractionColor = ShadeRay(refractionHit, background, depth-1, nextIOR).GetVec();
+                refractionColor = ShadeRay(refractionHit, background, depth-2, nextIOR).GetVec();
                 Vec3 alpha = objectFactory.GetMatIndex(hit.model->mat).alpha.GetVec();
                 refractionColor.x *= exp(-alpha.x * refractionHit.t);
                 refractionColor.y *= exp(-alpha.y * refractionHit.t);
@@ -201,7 +202,7 @@ namespace Raytracer {
         }
 
         float f0 = pow((mat.refractionIndex - 1)/(mat.refractionIndex + 1), 2);
-        float cosTheta = fabs(Vec3::Dot(normal, -hit.viewDir));
+        float cosTheta = fabs(Vec3::Dot(hit.normal, -hit.viewDir));
         float fresnelR = f0 + (1 - f0) * pow(1 - cosTheta, 5);
         Vec3 finalColor =  surfaceColor + reflectionColor * fresnelR + refractionColor * (1 - fresnelR); 
         return Color(finalColor, false);

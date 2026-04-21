@@ -15,6 +15,7 @@ struct RayHit {
     Material mat; 
     Vec3 intersectedPoint;
     Vec3 viewDir;
+    Vec3 normal;
     float t; // beers law distance between entry and exit points
     int triangleHitIndex = -1;
 
@@ -25,11 +26,12 @@ struct RayHit {
 
 class Raycast {
     private:
+        const int SHADE_DEPTH;
         const ObjectFactory& objectFactory;
         Vec3 eye;
     public:
         Raycast() = default;
-        Raycast(Vec3 eye, const ObjectFactory& objectFactory);
+        Raycast(Vec3 eye, const ObjectFactory& objectFactory, const int SHADE_DEPTH);
 
         Vec3 GetEye();
         void SetEye(Vec3 eye);

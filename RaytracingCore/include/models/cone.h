@@ -27,7 +27,7 @@ struct Cone : public Model {
 
         bool CheckIntersection(const Ray& ray, HitRecord& hitRecord) override;
 
-        Vec3 GetNormal(Vec3 intersectedPoint, Vec3 raydir) override;
+        Vec3 GetNormal(Vec3 intersectedPoint, Vec3 raydir, const int triangleIndex) override;
         Vec2 GetTexUV(Vec3 intersectedPoint) override;
 
         string GetName() override;

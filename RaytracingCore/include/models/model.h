@@ -35,7 +35,7 @@ struct Model : public Object {
         virtual ~Model() {};
 
         virtual bool CheckIntersection(const Ray& ray, HitRecord& hitRecord) = 0;
-        virtual Vec3 GetNormal(Vec3 intersectedPoint, Vec3 raydir) = 0;
+        virtual Vec3 GetNormal(Vec3 intersectedPoint, Vec3 raydir, const int triangleIndex) = 0;
         virtual Vec2 GetTexUV(Vec3 intersectedPoint) = 0;
 
         void CalculateCentriod();

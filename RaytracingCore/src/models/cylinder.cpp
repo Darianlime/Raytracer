@@ -41,7 +41,7 @@ bool Cylinder::CheckIntersection(const Ray& ray, HitRecord& hitRecord) {
 
 }
 
-Vec3 Cylinder::GetNormal(Vec3 intersectedPoint, Vec3 raydir)
+Vec3 Cylinder::GetNormal(Vec3 intersectedPoint, Vec3 raydir, const int triangleIndex)
 {
     Vec3 unitDir = direction.Normalize();
     float proj = Vec3::Dot(intersectedPoint - pos, unitDir);

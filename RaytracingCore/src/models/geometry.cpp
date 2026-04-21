@@ -92,7 +92,7 @@ Vec3 Triangle::GetNormal(const Vec3& viewDir)
     Vec3 n = Vec3::Cross(e1, e2); // normal vector of triangle
     Vec3 normal = n.Normalize();
 
-    if (Vec3::Dot(n, viewDir) < 0) {
+    if (Vec3::Dot(n, viewDir) > 0) {
         normal = -normal;
     }
     return normal;

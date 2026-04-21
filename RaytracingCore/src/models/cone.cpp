@@ -66,7 +66,7 @@ bool Cone::CheckIntersection(const Ray& ray, HitRecord& hitRecord) {
     return true;
 }
 
-Vec3 Cone::GetNormal(Vec3 intersectedPoint, Vec3 raydir)
+Vec3 Cone::GetNormal(Vec3 intersectedPoint, Vec3 raydir, const int triangleIndex)
 {
     Vec3 unitDir = Vec3(0, -1, 0);
     Vec3 local = (worldToLocal * Vec4(intersectedPoint)).toVec3();
@@ -88,7 +88,7 @@ Vec3 Cone::GetNormal(Vec3 intersectedPoint, Vec3 raydir)
     Vec3 localNormal = (radial * cos(angle * M_PI / 180) - unitDir * sin(angle * M_PI / 180)).Normalize();
     Vec3 worldNormal = (normalMatrix * Vec4(localNormal,0)).toVec3().Normalize();
 
-    if (Vec3::Dot(worldNormal, raydir) < 0) {
+    if (Vec3::Dot(worldNormal, raydir) > 0) {
         worldNormal = -worldNormal;
     }
     return worldNormal;

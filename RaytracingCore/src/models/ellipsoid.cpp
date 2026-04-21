@@ -36,7 +36,7 @@ bool Ellipsoid::CheckIntersection(const Ray& ray, HitRecord& hitRecord)
     return true;
 }
 
-Vec3 Ellipsoid::GetNormal(Vec3 intersectedPoint, Vec3 raydir)
+Vec3 Ellipsoid::GetNormal(Vec3 intersectedPoint, Vec3 raydir, const int triangleIndex)
 {
     Vec3 local = (worldToLocal * Vec4(intersectedPoint, 1.0f)).toVec3();
 

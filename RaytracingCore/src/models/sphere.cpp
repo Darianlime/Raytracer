@@ -45,7 +45,7 @@ bool Sphere::CheckIntersection(const Ray& ray, HitRecord& hitRecord) {
     return true;
 }
 
-Vec3 Sphere::GetNormal(Vec3 intersectedPoint, Vec3 raydir)
+Vec3 Sphere::GetNormal(Vec3 intersectedPoint, Vec3 raydir, const int triangleIndex)
 {
     return (intersectedPoint - pos) / size.x;
 }

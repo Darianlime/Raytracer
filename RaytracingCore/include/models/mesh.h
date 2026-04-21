@@ -16,7 +16,7 @@ struct Mesh : public Model {
         bool CheckBVHIntersection(const Ray &ray, const BVHNode &node, const int ignoreTriangle, HitRecord &hitRecord);
         void CenterOrgVertsToCenter();
         void UpdateTransformation() override;
-        Vec3 GetNormal(Vec3 intersectedPoint, Vec3 raydir) override;
+        Vec3 GetNormal(Vec3 intersectedPoint, Vec3 raydir, const int triangleIndex) override;
         Vec2 GetTexUV(Vec3 intersectedPoint) override;
 
         std::string GetName();
