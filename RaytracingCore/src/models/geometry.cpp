@@ -34,11 +34,6 @@ bool Triangle::CheckIntersection(const Ray& ray, float& entryIntersection, float
     Vec3 e1 = ind2 - ind1;
     Vec3 e2 = ind3 - ind1;
     Vec3 n = Vec3::Cross(e1, e2); // normal vector of triangle
-    normal = n.Normalize();
-
-    if (Vec3::Dot(n, ray.raydir) > 0) {
-        normal = -normal;
-    }
     
     float D = -(Vec3::Dot(n, ind1));
 
@@ -87,14 +82,25 @@ Vec3 Triangle::CalcCenter()
     return (*indices.v1 + *indices.v2 + *indices.v3) / 3.0f;
 }
 
-Vec3 Triangle::GetNormal()
+Vec3 Triangle::GetNormal(const Vec3& viewDir)
 {
+    Vec3 ind1 = *indices.v1; 
+    Vec3 ind2 = *indices.v2;
+    Vec3 ind3 = *indices.v3;
+    Vec3 e1 = ind2 - ind1;
+    Vec3 e2 = ind3 - ind1;
+    Vec3 n = Vec3::Cross(e1, e2); // normal vector of triangle
+    Vec3 normal = n.Normalize();
+
+    if (Vec3::Dot(n, viewDir) < 0) {
+        normal = -normal;
+    }
     return normal;
 }
 
 Vec2 Triangle::GetTexUV()
 {
-    return texture;
+    return Vec2();
 }
 
 Indices& Triangle::GetIndices() {

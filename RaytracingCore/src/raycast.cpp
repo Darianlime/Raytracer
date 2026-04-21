@@ -130,7 +130,7 @@ namespace Raytracer {
         if (hit.model->type != ModelType::MESH) {
             normal = hit.model->GetNormal(intersectedPoint, hit.viewDir).Normalize();
         } else { 
-            normal = hit.model->GetTriangles()[hit.triangleHitIndex].GetNormal().Normalize();
+            normal = hit.model->GetTriangles()[hit.triangleHitIndex].GetNormal(hit.viewDir).Normalize();
         }
         Vec3 viewDir = (eye - intersectedPoint).Normalize();
 

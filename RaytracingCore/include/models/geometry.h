@@ -50,8 +50,6 @@ struct Triangle {
         int mat;
         int tex;
         int shadeType; 
-        Vec3 normal;
-        Vec2 texture;
     public:
         Triangle() = default;
         Triangle(Indices indices, int mat, int tex);
@@ -62,7 +60,7 @@ struct Triangle {
 
         bool CheckIntersection(const Ray& ray, float &entryIntersection, float &exitIntersection, Vec3 &intersection);
         Vec3 CalcCenter();
-        Vec3 GetNormal();
+        Vec3 GetNormal(const Vec3 &viewDir);
         Vec2 GetTexUV();
         Indices& GetIndices();
         void SetIndice(int index, Vec3 *vert);
