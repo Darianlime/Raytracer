@@ -33,29 +33,21 @@ namespace Raytracer {
         float closestEntryT{}, closestExitT{};
         int closestTriangleHit{};
         for (unique_ptr<Model>& model : models) {
-            auto ClosestIntersection = [&]() {
-                HitRecord rec{};
-                rec.triangleHitIndex = triangleHitIndex;
-                if (model->CheckIntersection(ray, rec)) {
-                    float dist = Vec3::Dist(ray.origin, rec.intersection);
-                    const float EPSILON = 1e-4f;
-                    if (dist > EPSILON && dist < closestDist) {
-                        closest = model.get();
-                        //entryIntersection = ray.GetRay(entryT);
-                        //exitIntersection = ray.GetRay(exitT);
-                        closestEntryT = rec.entryIntersection;
-                        closestExitT = rec.exitIntersection;
-                        closestIntersection = rec.intersection;
-                        closestTriangleHit = rec.triangleHitIndex;
-                        closestDist = dist;
-                    }
-                }
-            };
-            //if (model->type != ModelType::MESH) {
             if (currentModelHit == model.get() && triangleHitIndex == -1) continue;
-            ClosestIntersection();
-            //} 
-            //ClosestIntersection();
+            HitRecord rec{};
+            rec.triangleHitIndex = triangleHitIndex;
+            if (model->CheckIntersection(ray, rec)) {
+                float dist = Vec3::Dist(ray.origin, rec.intersection);
+                const float EPSILON = 1e-4f;
+                if (dist > EPSILON && dist < closestDist) {
+                    closest = model.get();
+                    closestEntryT = rec.entryIntersection;
+                    closestExitT = rec.exitIntersection;
+                    closestIntersection = rec.intersection;
+                    closestTriangleHit = rec.triangleHitIndex;
+                    closestDist = dist;
+                }
+            }
         }
         if (closest) {
             Material mat = objectFactory.GetMatIndex(closest->mat);
@@ -77,29 +69,21 @@ namespace Raytracer {
         Ray ray{origin, lightDir};
         vector<unique_ptr<Model>>& models = objectFactory.GetFactory<ModelFactory>().GetObjects();
         for (unique_ptr<Model>& model : models) {
-            auto BeersLaw = [&]() -> bool {
-                HitRecord rec{};
-                rec.triangleHitIndex = triangleHitIndex;
-                if (model->CheckIntersection(ray, rec) && !light->CompareDistToLight(origin, rec.intersection)) {
-                    Vec3 alpha = objectFactory.GetMatIndex(model->mat).alpha.GetVec();
-                    
-                    if (alpha.x >= 1.0f && alpha.y >= 1.0f && alpha.z >= 1.0f) {
-                        return false;
-                    }
-                    // Beers law
-                    float distance = rec.exitIntersection - rec.entryIntersection;
-                    S.x *= exp(-alpha.x * distance);
-                    S.y *= exp(-alpha.y * distance);    
-                    S.z *= exp(-alpha.z * distance);
-                }
-                return true;
-            };
-            //if (model->type != ModelType::MESH) {
             if (model.get() == intersectedModel && triangleHitIndex == -1) continue;
-            if (!BeersLaw()) return Vec3(0.0f, 0.0f, 0.0f);
-            //}
-            //if (triangleHitIndex >= 0) std::cout << "tri: "<< (model.get() == intersectedModel && triangleHitIndex == i) << std::endl;
-            //if (!BeersLaw()) return Vec3(0.0f, 0.0f, 0.0f);
+            HitRecord rec{};
+            rec.triangleHitIndex = triangleHitIndex;
+            if (model->CheckIntersection(ray, rec) && !light->CompareDistToLight(origin, rec.intersection)) {
+                Vec3 alpha = objectFactory.GetMatIndex(model->mat).alpha.GetVec();
+                
+                if (alpha.x >= 1.0f && alpha.y >= 1.0f && alpha.z >= 1.0f) {
+                    return Vec3(0.0f, 0.0f, 0.0f);
+                }
+                // Beers law
+                float distance = rec.exitIntersection - rec.entryIntersection;
+                S.x *= exp(-alpha.x * distance);
+                S.y *= exp(-alpha.y * distance);    
+                S.z *= exp(-alpha.z * distance);
+            }
         }
         return S;
     }
@@ -126,12 +110,6 @@ namespace Raytracer {
         vector<unique_ptr<Light>>& lights = objectFactory.GetFactory<LightFactory>().GetObjects();
         Material mat = hit.mat;
         Vec3 intersectedPoint = hit.intersectedPoint;
-        //Vec3 normal{};
-        // if (hit.model->type != ModelType::MESH) {
-        //     normal = hit.model->GetNormal(intersectedPoint, hit.viewDir).Normalize();
-        // } else { 
-        //     normal = hit.model->GetTriangles()[hit.triangleHitIndex].GetNormal(hit.viewDir).Normalize();
-        // }
         Vec3 viewDir = (eye - intersectedPoint).Normalize();
 
         Vec3 summation(0, 0, 0);
@@ -176,8 +154,8 @@ namespace Raytracer {
             float nextIOR = mat.refractionIndex;
 
             if (!entering) {
-                n = -hit.normal;          // flip normal if exiting
-                nextIOR = 1.0f;       // air
+                n = -hit.normal; // flip normal if exiting
+                nextIOR = 1.0f;  // air
             }
 
             float eta = currentIOR / nextIOR;
