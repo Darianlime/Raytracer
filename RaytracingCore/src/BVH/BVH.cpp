@@ -17,8 +17,8 @@ void BVH::Build()
     BoundingBox bounds;
 
     // expand bounds to mesh
-    for (Vec3 vert : verts) {
-        bounds.GrowBox(vert);
+    for (Vertex vert : verts) {
+        bounds.GrowBox(vert.pos);
     }
 
     bounds.ToString();

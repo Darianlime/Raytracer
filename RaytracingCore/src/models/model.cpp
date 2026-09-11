@@ -7,9 +7,9 @@ map<ModelType, string> Model::typeMap = {
     {ModelType::ELLIPSOID, "ellipsoid"},
 };
 
-Model::Model(int mat, int tex, ModelType type) : mat(mat), tex(tex), type(type), lastVertIndex(-1), lastIndiceIndex(-1), bvh(4) {}
-Model::Model(Vec3 pos, int mat, int tex, ModelType type) : Object(pos), mat(mat), tex(tex), type(type), lastVertIndex(-1), lastIndiceIndex(-1), bvh(4) {}
-Model::Model(Vec3 pos, Vec3 rot, Vec3 size, int mat, int tex, ModelType type) : Object(pos, rot, size), mat(mat), tex(tex), type(type), lastVertIndex(-1), lastIndiceIndex(-1), bvh(4) {}
+Model::Model(int mat, int tex, ModelType type) : mat(mat), tex(tex), type(type), lastVertIndex(-1), lastIndiceIndex(-1), bvh(4), isSmoothShadingOn(false) {}
+Model::Model(Vec3 pos, int mat, int tex, ModelType type) : Object(pos), mat(mat), tex(tex), type(type), lastVertIndex(-1), lastIndiceIndex(-1), bvh(4), isSmoothShadingOn(false) {}
+Model::Model(Vec3 pos, Vec3 rot, Vec3 size, int mat, int tex, ModelType type) : Object(pos, rot, size), mat(mat), tex(tex), type(type), lastVertIndex(-1), lastIndiceIndex(-1), bvh(4), isSmoothShadingOn(false) {}
 
 // returns the entry hit and exit hit
 pair<float, float> Model::GetHitDistance(float A, float B, float C)
@@ -41,18 +41,18 @@ pair<float, float> Model::GetHitDistance(float A, float B, float C)
 
 void Model::CalculateCentriod() {
     if (bvh.verts.empty()) return;
-    for (Vec3 vert : bvh.verts) {
-        pos = pos + vert;
+    for (Vertex vert : bvh.verts) {
+        pos = pos + vert.pos;
     }
     pos = pos / bvh.verts.size();
 }
 
-std::vector<Vec3> &Model::GetVertices()
+std::vector<Vertex> &Model::GetVertices()
 {
     return bvh.verts;
 }
 
-std::vector<Vec3> &Model::GetOrgVertices()
+std::vector<Vertex> &Model::GetOrgVertices()
 {
     return orignalVerts;
 }

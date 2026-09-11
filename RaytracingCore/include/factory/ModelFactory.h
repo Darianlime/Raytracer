@@ -14,11 +14,14 @@ class ModelFactory : public FactoryBase<Model> {
     private:
         map<string, std::function<unique_ptr<Model>(vector<float>&)>> modelMap;
         map<string, std::function<void(vector<float>&)>> geometryMap;
+        vector<Vertex> verts;
         vector<Vec3> vertsPos;
         vector<Vec3> vertsNormal;
         vector<Vec2> vertsTex;
         //vector<Triangle> indices;
         int currentVertexStart;
+        int normalIndex;
+        int texIndex;
         bool isAddingToVertCount;
         int indexOfCurrentMesh;
     public:

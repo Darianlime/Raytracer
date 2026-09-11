@@ -4,10 +4,10 @@ viewdir 0 0 1
 updir 0 1 0
 vfov 45
 bkgcolor 0.1 0.1 0.1 1
-light 0 4 0 1 1
+light 0 2 0 1 1
 mtlcolor 0 1 1 1 1 1 0.2 0.6 0.0 20 1 1 1 1
 
-obj out/OBJ/Untitled.obj
+obj out/OBJ/u_teapot.obj
 sphere 0 7 0 1
 
 

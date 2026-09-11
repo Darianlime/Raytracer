@@ -20,17 +20,17 @@ Indices Triangle::ParseArgs(vector<int> &args) {
     tex = args[args.size()-2];
     shadeType = args[args.size()-1];
     //std::cout << args[0] << " " << args[1] << " " << args[2] << " " << args[3] << " " << args[4] << " " << args[5] << " " << args[6] << " " << args[7] << " " << args[8] << std::endl;
-    return Indices{nullptr, nullptr, nullptr};
+    return Indices{};
 }
 
-bool Triangle::CheckIntersection(const Ray& ray, float& entryIntersection, float& exitIntersection, Vec3& intersection)
+bool Triangle::CheckIntersection(const Ray& ray, Vec3& baycentric, float& entryIntersection, float& exitIntersection, Vec3& intersection)
 {
     const float EPS = 1e-6f;
     //verts[indices.v1P].ToString();
     //verts[indices.v2P].ToString();
-    Vec3 ind1 = *indices.v1; 
-    Vec3 ind2 = *indices.v2;
-    Vec3 ind3 = *indices.v3;
+    Vec3 ind1 = indices.v1->pos; 
+    Vec3 ind2 = indices.v2->pos;
+    Vec3 ind3 = indices.v3->pos;
     Vec3 e1 = ind2 - ind1;
     Vec3 e2 = ind3 - ind1;
     Vec3 n = Vec3::Cross(e1, e2); // normal vector of triangle
@@ -72,6 +72,9 @@ bool Triangle::CheckIntersection(const Ray& ray, float& entryIntersection, float
         entryIntersection = t;
         exitIntersection = t;
         intersection = intersectedPoint;
+        baycentric.x = alpha;
+        baycentric.y = beta;
+        baycentric.z = gamma;
         return true;
     }
     return false;
@@ -79,14 +82,14 @@ bool Triangle::CheckIntersection(const Ray& ray, float& entryIntersection, float
 
 Vec3 Triangle::CalcCenter()
 {
-    return (*indices.v1 + *indices.v2 + *indices.v3) / 3.0f;
+    return (indices.v1->pos + indices.v1->pos + indices.v1->pos) / 3.0f;
 }
 
 Vec3 Triangle::GetNormal(const Vec3& viewDir)
 {
-    Vec3 ind1 = *indices.v1; 
-    Vec3 ind2 = *indices.v2;
-    Vec3 ind3 = *indices.v3;
+    Vec3 ind1 = indices.v1->pos; 
+    Vec3 ind2 = indices.v2->pos;
+    Vec3 ind3 = indices.v3->pos;
     Vec3 e1 = ind2 - ind1;
     Vec3 e2 = ind3 - ind1;
     Vec3 n = Vec3::Cross(e1, e2); // normal vector of triangle
@@ -107,20 +110,35 @@ Indices& Triangle::GetIndices() {
     return indices;
 }
 
-void Triangle::SetIndice(int index, Vec3* vert) {
+void Triangle::SetVertex(Vertex* vertex, int index) {
     if (index == 0) {
-        indices.v1 = vert;
+        indices.v1 = vertex;
         //indices.v1->ToString();
     } else if (index == 1) {
-        indices.v2 = vert;
+        indices.v2 = vertex;
         //indices.v2->ToString();
     } else if (index == 2) {
-        indices.v3 = vert;
+        indices.v3 = vertex;
         //indices.v3->ToString();
     } else {
-        throw std::runtime_error("Runtime Error: Get indices out of index");
+        throw std::runtime_error("Runtime Error: Get vertex out of index");
     }
 }
+
+// void Triangle::SetNormals(int index, int normalIndex) {
+//     if (index == 0) {
+//         normals.v1 = normalIndex;
+//         //indices.v1->ToString();
+//     } else if (index == 1) {
+//         normals.v2 = normalIndex;
+//         //indices.v2->ToString();
+//     } else if (index == 2) {
+//         normals.v3 = normalIndex;
+//         //indices.v3->ToString();
+//     } else {
+//         throw std::runtime_error("Runtime Error: Get normals out of index");
+//     }
+// }
 
 
 

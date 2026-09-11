@@ -69,7 +69,7 @@ int main(int argc, char* argv[]) {
     }
 
     for (auto& shape : mF.GetObjects()) {
-        cout << shape->mat << endl;
+        cout << "mat " << shape->mat << endl;
     }
 
     Camera cam(
@@ -93,6 +93,8 @@ int main(int argc, char* argv[]) {
         depthNear = argsMap["depthcueing"][5];
         depthFar = argsMap["depthcueing"][6];
     }
+
+    cout << "break" << endl;
 
     vector<vector<Color>>& pixels = screen.GetPixels();
     int h = screen.GetHeight();

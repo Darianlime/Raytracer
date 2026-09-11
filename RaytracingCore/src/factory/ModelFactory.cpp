@@ -15,17 +15,23 @@ ModelFactory::ModelFactory() : currentVertexStart(0), indexOfCurrentMesh(-1) {
 void ModelFactory::AddVertPos(vector<float>& args) {
     vertsPos.emplace_back(args[0],args[1],args[2]);
     objects[indexOfCurrentMesh]->pos = objects[indexOfCurrentMesh]->pos * objects[indexOfCurrentMesh]->GetVertices().size();
-    objects[indexOfCurrentMesh]->GetVertices().emplace_back(args[0],args[1],args[2]);
-    objects[indexOfCurrentMesh]->GetOrgVertices().emplace_back(args[0],args[1],args[2]);
+    objects[indexOfCurrentMesh]->GetVertices().emplace_back();
+    objects[indexOfCurrentMesh]->GetVertices().back().pos = Vec3(args[0],args[1],args[2]);
+    objects[indexOfCurrentMesh]->GetOrgVertices().emplace_back();
+    objects[indexOfCurrentMesh]->GetOrgVertices().back().pos = Vec3(args[0],args[1],args[2]);
     objects[indexOfCurrentMesh]->pos = (objects[indexOfCurrentMesh]->pos + Vec3(args[0],args[1],args[2])) / objects[indexOfCurrentMesh]->GetVertices().size();
 }
 
 void ModelFactory::AddVertNormal(vector<float>& args) {
     vertsNormal.emplace_back(args[0],args[1],args[2]);
+    //objects[indexOfCurrentMesh]->GetVertices()[normalIndex].normal = Vec3(args[0],args[1],args[2]);
+    //normalIndex++;
 }
 
 void ModelFactory::AddVertTex(vector<float>& args) {
     vertsTex.emplace_back(args[0],args[1]);
+    //objects[indexOfCurrentMesh]->GetVertices()[texIndex].texture = Vec2(args[0],args[1]);
+    //texIndex++;
 }
 
 void ModelFactory::AddIndice(vector<int>& args) {
@@ -40,12 +46,15 @@ void ModelFactory::AddMesh(string name, vector<int> modelArgs) {
     }
     isAddingToVertCount = true;
     indexOfCurrentMesh = objects.size();
+    for (int args : modelArgs) { std::cout << "modelArgs: " << args << std::endl; }
     objects.push_back(make_unique<Mesh>(name, modelArgs));
 }
 
 void ModelFactory::ResetCurrentVertexStart()
 {
     vertsPos.clear();
+    normalIndex = 0;
+    texIndex = 0;
     vertsNormal.clear();
     vertsTex.clear();
     currentVertexStart = 0;
@@ -60,11 +69,12 @@ int ModelFactory::CreateObject(string &objectName, vector<string> &args)
 {
     // create meshs            
     if (objectName == "o") {
-        vector<int> modelArgs = {-1, -1};
+        vector<int> modelArgs = {stoi(args[args.size()-2]), -1};
+        //if (stoi(args[args.size()-2])) { }
         // for (int i = 1; i < modelArgs.size(); i++) {
         //     modelArgs[i] = stoi(args[i]);
         // }
-        std::cout << "o: mesh created" << std::endl;
+        std::cout << "o: mesh created: " << stoi(args[args.size()-2]) << stoi(args[args.size()-1]) << std::endl;
         AddMesh(args[0], modelArgs);
         return 0;
     }
@@ -86,11 +96,20 @@ int ModelFactory::CreateObject(string &objectName, vector<string> &args)
             vertsArgs[i] = stof(args[i]); 
         } 
         if (indexOfCurrentMesh == -1 && vertsPos.empty()) {
-            std::cout << "mesh created" << std::endl;
+            std::cout << "mesh created " << (int)vertsArgs[vertsArgs.size()-2] << " + "<< (int)vertsArgs[vertsArgs.size()-1] << std::endl;
             vector<int> modelArgs = {(int)vertsArgs[vertsArgs.size()-2], (int)vertsArgs[vertsArgs.size()-1]};
             AddMesh("mesh", modelArgs);
         }
         geometryMap[objectName](vertsArgs);
+        return 0;
+    }
+
+    // Is Shade Smoothing On?
+    if (objectName == "s") {
+        std::cout << "smoothing on: " << stoi(args[0]) << std::endl;
+        if (stoi(args[0]) == 1) {
+            objects[indexOfCurrentMesh]->isSmoothShadingOn = true;
+        }
         return 0;
     }
 
@@ -113,21 +132,26 @@ void ModelFactory::ParseTriangle(vector<string>& args, vector<int>& vertsArgs) {
     bool texPresent = false;
     bool normalPresent = false;
     Triangle& tri = objects[indexOfCurrentMesh]->GetTriangles().back();
+    Indices indice;
     for (int i = 0; i < INDICE_SIZE; i++) {
         const char* toChar = args[i].c_str();
         const char* ptr = toChar;
         const char* end = toChar + strlen(toChar);
         int v, vn, vt;
-        int index = i*INDICE_SIZE;
         std::from_chars_result res = std::from_chars(ptr, end, v);
-        tri.SetIndice(i, &objects[indexOfCurrentMesh]->GetVertices()[v - currentVertexStart - 1]);
+        //tri.SetIndice(i, &objects[indexOfCurrentMesh]->GetVertices()[v - currentVertexStart - 1].pos);
         //vertsArgs[index] = v - currentVertexStart - 1;
+        //indice.GetVertex(i).pos = objects[indexOfCurrentMesh]->GetVertices()[v - currentVertexStart - 1].pos;
         ptr = res.ptr;
         if (*ptr == '/') {
             ptr++;
             if (*ptr != '/') {
                 std::from_chars_result res = std::from_chars(ptr, end, vt);
                 //vertsArgs[index+2] = vt - currentVertexStart - 1;
+                objects[indexOfCurrentMesh]->GetVertices()[v - currentVertexStart - 1].texture = vertsTex[vt - currentVertexStart - 1];
+                objects[indexOfCurrentMesh]->GetOrgVertices()[v - currentVertexStart - 1].texture = vertsTex[vt - currentVertexStart - 1];
+                //indice.GetVertex(i).texture = vertsTex[vt - currentVertexStart - 1];
+                //indice.GetVertex(i).texture = objects[indexOfCurrentMesh]->GetVertices()[vt - currentVertexStart - 1].texture;
                 ptr = res.ptr;
                 texPresent = true;
             }
@@ -135,9 +159,13 @@ void ModelFactory::ParseTriangle(vector<string>& args, vector<int>& vertsArgs) {
                 ptr++;
                 std::from_chars(ptr, end, vn);
                 //vertsArgs[index+1] = vn - currentVertexStart - 1;
+                objects[indexOfCurrentMesh]->GetVertices()[v - currentVertexStart - 1].normal = vertsNormal[vn - currentVertexStart - 1];
+                objects[indexOfCurrentMesh]->GetOrgVertices()[v - currentVertexStart - 1].normal = vertsNormal[vn - currentVertexStart - 1];
+                //indice.GetVertex(i).normal = vertsNormal[vn - currentVertexStart - 1];
                 normalPresent = true;
             }
         }
+        tri.SetVertex(&objects[indexOfCurrentMesh]->GetVertices()[v - currentVertexStart - 1], i);
     }
     //vertsArgs[vertsArgs.size()-EXTRA_ARGS] = stoi(args[args.size()-2]);
     //vertsArgs[vertsArgs.size()-(EXTRA_ARGS-1)] = stoi(args[args.size()-1]);

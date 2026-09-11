@@ -28,9 +28,9 @@ void BoundingBox::GrowBox(Vec3& vertex)
 
 void BoundingBox::GrowBoxTriangle(Triangle& tri)
 {
-    GrowBox(*tri.GetIndices().v1);
-    GrowBox(*tri.GetIndices().v2);
-    GrowBox(*tri.GetIndices().v3);
+    GrowBox(tri.GetIndices().v1->pos);
+    GrowBox(tri.GetIndices().v2->pos);
+    GrowBox(tri.GetIndices().v3->pos);
 }
 
 void BoundingBox::ToString()

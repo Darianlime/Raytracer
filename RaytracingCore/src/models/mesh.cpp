@@ -6,7 +6,7 @@ using std::numeric_limits;
 
 Mesh::Mesh() : Model(Vec3(0,0,0), -1, -1, ModelType::MESH), name("Mesh") {}
 
-Mesh::Mesh(std::string name, vector<int> args) : Model(Vec3(0,0,0), -1, -1, ModelType::MESH), name(name) {}
+Mesh::Mesh(std::string name, vector<int> args) : Model(Vec3(0,0,0), args[0], args[1], ModelType::MESH), name(name) {}
 
 bool Mesh::CheckIntersection(const Ray& ray, HitRecord& hitRecord)
 {
@@ -22,12 +22,13 @@ bool Mesh::CheckBVHIntersection(const Ray& ray, const BVHNode& node, const int i
         for (int triIndex : node.triangleIndexs) {
             if (ignoreTriangle == triIndex) continue;
             HitRecord newHit{};
-            if (bvh.triangles[triIndex].CheckIntersection(ray, newHit.entryIntersection, newHit.exitIntersection, newHit.intersection)) {
+            if (bvh.triangles[triIndex].CheckIntersection(ray, newHit.baycentric, newHit.entryIntersection, newHit.exitIntersection, newHit.intersection)) {
                 if (newHit.entryIntersection < hitRecord.entryIntersection) {
                     hitRecord.entryIntersection = newHit.entryIntersection;
                     hitRecord.exitIntersection = newHit.exitIntersection;
                     hitRecord.intersection = newHit.intersection;
                     hitRecord.triangleHitIndex = triIndex;
+                    hitRecord.baycentric = newHit.baycentric;
                     hit = true;
                 }
             }   
@@ -41,7 +42,7 @@ bool Mesh::CheckBVHIntersection(const Ray& ray, const BVHNode& node, const int i
 
 void Mesh::CenterOrgVertsToCenter() {
     for (auto& vertex : orignalVerts) {
-		vertex = vertex - pos; 
+		vertex.pos = vertex.pos - pos; 
     }
 }
 
@@ -49,8 +50,12 @@ void Mesh::UpdateTransformation()
 {
     SetMatrix(pos, rot * M_PI / 180, size);
     //Matrix4 normalMatrix = worldToLocal.Transpose();
+    Matrix4 normalMatrix = localToWorld.InverseAffine().Transpose();
+
     for (int i = 0; i < bvh.verts.size(); i++) {
-        bvh.verts[i] = (localToWorld * Vec4(orignalVerts[i])).toVec3();
+        bvh.verts[i].pos = (localToWorld * Vec4(orignalVerts[i].pos)).toVec3();
+        Vec4 normal = normalMatrix * Vec4(orignalVerts[i].normal, 0.0f);
+        bvh.verts[i].normal = normal.toVec3().Normalize();
     }
     bvh.Build();
 }

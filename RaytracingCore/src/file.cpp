@@ -90,7 +90,7 @@ int File::ReadOBJ(string inputFileName, int matIndex, int texIndex, ObjectFactor
         args.push_back(to_string(matIndex));
         args.push_back(to_string(texIndex));
         objectFactory.GetFactory<ModelFactory>().CreateObject(keyword, args);
-        cout << "Input line OBJ: " << inputLine << endl;
+        //cout << "Input line OBJ: " << inputLine << endl;
     }
 
     if (fin.eof()) {
@@ -246,6 +246,7 @@ int File::VaildateObjectsArgs(vector<vector<string>>& args, ObjectFactory& objec
             objectFactory.AddTexture(tex);
             texIndex++;
         } else if (id == "obj") {
+            std::cout << "obj mat: " << matIndex << std::endl;
             objectFactory.GetFactory<ModelFactory>().ResetCurrentVertexStart();
             File::ReadOBJ(args[i][1], matIndex, texIndex, objectFactory);
         } else {

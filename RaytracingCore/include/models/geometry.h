@@ -37,11 +37,21 @@ struct Vertex {
 // };
 
 struct Indices  {
-    Vec3* v1;
-    Vec3* v2;
-    Vec3* v3;
-    // Indices(Vec3* v1, Vec3* v2, Vec3* v3) 
-    //     : v1(v1), v2(v2), v3(v3) {}
+    Vertex* v1;
+    Vertex* v2;
+    Vertex* v3;
+
+    // Vertex& GetVertex(int index) { 
+    //     if (index == 0) {
+    //         return v1;
+    //     } else if (index == 1) {
+    //         return v2;
+    //     } else if (index == 2) {
+    //         return v3;
+    //     } else {
+    //         throw std::runtime_error("Runtime Error: Get indices out of index");
+    //     } 
+    // }
 };
 
 struct Triangle {
@@ -58,12 +68,13 @@ struct Triangle {
 
         Indices ParseArgs(std::vector<int> &args);
 
-        bool CheckIntersection(const Ray& ray, float &entryIntersection, float &exitIntersection, Vec3 &intersection);
+        bool CheckIntersection(const Ray& ray, Vec3& baycentric, float &entryIntersection, float &exitIntersection, Vec3 &intersection);
         Vec3 CalcCenter();
         Vec3 GetNormal(const Vec3 &viewDir);
         Vec2 GetTexUV();
         Indices& GetIndices();
-        void SetIndice(int index, Vec3 *vert);
+        void SetVertex(Vertex* vertex, int index);
+        
         // void UpdateTransformation() override;
         // string GetName() override;
 }; 

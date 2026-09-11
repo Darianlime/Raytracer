@@ -19,13 +19,14 @@ enum class ModelType {
 struct Model : public Object {
     protected:
         static map<ModelType, string> typeMap;
-        std::vector<Vec3> orignalVerts;
+        std::vector<Vertex> orignalVerts;
         BVH bvh;
     public:
         int mat;
         int tex;
         int lastVertIndex;
         int lastIndiceIndex;
+        bool isSmoothShadingOn;
         ModelType type;
 
         Model() = default;
@@ -39,8 +40,8 @@ struct Model : public Object {
         virtual Vec2 GetTexUV(Vec3 intersectedPoint) = 0;
 
         void CalculateCentriod();
-        std::vector<Vec3>& GetVertices();
-        std::vector<Vec3> &GetOrgVertices();
+        std::vector<Vertex>& GetVertices();
+        std::vector<Vertex> &GetOrgVertices();
         std::vector<Triangle> &GetTriangles();
         BVH &GetBVH();
         pair<float, float> GetHitDistance(float A, float B, float C);

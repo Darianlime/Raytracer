@@ -22,7 +22,7 @@ class BVH {
     public:
         std::vector<BVHNode> nodes;
         std::vector<Triangle> triangles;
-        std::vector<Vec3> verts;
+        std::vector<Vertex> verts;
 
         BVH();
         BVH(int leafSize);

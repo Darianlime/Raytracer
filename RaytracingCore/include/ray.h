@@ -19,6 +19,7 @@ struct HitRecord {
         Vec3 intersection = Vec3(std::numeric_limits<float>::infinity(), std::numeric_limits<float>::infinity(), std::numeric_limits<float>::infinity());
         float entryIntersection = std::numeric_limits<float>::infinity();
         float exitIntersection = std::numeric_limits<float>::infinity();
+        Vec3 baycentric{};
         int triangleHitIndex = -1;
 };
 #endif

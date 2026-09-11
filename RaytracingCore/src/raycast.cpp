@@ -32,10 +32,12 @@ namespace Raytracer {
         Vec3 closestIntersection(numeric_limits<float>::infinity(), numeric_limits<float>::infinity(), numeric_limits<float>::infinity());
         float closestEntryT{}, closestExitT{};
         int closestTriangleHit{};
+        Vec3 baycentric{};
         for (unique_ptr<Model>& model : models) {
             if (currentModelHit == model.get() && triangleHitIndex == -1) continue;
             HitRecord rec{};
             rec.triangleHitIndex = triangleHitIndex;
+
             if (model->CheckIntersection(ray, rec)) {
                 float dist = Vec3::Dist(ray.origin, rec.intersection);
                 const float EPSILON = 1e-4f;
@@ -46,6 +48,8 @@ namespace Raytracer {
                     closestIntersection = rec.intersection;
                     closestTriangleHit = rec.triangleHitIndex;
                     closestDist = dist;
+                    baycentric = rec.baycentric;
+                    //std::cout << "index: " << closestTriangleHit << std::endl;
                 }
             }
         }
@@ -55,7 +59,17 @@ namespace Raytracer {
                 Vec2 texUV = closest->GetTexUV(closestIntersection);
                 mat.diffuse = objectFactory.GetTexIndex(closest->tex).GetPixel(texUV.x, texUV.y);
             }
-            return RayHit{true, closest, mat, closestIntersection, (ray.origin - closestIntersection).Normalize(), closest->GetNormal(closestIntersection, ray.raydir, closestTriangleHit), closestExitT - closestEntryT, closestTriangleHit };
+            Vec3 normal{};
+            if (closest->isSmoothShadingOn && closestTriangleHit != -1) {
+                Vec3 n1 = closest->GetTriangles()[closestTriangleHit].GetIndices().v1->normal;
+                Vec3 n2 = closest->GetTriangles()[closestTriangleHit].GetIndices().v2->normal;
+                Vec3 n3 = closest->GetTriangles()[closestTriangleHit].GetIndices().v3->normal;
+                Vec3 pNormal = n1*baycentric.x + n2*baycentric.y + n3*baycentric.z;
+                normal = pNormal.Normalize();
+            } else {
+                normal = closest->GetNormal(closestIntersection, ray.raydir, closestTriangleHit);
+            }
+            return RayHit{true, closest, mat, closestIntersection, (ray.origin - closestIntersection).Normalize(), normal, closestExitT - closestEntryT, closestTriangleHit };
         }
         return RayHit{false, nullptr, Material(), Vec3(0,0,0), Vec3(0,0,0), Vec3(0,0,0)};
     }
