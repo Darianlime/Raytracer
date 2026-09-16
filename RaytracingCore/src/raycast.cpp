@@ -183,7 +183,7 @@ namespace Raytracer {
                 Vec3 origin = intersectedPoint + T * EPSILON;
                 Model* skipModel = entering ? nullptr : hit.model;
                 RayHit refractionHit = GetRayHit(Ray{origin, T}, skipModel, hit.triangleHitIndex);
-                refractionColor = ShadeRay(refractionHit, background, depth-2, nextIOR).GetVec();
+                refractionColor = ShadeRay(refractionHit, background, depth-1, nextIOR).GetVec();
                 Vec3 alpha = objectFactory.GetMatIndex(hit.model->mat).alpha.GetVec();
                 refractionColor.x *= exp(-alpha.x * refractionHit.t);
                 refractionColor.y *= exp(-alpha.y * refractionHit.t);

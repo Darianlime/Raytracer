@@ -76,7 +76,7 @@ void BVH::Split(const BVHNode& parent, int parentIndex, int depth = 0) {
     Split(nodes[right], right, depth + 1);
 }
 
-bool BVH::IsBoundsHit(const Ray& ray, const BoundingBox& bounds)
+float BVH::IsBoundsHit(const Ray& ray, const BoundingBox& bounds)
 {
     float tx1 = (bounds.min.x - ray.origin.x) * ray.invRaydir.x;
     float tx2 = (bounds.max.x - ray.origin.x) * ray.invRaydir.x;
@@ -96,6 +96,7 @@ bool BVH::IsBoundsHit(const Ray& ray, const BoundingBox& bounds)
     tmin = fmaxf(tmin, fminf(tz1, tz2));
     tmax = fminf(tmax, fmaxf(tz1, tz2));
 
-    return tmax >= tmin && tmax > 0.0f;
+    bool hit = tmax >= tmin && tmax > 0.0f;
+    return hit ? tmin : std::numeric_limits<float>::infinity();
 }
 

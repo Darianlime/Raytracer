@@ -28,7 +28,7 @@ class BVH {
         BVH(int leafSize);
         void Init();
         void Build();
-        static bool IsBoundsHit(const Ray &ray, const BoundingBox &bounds);
+        static float IsBoundsHit(const Ray &ray, const BoundingBox &bounds);
 };
 
 #endif
