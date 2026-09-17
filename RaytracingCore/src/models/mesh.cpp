@@ -93,6 +93,11 @@ void Mesh::UpdateTransformation()
         Vec4 normal = normalMatrix * Vec4(orignalVerts[i].normal, 0.0f);
         bvh.verts[i].normal = normal.toVec3().Normalize();
     }
+
+    for (Triangle& tri : bvh.triangles) {
+        tri.CacheCalculations();
+    } 
+      
     bvh.Build();
 }
 

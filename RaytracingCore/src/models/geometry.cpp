@@ -23,42 +23,45 @@ Indices Triangle::ParseArgs(vector<int> &args) {
     return Indices{};
 }
 
+void Triangle::CacheCalculations() {
+    v0 = indices.v1->pos;
+    e1 = indices.v2->pos - indices.v1->pos;
+    e2 = indices.v3->pos - indices.v1->pos;
+    cachedNormal = Vec3::Cross(e1, e2);
+    cachedD = -(Vec3::Dot(cachedNormal, indices.v1->pos));
+    d11 = Vec3::Dot(e1, e1);
+    d12 = Vec3::Dot(e1, e2);
+    d22 = Vec3::Dot(e2, e2);
+    float determinant = d11 * d22 - d12 * d12;
+    invDeterminant = 1.0f / determinant;
+}
+
 bool Triangle::CheckIntersection(const Ray& ray, Vec3& baycentric, float& entryIntersection, float& exitIntersection, Vec3& intersection)
 {
     const float EPS = 1e-6f;
-    //verts[indices.v1P].ToString();
-    //verts[indices.v2P].ToString();
-    Vec3 ind1 = indices.v1->pos; 
-    Vec3 ind2 = indices.v2->pos;
-    Vec3 ind3 = indices.v3->pos;
-    Vec3 e1 = ind2 - ind1;
-    Vec3 e2 = ind3 - ind1;
-    Vec3 n = Vec3::Cross(e1, e2); // normal vector of triangle
     
-    float D = -(Vec3::Dot(n, ind1));
-
-    float denominator = Vec3::Dot(n, ray.raydir);
+    float denominator = Vec3::Dot(cachedNormal, ray.raydir);
     if (fabs(denominator) < EPS) { return false; } 
 
-    float t = -(Vec3::Dot(n, ray.origin) + D) / denominator;
+    float t = -(Vec3::Dot(cachedNormal, ray.origin) + cachedD) / denominator;
     if (t < EPS) {
         return false;
     }
 
     Vec3 intersectedPoint = ray.GetRay(t);
-    Vec3 ep = intersectedPoint - ind1;
+    Vec3 ep = intersectedPoint - v0;
 
-    float d11 = Vec3::Dot(e1, e1);
-    float d12 = Vec3::Dot(e1, e2);
-    float d22 = Vec3::Dot(e2, e2);
     float d1p = Vec3::Dot(e1, ep);
     float d2p = Vec3::Dot(e2, ep);
 
     float determinant = (d11 * d22) - (d12 * d12);
     if (determinant == 0) { return false; }
 
-    float beta = (d22*d1p - d12*d2p) / determinant;
-    float gamma = (d11*d2p - d12*d1p) / determinant;
+    float beta = (d22*d1p - d12*d2p) * invDeterminant;
+    float gamma = (d11*d2p - d12*d1p) * invDeterminant;
+
+    if (beta < -EPS || gamma < -EPS || beta + gamma > 1.0f + EPS) { return false; }
+
     float alpha = 1 - (beta + gamma);
     // if (shadeType == (int)ShadeType::SMOOTH || shadeType == (int)ShadeType::SMOOTH_TEXTURED) {
     //     Vec3 pNormal = verts[indices.v1N]*alpha + indices.v2.normal*beta + indices.v3.normal*gamma;
@@ -67,17 +70,11 @@ bool Triangle::CheckIntersection(const Ray& ray, Vec3& baycentric, float& entryI
     // if (shadeType == (int)ShadeType::TEXTURED || shadeType == (int)ShadeType::SMOOTH_TEXTURED) {
     //     texture = indices.v1.texture*alpha + indices.v2.texture*beta + indices.v3.texture*gamma;
     // }
-    if ((alpha >= -EPS && alpha <= 1 + EPS) && (beta  >= -EPS && beta <= 1 + EPS) && (gamma >= -EPS && gamma <= 1 + EPS))
-    {
-        entryIntersection = t;
-        exitIntersection = t;
-        intersection = intersectedPoint;
-        baycentric.x = alpha;
-        baycentric.y = beta;
-        baycentric.z = gamma;
-        return true;
-    }
-    return false;
+    entryIntersection = t;
+    exitIntersection = t;
+    intersection = intersectedPoint;
+    baycentric = Vec3(alpha, beta, gamma);
+    return true;
 }
 
 Vec3 Triangle::CalcCenter()
@@ -87,15 +84,9 @@ Vec3 Triangle::CalcCenter()
 
 Vec3 Triangle::GetNormal(const Vec3& viewDir)
 {
-    Vec3 ind1 = indices.v1->pos; 
-    Vec3 ind2 = indices.v2->pos;
-    Vec3 ind3 = indices.v3->pos;
-    Vec3 e1 = ind2 - ind1;
-    Vec3 e2 = ind3 - ind1;
-    Vec3 n = Vec3::Cross(e1, e2); // normal vector of triangle
-    Vec3 normal = n.Normalize();
+    Vec3 normal = cachedNormal.Normalize();
 
-    if (Vec3::Dot(n, viewDir) > 0) {
+    if (Vec3::Dot(cachedNormal, viewDir) > 0) {
         normal = -normal;
     }
     return normal;

@@ -57,6 +57,17 @@ struct Indices  {
 struct Triangle {
     private:
         Indices indices;
+
+        Vec3 v0;
+        Vec3 e1;
+        Vec3 e2;
+        Vec3 cachedNormal;
+        float cachedD;
+        float d11;
+        float d12;
+        float d22;
+        float invDeterminant;
+
         int mat;
         int tex;
         int shadeType; 
@@ -74,6 +85,7 @@ struct Triangle {
         Vec2 GetTexUV();
         Indices& GetIndices();
         void SetVertex(Vertex* vertex, int index);
+        void CacheCalculations();
         
         // void UpdateTransformation() override;
         // string GetName() override;

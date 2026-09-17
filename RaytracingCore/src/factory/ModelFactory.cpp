@@ -167,6 +167,7 @@ void ModelFactory::ParseTriangle(vector<string>& args, vector<int>& vertsArgs) {
         }
         tri.SetVertex(&objects[indexOfCurrentMesh]->GetVertices()[v - currentVertexStart - 1], i);
     }
+    tri.CacheCalculations();
     //vertsArgs[vertsArgs.size()-EXTRA_ARGS] = stoi(args[args.size()-2]);
     //vertsArgs[vertsArgs.size()-(EXTRA_ARGS-1)] = stoi(args[args.size()-1]);
     //vertsArgs[vertsArgs.size()-(EXTRA_ARGS-2)] = texPresent + (normalPresent << 1);

@@ -1,5 +1,6 @@
 #include "BVH/BVH.h"
 #include <numeric>
+#include <immintrin.h>
 using std::vector;
 
 BVH::BVH() : leafSize(4), MAX_DEPTH(64) {}
@@ -81,22 +82,24 @@ float BVH::IsBoundsHit(const Ray& ray, const BoundingBox& bounds)
     float tx1 = (bounds.min.x - ray.origin.x) * ray.invRaydir.x;
     float tx2 = (bounds.max.x - ray.origin.x) * ray.invRaydir.x;
 
-    float tmin = fminf(tx1, tx2);
-    float tmax = fmaxf(tx1, tx2);
-
     float ty1 = (bounds.min.y - ray.origin.y) * ray.invRaydir.y;
     float ty2 = (bounds.max.y - ray.origin.y) * ray.invRaydir.y;
-
-    tmin = fmaxf(tmin, fminf(ty1, ty2));
-    tmax = fminf(tmax, fmaxf(ty1, ty2));
 
     float tz1 = (bounds.min.z - ray.origin.z) * ray.invRaydir.z;
     float tz2 = (bounds.max.z - ray.origin.z) * ray.invRaydir.z;
 
-    tmin = fmaxf(tmin, fminf(tz1, tz2));
-    tmax = fminf(tmax, fmaxf(tz1, tz2));
+    float tmin = std::max(
+        std::max(std::min(tx1, tx2), std::min(ty1, ty2)),
+        std::min(tz1, tz2)
+    );
 
-    bool hit = tmax >= tmin && tmax > 0.0f;
-    return hit ? tmin : std::numeric_limits<float>::infinity();
+    float tmax = std::min(
+        std::min(std::max(tx1, tx2), std::max(ty1, ty2)),
+        std::max(tz1, tz2)
+    );
+
+    return (tmax >= tmin && tmax > 0.0f)
+        ? tmin
+        : std::numeric_limits<float>::infinity();
 }
 
