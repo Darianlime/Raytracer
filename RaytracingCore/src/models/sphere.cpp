@@ -17,20 +17,10 @@ SphereData Sphere::ParseArgs(vector<float> &args) {
 }
 
 bool Sphere::CheckIntersection(const Ray& ray, HitRecord& hitRecord) {
-    if (size.y != size.x && size.y != size.z) {
-        size.x = size.y;
-        size.z = size.y;
-    } else if (size.z != size.x && size.z != size.y) {
-        size.x = size.z;
-        size.y = size.z;
-    } else {
-        size.y = size.x;
-        size.z = size.x;
-    }
-
-    float A = pow(ray.raydir.x, 2) + pow(ray.raydir.y, 2) + pow(ray.raydir.z, 2);
-    float B = 2 * (ray.raydir.x * (ray.origin.x - pos.x) + ray.raydir.y * (ray.origin.y - pos.y) + ray.raydir.z * (ray.origin.z - pos.z));
-    float C = pow(ray.origin.x - pos.x, 2) + pow(ray.origin.y - pos.y, 2) + pow(ray.origin.z - pos.z, 2) - pow(size.x, 2);
+    Vec3 rayPos = ray.origin - pos;
+    float A = ray.raydir.x * ray.raydir.x + ray.raydir.y * ray.raydir.y + ray.raydir.z * ray.raydir.z;
+    float B = 2 * (ray.raydir.x * rayPos.x + ray.raydir.y * rayPos.y + ray.raydir.z * rayPos.z);
+    float C = rayPos.x * rayPos.x + rayPos.y * rayPos.y + rayPos.z * rayPos.z - pow(size.x, 2);
 
     pair<float, float> t = GetHitDistance(A, B, C);
     if (t.first < 0 && t.second < 0) {
@@ -56,6 +46,19 @@ Vec2 Sphere::GetTexUV(Vec3 intersectedPoint)
     float theta = atan2(intersectedPoint.y - pos.y, intersectedPoint.x - pos.x);
 
     return Vec2(std::max(theta/(2*M_PI), (theta + 2*M_PI)/(2*M_PI)), phi / M_PI);
+}
+
+void Sphere::UpdateTransformation() {
+    if (size.y != size.x && size.y != size.z) {
+        size.x = size.y;
+        size.z = size.y;
+    } else if (size.z != size.x && size.z != size.y) {
+        size.x = size.z;
+        size.y = size.z;
+    } else {
+        size.y = size.x;
+        size.z = size.x;
+    }
 }
 
 string Sphere::GetName()

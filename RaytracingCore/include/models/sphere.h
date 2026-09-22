@@ -25,6 +25,8 @@ struct Sphere : public Model {
         Vec3 GetNormal(Vec3 intersectedPoint, Vec3 raydir, const int triangleIndex) override;
         Vec2 GetTexUV(Vec3 intersectedPoint) override;
 
+        void UpdateTransformation() override;
+
         string GetName() override;
 }; 
 

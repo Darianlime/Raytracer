@@ -20,10 +20,10 @@ bool Mesh::CheckBVHIntersection(const Ray& ray, const BVHNode& node, const int i
 
     bool hit = false;
     if (node.child == -1) {
+        float nearestBoxHit = BVH::IsBoundsHit(ray, node.bounds);
+        if (nearestBoxHit >= hitRecord.entryIntersection) return false;
+        
         for (int triIndex : node.triangleIndexs) {
-            float nearestBoxHit = BVH::IsBoundsHit(ray, node.bounds);
-            if (nearestBoxHit >= hitRecord.entryIntersection) return false;
-
             if (ignoreTriangle == triIndex) continue;
             HitRecord newHit{};
             if (bvh.triangles[triIndex].CheckIntersection(ray, newHit.baycentric, newHit.entryIntersection, newHit.exitIntersection, newHit.intersection)) {
@@ -97,7 +97,7 @@ void Mesh::UpdateTransformation()
     for (Triangle& tri : bvh.triangles) {
         tri.CacheCalculations();
     } 
-      
+
     bvh.Build();
 }
 
