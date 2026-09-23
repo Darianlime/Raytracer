@@ -22,7 +22,7 @@ void BVH::Build()
         bounds.GrowBox(vert.pos);
     }
 
-    bounds.ToString();
+    //bounds.ToString();
 
     // fills index from 0, 1, 2 to triangleSize
     vector<int> triangleIndex(triangleSize);
@@ -82,24 +82,33 @@ float BVH::IsBoundsHit(const Ray& ray, const BoundingBox& bounds)
     float tx1 = (bounds.min.x - ray.origin.x) * ray.invRaydir.x;
     float tx2 = (bounds.max.x - ray.origin.x) * ray.invRaydir.x;
 
+    float tmin = std::min(tx1, tx2);
+    float tmax = std::max(tx1, tx2);
+
     float ty1 = (bounds.min.y - ray.origin.y) * ray.invRaydir.y;
     float ty2 = (bounds.max.y - ray.origin.y) * ray.invRaydir.y;
+
+    float tymin = std::min(ty1, ty2);
+    float tymax = std::max(ty1, ty2);
+
+    if (tmin > tymax || tymin > tmax) { return std::numeric_limits<float>::infinity(); }
+
+    tmin = std::max(tmin, tymin);
+    tmax = std::min(tmax, tymax);
 
     float tz1 = (bounds.min.z - ray.origin.z) * ray.invRaydir.z;
     float tz2 = (bounds.max.z - ray.origin.z) * ray.invRaydir.z;
 
-    float tmin = std::max(
-        std::max(std::min(tx1, tx2), std::min(ty1, ty2)),
-        std::min(tz1, tz2)
-    );
+    float tzmin = std::min(tz1, tz2);
+    float tzmax = std::max(tz1, tz2);
 
-    float tmax = std::min(
-        std::min(std::max(tx1, tx2), std::max(ty1, ty2)),
-        std::max(tz1, tz2)
-    );
+    if (tmin > tzmax || tzmin > tmax) { return std::numeric_limits<float>::infinity(); }
 
-    return (tmax >= tmin && tmax > 0.0f)
-        ? tmin
-        : std::numeric_limits<float>::infinity();
+    tmin = std::max(tmin, tzmin);
+    tmax = std::min(tmax, tzmax);
+
+    if (tmax >= tmin && tmax > 0.0f) { return tmin; }
+
+    return std::numeric_limits<float>::infinity();
 }
 

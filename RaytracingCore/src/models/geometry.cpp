@@ -28,52 +28,35 @@ void Triangle::CacheCalculations() {
     e1 = indices.v2->pos - indices.v1->pos;
     e2 = indices.v3->pos - indices.v1->pos;
     cachedNormal = Vec3::Cross(e1, e2);
-    cachedD = -(Vec3::Dot(cachedNormal, indices.v1->pos));
-    d11 = Vec3::Dot(e1, e1);
-    d12 = Vec3::Dot(e1, e2);
-    d22 = Vec3::Dot(e2, e2);
-    float determinant = d11 * d22 - d12 * d12;
-    invDeterminant = 1.0f / determinant;
 }
 
 bool Triangle::CheckIntersection(const Ray& ray, Vec3& baycentric, float& entryIntersection, float& exitIntersection, Vec3& intersection)
 {
     const float EPS = 1e-6f;
-    
-    float denominator = Vec3::Dot(cachedNormal, ray.raydir);
-    if (fabs(denominator) < EPS) { return false; } 
+    const float det = -Vec3::Dot(cachedNormal, ray.raydir);
 
-    float t = -(Vec3::Dot(cachedNormal, ray.origin) + cachedD) / denominator;
-    if (t < EPS) {
-        return false;
-    }
+    if (fabs(det) < EPS) { return false; }
 
-    Vec3 intersectedPoint = ray.GetRay(t);
-    Vec3 ep = intersectedPoint - v0;
+    const float invDet = 1.0f / det;
+    const Vec3 pvec = Vec3::Cross(ray.raydir, e2);
+    const Vec3 tvec = ray.origin - v0;
+    const float u = Vec3::Dot(tvec, pvec) * invDet;
 
-    float d1p = Vec3::Dot(e1, ep);
-    float d2p = Vec3::Dot(e2, ep);
+    if (u < -EPS || u > 1.0f + EPS) { return false; }
 
-    float determinant = (d11 * d22) - (d12 * d12);
-    if (determinant == 0) { return false; }
+    const Vec3 qvec = Vec3::Cross(tvec, e1);
+    const float v = Vec3::Dot(ray.raydir, qvec) * invDet;
 
-    float beta = (d22*d1p - d12*d2p) * invDeterminant;
-    float gamma = (d11*d2p - d12*d1p) * invDeterminant;
+    if (v < -EPS || u + v > 1.0f + EPS) { return false; }
 
-    if (beta < -EPS || gamma < -EPS || beta + gamma > 1.0f + EPS) { return false; }
+    const float t = Vec3::Dot(e2, qvec) * invDet;
 
-    float alpha = 1 - (beta + gamma);
-    // if (shadeType == (int)ShadeType::SMOOTH || shadeType == (int)ShadeType::SMOOTH_TEXTURED) {
-    //     Vec3 pNormal = verts[indices.v1N]*alpha + indices.v2.normal*beta + indices.v3.normal*gamma;
-    //     normal = pNormal.Normalize();
-    // }
-    // if (shadeType == (int)ShadeType::TEXTURED || shadeType == (int)ShadeType::SMOOTH_TEXTURED) {
-    //     texture = indices.v1.texture*alpha + indices.v2.texture*beta + indices.v3.texture*gamma;
-    // }
+    if (t < EPS) {return false; }
+
     entryIntersection = t;
     exitIntersection = t;
-    intersection = intersectedPoint;
-    baycentric = Vec3(alpha, beta, gamma);
+    baycentric = Vec3(1.0f - u - v, u, v);
+    intersection = ray.GetRay(t);
     return true;
 }
 

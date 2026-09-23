@@ -62,11 +62,6 @@ struct Triangle {
         Vec3 e1;
         Vec3 e2;
         Vec3 cachedNormal;
-        float cachedD;
-        float d11;
-        float d12;
-        float d22;
-        float invDeterminant;
 
         int mat;
         int tex;
