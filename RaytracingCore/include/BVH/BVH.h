@@ -18,7 +18,7 @@ class BVH {
         int leafSize;
         int triangleSize;
         const int MAX_DEPTH;
-        void Split(const BVHNode &parent, int parentIndex, int depth);
+        void Split(int parentIndex, int depth);
     public:
         std::vector<BVHNode> nodes;
         std::vector<Triangle> triangles;

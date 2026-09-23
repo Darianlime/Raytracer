@@ -69,22 +69,20 @@ int File::ReadOBJ(string inputFileName, int matIndex, int texIndex, ObjectFactor
     }
 
     string inputLine;
-    int index = 0;
     while (getline(fin, inputLine, '\n'))
     {
-        std::vector<string> args{};
         size_t firstChar = inputLine.find_first_not_of(" \t");
         if (firstChar == std::string::npos || inputLine[firstChar] == '#') {
             continue;
         }
-
+        std::vector<string> args{};
         std::stringstream input(inputLine);
         string keyword;
         
-        getline(input, keyword, ' ');
+		input >> keyword;
 
         string arg;
-        while (getline(input, arg, ' ')) {
+        while (input >> arg) {
             args.push_back(arg);
         }
         args.push_back(to_string(matIndex));

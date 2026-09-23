@@ -60,10 +60,6 @@ void ModelFactory::ResetCurrentVertexStart()
     currentVertexStart = 0;
     isAddingToVertCount = false;
 }
-// const vector<Vec3> &ModelFactory::GetVertsPos() const
-// {
-//     return vertsPos;
-// }
 
 int ModelFactory::CreateObject(string &objectName, vector<string> &args)
 {
@@ -125,6 +121,13 @@ void ModelFactory::RemoveModel(int index) {
     objects.erase(objects.begin() + index);
 }
 
+int ModelFactory::ChangeNegativeIndices(int index, int count) {
+    if (index > 0) { 
+        return index - 1; 
+    }
+    return count + index;
+}
+
 void ModelFactory::ParseTriangle(vector<string>& args, vector<int>& vertsArgs) {
     const int INDICE_SIZE = 3;
     const int EXTRA_ARGS = 3;
@@ -135,37 +138,34 @@ void ModelFactory::ParseTriangle(vector<string>& args, vector<int>& vertsArgs) {
     Indices indice;
     for (int i = 0; i < INDICE_SIZE; i++) {
         const char* toChar = args[i].c_str();
-        const char* ptr = toChar;
+        const char* ptr = args[i].c_str();
         const char* end = toChar + strlen(toChar);
-        int v, vn, vt;
+        int v = 0, vn = 0, vt = 0;
         std::from_chars_result res = std::from_chars(ptr, end, v);
-        //tri.SetIndice(i, &objects[indexOfCurrentMesh]->GetVertices()[v - currentVertexStart - 1].pos);
-        //vertsArgs[index] = v - currentVertexStart - 1;
-        //indice.GetVertex(i).pos = objects[indexOfCurrentMesh]->GetVertices()[v - currentVertexStart - 1].pos;
         ptr = res.ptr;
+
+        int vertexIndex = ChangeNegativeIndices(v, vertsPos.size());
+
         if (*ptr == '/') {
             ptr++;
             if (*ptr != '/') {
                 std::from_chars_result res = std::from_chars(ptr, end, vt);
-                //vertsArgs[index+2] = vt - currentVertexStart - 1;
-                objects[indexOfCurrentMesh]->GetVertices()[v - currentVertexStart - 1].texture = vertsTex[vt - currentVertexStart - 1];
-                objects[indexOfCurrentMesh]->GetOrgVertices()[v - currentVertexStart - 1].texture = vertsTex[vt - currentVertexStart - 1];
-                //indice.GetVertex(i).texture = vertsTex[vt - currentVertexStart - 1];
-                //indice.GetVertex(i).texture = objects[indexOfCurrentMesh]->GetVertices()[vt - currentVertexStart - 1].texture;
+                int texIndex = ChangeNegativeIndices(vt, vertsTex.size());
+                objects[indexOfCurrentMesh]->GetVertices()[vertexIndex - currentVertexStart].texture = vertsTex[texIndex - currentVertexStart];
+                objects[indexOfCurrentMesh]->GetOrgVertices()[vertexIndex - currentVertexStart].texture = vertsTex[texIndex - currentVertexStart];
                 ptr = res.ptr;
                 texPresent = true;
             }
             if (*ptr == '/') {
                 ptr++;
                 std::from_chars(ptr, end, vn);
-                //vertsArgs[index+1] = vn - currentVertexStart - 1;
-                objects[indexOfCurrentMesh]->GetVertices()[v - currentVertexStart - 1].normal = vertsNormal[vn - currentVertexStart - 1];
-                objects[indexOfCurrentMesh]->GetOrgVertices()[v - currentVertexStart - 1].normal = vertsNormal[vn - currentVertexStart - 1];
-                //indice.GetVertex(i).normal = vertsNormal[vn - currentVertexStart - 1];
+				int normalIndex = ChangeNegativeIndices(vn, vertsNormal.size());
+                objects[indexOfCurrentMesh]->GetVertices()[vertexIndex - currentVertexStart].normal = vertsNormal[normalIndex - currentVertexStart];
+                objects[indexOfCurrentMesh]->GetOrgVertices()[vertexIndex - currentVertexStart].normal = vertsNormal[normalIndex - currentVertexStart];
                 normalPresent = true;
             }
         }
-        tri.SetVertex(&objects[indexOfCurrentMesh]->GetVertices()[v - currentVertexStart - 1], i);
+        tri.SetVertex(&objects[indexOfCurrentMesh]->GetVertices()[vertexIndex - currentVertexStart], i);
     }
     tri.CacheCalculations();
     //vertsArgs[vertsArgs.size()-EXTRA_ARGS] = stoi(args[args.size()-2]);

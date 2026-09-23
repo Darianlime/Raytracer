@@ -22,23 +22,21 @@ void BVH::Build()
         bounds.GrowBox(vert.pos);
     }
 
-    //bounds.ToString();
-
     // fills index from 0, 1, 2 to triangleSize
     vector<int> triangleIndex(triangleSize);
     std::iota(triangleIndex.begin(), triangleIndex.end(), 0); 
 
     nodes.emplace_back(bounds, triangleIndex);
 
-    Split(nodes[0], 0, 0);
+    Split(0, 0);
 }
 
-void BVH::Split(const BVHNode& parent, int parentIndex, int depth = 0) {
-    if (parent.triangleIndexs.size() <= leafSize || depth >= MAX_DEPTH) {
+void BVH::Split(int parentIndex, int depth = 0) {
+    if (nodes[parentIndex].triangleIndexs.size() <= leafSize || depth >= MAX_DEPTH) {
         return;
     }
-    Vec3 center = parent.bounds.CalcCenter();
-    Vec3 size = parent.bounds.Size(center);
+    Vec3 center = nodes[parentIndex].bounds.CalcCenter();
+    Vec3 size = nodes[parentIndex].bounds.Size(center);
     int axis = 0;
     if (size.y > size.x) axis = 1;
     if (size.z > size.GetAxisValue(axis)) axis = 2;
@@ -49,7 +47,7 @@ void BVH::Split(const BVHNode& parent, int parentIndex, int depth = 0) {
     nodes.emplace_back();
     nodes.emplace_back();
 
-    for (int triIndex : parent.triangleIndexs) {
+    for (int triIndex : nodes[parentIndex].triangleIndexs) {
         Triangle& tri = triangles[triIndex];
         float triAxis = tri.CalcCenter().GetAxisValue(axis);
         int inLeftBox = triAxis < centerAxis ? left : right;
@@ -60,21 +58,11 @@ void BVH::Split(const BVHNode& parent, int parentIndex, int depth = 0) {
     if (nodes[left].triangleIndexs.empty() || nodes[right].triangleIndexs.empty()) {
         return;
     }
-    // std::cout << "split: ";
-    // for (int i : nodes[left].triangleIndexs) {
-    //     std::cout << i << " ";
-    // }
-    // std::cout << std::endl;
-    // std::cout << "split: ";
-    // for (int i : nodes[right].triangleIndexs) {
-    //     std::cout << i << " ";
-    // }
-    // std::cout << std::endl;
 
     nodes[parentIndex].child = left;
 
-    Split(nodes[left], left, depth + 1);
-    Split(nodes[right], right, depth + 1);
+    Split(left, depth + 1);
+    Split(right, depth + 1);
 }
 
 float BVH::IsBoundsHit(const Ray& ray, const BoundingBox& bounds)

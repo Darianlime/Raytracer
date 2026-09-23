@@ -24,6 +24,8 @@ class ModelFactory : public FactoryBase<Model> {
         int texIndex;
         bool isAddingToVertCount;
         int indexOfCurrentMesh;
+
+        int ChangeNegativeIndices(int index, int count);
     public:
         ModelFactory();
         ~ModelFactory() {};
