@@ -39,7 +39,7 @@ struct Model : public Object {
         virtual Vec3 GetNormal(Vec3 intersectedPoint, Vec3 raydir, const int triangleIndex) = 0;
         virtual Vec2 GetTexUV(Vec3 intersectedPoint) = 0;
 
-        void CalculateCentriod();
+        Vec3 CalculateCentriod();
         std::vector<Vertex>& GetVertices();
         std::vector<Vertex> &GetOrgVertices();
         std::vector<Triangle> &GetTriangles();

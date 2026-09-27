@@ -10,7 +10,15 @@ Mesh::Mesh(std::string name, vector<int> args) : Model(Vec3(0,0,0), args[0], arg
 
 bool Mesh::CheckIntersection(const Ray& ray, HitRecord& hitRecord)
 {
-    return CheckBVHIntersection(ray, bvh.nodes[0], hitRecord.triangleHitIndex, hitRecord);
+	Vec3 rayOriginLocal = (worldToLocal * Vec4(ray.origin, 1.0f)).toVec3();
+	Vec3 rayDirLocal = (worldToLocal * Vec4(ray.raydir, 0.0f)).toVec3();
+
+    bool hit = CheckBVHIntersection(Ray(rayOriginLocal, rayDirLocal), bvh.nodes[0], hitRecord.triangleHitIndex, hitRecord);
+    if (hit) {
+        hitRecord.intersection = (localToWorld * Vec4(hitRecord.intersection, 1.0f)).toVec3();
+    }
+
+    return hit;
 }
 
 bool Mesh::CheckBVHIntersection(const Ray& ray, const BVHNode& node, const int ignoreTriangle, HitRecord& hitRecord)
@@ -86,24 +94,25 @@ void Mesh::UpdateTransformation()
 {
     SetMatrix(pos, rot * M_PI / 180, size);
     //Matrix4 normalMatrix = worldToLocal.Transpose();
-    Matrix4 normalMatrix = localToWorld.InverseAffine().Transpose();
+    //Matrix4 normalMatrix = localToWorld.InverseAffine().Transpose();
 
-    for (int i = 0; i < bvh.verts.size(); i++) {
-        bvh.verts[i].pos = (localToWorld * Vec4(orignalVerts[i].pos)).toVec3();
-        Vec4 normal = normalMatrix * Vec4(orignalVerts[i].normal, 0.0f);
-        bvh.verts[i].normal = normal.toVec3().Normalize();
-    }
+    //for (int i = 0; i < bvh.verts.size(); i++) {
+    //    bvh.verts[i].pos = (localToWorld * Vec4(orignalVerts[i].pos)).toVec3();
+    //    Vec4 normal = normalMatrix * Vec4(orignalVerts[i].normal, 0.0f);
+    //    bvh.verts[i].normal = normal.toVec3().Normalize();
+    //}
 
-    for (Triangle& tri : bvh.triangles) {
-        tri.CacheCalculations();
-    } 
+    //for (Triangle& tri : bvh.triangles) {
+    //    tri.CacheCalculations();
+    //} 
 
-    bvh.Build();
+    //bvh.Build();
 }
 
 Vec3 Mesh::GetNormal(Vec3 intersectedPoint, Vec3 raydir, const int triangleIndex)
 {
-    return GetTriangles()[triangleIndex].GetNormal(raydir).Normalize();
+    Vec3 localNormal = GetTriangles()[triangleIndex].GetNormal(raydir).Normalize();
+    return (worldToLocal.Transpose() * Vec4(localNormal, 0.0f)).toVec3().Normalize();
 }
 
 Vec2 Mesh::GetTexUV(Vec3 intersectedPoint)

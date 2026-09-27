@@ -39,12 +39,13 @@ pair<float, float> Model::GetHitDistance(float A, float B, float C)
     // if (t2 > EPSILON) return t2;  // inside sphere, use far hit
 }
 
-void Model::CalculateCentriod() {
-    if (bvh.verts.empty()) return;
-    for (Vertex vert : bvh.verts) {
-        pos = pos + vert.pos;
+Vec3 Model::CalculateCentriod() {
+    if (bvh.verts.empty()) return Vec3(0, 0, 0);
+    Vec3 centroid(0, 0, 0);
+    for (const Vertex& vert : bvh.verts) {
+        centroid = centroid + vert.pos;
     }
-    pos = pos / bvh.verts.size();
+    return centroid / bvh.verts.size();
 }
 
 std::vector<Vertex> &Model::GetVertices()
