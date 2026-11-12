@@ -111,8 +111,12 @@ void Mesh::UpdateTransformation()
 
 Vec3 Mesh::GetNormal(Vec3 intersectedPoint, Vec3 raydir, const int triangleIndex)
 {
-    Vec3 localNormal = GetTriangles()[triangleIndex].GetNormal(raydir).Normalize();
-    return (worldToLocal.Transpose() * Vec4(localNormal, 0.0f)).toVec3().Normalize();
+    Vec3 localRayDir = (worldToLocal * Vec4(raydir, 0.0f)).toVec3();
+    Vec3 localNormal = GetTriangles()[triangleIndex].GetNormal(localRayDir).Normalize();
+
+    Vec4 transformedNormal = worldToLocal.Transpose() * Vec4(localNormal, 0.0f);
+
+    return Vec3(transformedNormal.x, transformedNormal.y, transformedNormal.z).Normalize();
 }
 
 Vec2 Mesh::GetTexUV(Vec3 intersectedPoint)

@@ -67,8 +67,9 @@ namespace Raytracer {
                 Vec3 n1 = closest->GetTriangles()[closestTriangleHit].GetIndices().v1->normal;
                 Vec3 n2 = closest->GetTriangles()[closestTriangleHit].GetIndices().v2->normal;
                 Vec3 n3 = closest->GetTriangles()[closestTriangleHit].GetIndices().v3->normal;
-                Vec3 pNormal = n1*baycentric.x + n2*baycentric.y + n3*baycentric.z;
-                normal = pNormal.Normalize();
+                Vec3 pNormal = (n1 * baycentric.x + n2 * baycentric.y + n3 * baycentric.z).Normalize();
+                Vec4 transformedNormal = closest->worldToLocal.Transpose() * Vec4(pNormal, 0.0f);
+                normal = Vec3(transformedNormal.x, transformedNormal.y, transformedNormal.z).Normalize();
             } else {
                 normal = closest->GetNormal(closestIntersection, ray.raydir, closestTriangleHit);
             }
@@ -80,7 +81,7 @@ namespace Raytracer {
     // Shoots a shadow ray from intersected point to light and checks for object intersections
     Vec3 Raycast::IsShadow(Light* light, Vec3 intersectedPoint, Model* intersectedModel, int triangleHitIndex) {
         Vec3 S(1.0f,1.0f,1.0f);
-        const float EPSILON = 1e-4f;
+        const float EPSILON = 1e-3f;
         Vec3 lightDir = light->GetLightDir(intersectedPoint);
         Vec3 origin = intersectedPoint + lightDir * EPSILON;
         Ray ray{origin, lightDir};

@@ -32,7 +32,7 @@ void Triangle::CacheCalculations() {
 
 bool Triangle::CheckIntersection(const Ray& ray, Vec3& baycentric, float& entryIntersection, float& exitIntersection, Vec3& intersection)
 {
-    const float EPS = 1e-6f;
+    const float EPS = 1e-8f;
     const float det = -Vec3::Dot(cachedNormal, ray.raydir);
 
     if (fabs(det) < EPS) { return false; }
