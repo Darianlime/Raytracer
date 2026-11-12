@@ -16,6 +16,18 @@ enum class ModelType {
     MESH
 };
 
+struct Checker {
+    bool enabled = false;
+    float tileSize = 1.0f;
+    Color a = Color(0.9f, 0.9f, 0.9f, false);
+    Color b = Color(0.1f, 0.1f, 0.1f, false);
+    Color At(const Vec3& p) const {
+        int ix = (int)std::floor(p.x / tileSize);
+        int iz = (int)std::floor(p.z / tileSize);
+        return ((ix + iz) & 1) ? a : b;
+    }
+};
+
 struct Model : public Object {
     protected:
         static map<ModelType, string> typeMap;
@@ -24,6 +36,7 @@ struct Model : public Object {
     public:
         int mat;
         int tex;
+        Checker checker;
         int lastVertIndex;
         int lastIndiceIndex;
         bool isSmoothShadingOn;

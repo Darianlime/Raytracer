@@ -59,6 +59,9 @@ namespace Raytracer {
                 Vec2 texUV = closest->GetTexUV(closestIntersection);
                 mat.diffuse = objectFactory.GetTexIndex(closest->tex).GetPixel(texUV.x, texUV.y);
             }
+            if (closest->checker.enabled) {
+                mat.diffuse = closest->checker.At(closestIntersection);
+            }
             Vec3 normal{};
             if (closest->isSmoothShadingOn && closestTriangleHit != -1) {
                 Vec3 n1 = closest->GetTriangles()[closestTriangleHit].GetIndices().v1->normal;
