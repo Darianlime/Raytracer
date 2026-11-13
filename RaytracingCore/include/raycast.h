@@ -26,12 +26,12 @@ struct RayHit {
 
 class Raycast {
     private:
-        const int SHADE_DEPTH;
+        int SHADE_DEPTH;
         const ObjectFactory& objectFactory;
         Vec3 eye;
     public:
         Raycast() = default;
-        Raycast(Vec3 eye, const ObjectFactory& objectFactory, const int SHADE_DEPTH);
+        Raycast(Vec3 eye, const ObjectFactory& objectFactory, int SHADE_DEPTH);
 
         Vec3 GetEye();
         void SetEye(Vec3 eye);
@@ -41,6 +41,8 @@ class Raycast {
         Vec3 IsShadow(Light *light, Vec3 eye, Model *intersectedModel, int triangleHitIndex);
         Color TraceRay(Vec3 point, Color background, pair<Vec3, bool> &intersectedPoint);
         Color ShadeRay(RayHit hit, Color background, int depth, float currentIOR);
+
+        void SetShadeDepth(int ShadeDepth) { SHADE_DEPTH = ShadeDepth; }
 };
 }
 #endif
