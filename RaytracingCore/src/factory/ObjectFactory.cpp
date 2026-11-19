@@ -1,4 +1,5 @@
 #include "factory/ObjectFactory.h"
+#include <file.h>
 
 ObjectFactory::ObjectFactory() {
     CreateFactory<ModelFactory>();
@@ -79,4 +80,35 @@ const Texture& ObjectFactory::GetTexIndex(int index) const
 const int ObjectFactory::GetTexSize() const
 {
     return textures.size();
+}
+
+void ObjectFactory::CreateObj(const std::string& objPath) {
+    GetFactory<ModelFactory>().ResetCurrentVertexStart();
+    int intialSize = GetFactory<ModelFactory>().GetObjects().size();
+    if (File::ReadOBJ(objPath, -1, -1, *this) == -1) {
+        throw std::runtime_error("Failed to read OBJ file");
+    }
+    int updatedSize = GetFactory<ModelFactory>().GetObjects().size();
+    for (int i = intialSize; i < updatedSize; i++) {
+        Model* model = GetFactory<ModelFactory>().GetObjects()[i].get();
+
+        Vec3 centroid = model->CalculateCentriod();
+        model->pos = centroid;
+        for (auto& vertex : model->GetVertices())
+        {
+            vertex.pos = vertex.pos - centroid;
+        }
+        for (auto& tri : model->GetTriangles())
+        {
+            tri.CacheCalculations();
+        }
+
+        std::cout << "model pos: " << model->pos.x << ", " << model->pos.y << ", " << model->pos.z << std::endl;
+        model->rot.ToString();
+        model->SetMatrix(model->pos, model->rot, model->size);
+        model->GetBVH().Init();
+        model->GetBVH().Build();
+        model->localToWorld.ToString();
+        std::cout << "model triangles: " << model->GetTriangles().size() << std::endl;
+    }
 }

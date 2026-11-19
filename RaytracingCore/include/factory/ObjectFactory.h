@@ -63,6 +63,8 @@ class ObjectFactory {
         void AddTexture(Texture tex);
         const Texture& GetTexIndex(int index) const;
         const int GetTexSize() const;
+
+        void CreateObj(const std::string& objPath);
 };
 
 #endif
