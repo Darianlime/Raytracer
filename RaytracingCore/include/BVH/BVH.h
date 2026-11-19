@@ -17,7 +17,7 @@ class BVH {
     private:
         int leafSize;
         int triangleSize;
-        const int MAX_DEPTH;
+        int maxDepth;
         void Split(int parentIndex, int depth);
     public:
         std::vector<BVHNode> nodes;
@@ -29,6 +29,9 @@ class BVH {
         void Init();
         void Build();
         static float IsBoundsHit(const Ray &ray, const BoundingBox &bounds);
+
+        void SetMaxDepth(int d) { maxDepth = d; }
+        void SetLeafSize(int l) { leafSize = l; }
 };
 
 #endif

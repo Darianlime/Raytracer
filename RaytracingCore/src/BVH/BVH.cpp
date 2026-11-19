@@ -3,9 +3,9 @@
 #include <immintrin.h>
 using std::vector;
 
-BVH::BVH() : leafSize(4), MAX_DEPTH(64) {}
+BVH::BVH() : leafSize(4), maxDepth(64) {}
 
-BVH::BVH(int leafSize) : leafSize(leafSize), MAX_DEPTH(64) {}
+BVH::BVH(int leafSize) : leafSize(leafSize), maxDepth(64) {}
 
 void BVH::Init() {
     triangleSize = triangles.size();
@@ -32,7 +32,7 @@ void BVH::Build()
 }
 
 void BVH::Split(int parentIndex, int depth = 0) {
-    if (nodes[parentIndex].triangleIndexs.size() <= leafSize || depth >= MAX_DEPTH) {
+    if (nodes[parentIndex].triangleIndexs.size() <= leafSize || depth >= maxDepth) {
         return;
     }
     Vec3 center = nodes[parentIndex].bounds.CalcCenter();
