@@ -24,10 +24,10 @@ namespace Raytracer {
         lower_left = p - cam.GetU() * (viewportWidth/2) - cam.GetV() * (viewportHeight/2);
         lower_right = p + cam.GetU() * (viewportWidth/2) - cam.GetV() * (viewportHeight/2);
         
-        p.ToString();
-        upper_left.ToString();
-        upper_right.ToString();
-        lower_left.ToString();
-        lower_right.ToString();
+        // p.ToString();
+        // upper_left.ToString();
+        // upper_right.ToString();
+        // lower_left.ToString();
+        // lower_right.ToString();
     }
 }
